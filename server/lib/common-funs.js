@@ -52,7 +52,7 @@ module.exports = (function() {
                 if (error) {
                     callback(error, response, body);
                 } else if (response.statusCode >= 200 && response.statusCode <= 299) {
-                    console.log('Request completed in ' + (os.uptime() - startTime)+'s');
+                    //console.log('Request completed in ' + (os.uptime() - startTime)+'s');
                     var data;
                     if (body) {
                         data = JSON.parse(body);

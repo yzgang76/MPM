@@ -65,7 +65,7 @@ app.get('/getNodes/:type',function(req,res){
 
 
 // nfvd collector
-app.post('/collect/nfvd/inti',function(req,res){
+app.post('/collect/nfvd/init',function(req,res){
     nfvd.initNeo4j(req,res);
 });
 
