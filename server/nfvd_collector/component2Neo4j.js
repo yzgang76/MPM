@@ -57,7 +57,7 @@ module.exports = (function () {
                     });
                     if(_.includes(roots,id)){
                         rels.push({
-                            label:'CONSISTED_OF',
+                            label:'HAS_ROOT',
                             parent:rootid,
                             parent_label:"COMPONENT",
                             child:id,
@@ -69,7 +69,6 @@ module.exports = (function () {
                     }
 
                 });
-
                 _.forEach(COM.getComponentImmediateRelationships(com),function(rel){
                     rels.push({
                         label:rel['relationship-type'],
@@ -81,6 +80,9 @@ module.exports = (function () {
                             state:rel.status['visible-label']
                         }
                     });
+                });
+                _.forEach(COM.getSubComponents(com),function(sub){
+                    _inspectComponent(sub,rootid);
                 });
             }
 
