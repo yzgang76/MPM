@@ -42,7 +42,7 @@ module.exports = (function () {
                         }
                     });
                 }
-
+                var roots=com['root-artifacts'];
                 _.forEach(COM.getComponentImmediateArtifacts(com),function(art){
                     var id=ART.getID(art);
                     nodes.push({
@@ -55,30 +55,44 @@ module.exports = (function () {
                             state:ART.getState(art)
                         }
                     });
+                    if(_.includes(roots,id)){
+                        rels.push({
+                            label:'CONSISTED_OF',
+                            parent:rootid,
+                            parent_label:"COMPONENT",
+                            child:id,
+                            child_label:"ARTIFACT",
+                            properties:{
 
+                            }
+                        });
+                    }
+
+                });
+
+                _.forEach(COM.getComponentImmediateRelationships(com),function(rel){
                     rels.push({
-                        label:'CONSISTED_OF',
-                        parent:rootid,
-                        parent_label:"COMPONENT",
-                        child:id,
+                        label:rel['relationship-type'],
+                        parent:rel['parent-artifact-id'],
+                        parent_label:"ARTIFACT",
+                        child:rel['child-artifact-id'],
                         child_label:"ARTIFACT",
                         properties:{
-
+                            state:rel.status['visible-label']
                         }
                     });
                 });
-                roots=roots.concat(com['root-artifacts']);
             }
 
             var rels=[];
-            var roots=[];
+
             var nodes=[];
             _inspectComponent(com);
             function _createRelationship(rel,callback){
                 var payload={
                     "statements":[
                         {
-                            "statement":"match  (p:"+rel.parent_label+"{id:\""+rel.parent+"\"}) with p match (c:"+rel.child_label+"{id:\""+rel.child+"\"}) merge (p)-[:"+rel.type+"{"+  C.printProperties(rel.properties)+"}]->(c)"
+                            "statement":"match  (p:"+rel.parent_label+"{id:\""+rel.parent+"\"}) with p match (c:"+rel.child_label+"{id:\""+rel.child+"\"}) merge (p)-[:"+rel.label+"{"+  C.printProperties(rel.properties)+"}]->(c)"
                         }
                     ]
                 };
