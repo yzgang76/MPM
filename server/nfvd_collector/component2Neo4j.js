@@ -183,7 +183,9 @@ module.exports = (function () {
                     if (err) {
                         errors.push(err);
                     }
-                    results.push(body);
+                    if(body.errors.length>0){
+                        errors=errors.concat(body.errors);
+                    }
                     callback(null);
                 }, 'POST', payload);
             }
@@ -200,7 +202,10 @@ module.exports = (function () {
                     if (err) {
                         errors.push(err);
                     }
-                    results.push(body);
+
+                    if(body.errors.length>0){
+                        errors=errors.concat(body.errors);
+                    }
                     callback(null);
                 }, 'POST', payload);
             }
@@ -222,7 +227,7 @@ module.exports = (function () {
                 });
             } else {
                 var errors = [];
-                var results=[];
+                //var results=[];
                 //var ret=N.com2Neo4j({},errors);
                 //res.status(ret+0).send({
                 //    'Message': 'Complete',
@@ -242,8 +247,8 @@ module.exports = (function () {
                             _com2Neo4j(body, function(code){
                                 res.status( code).send({
                                     'Message': 'Complete',
-                                    'Errors': errors,
-                                    'Results':results
+                                    'Errors': errors
+                                    //'Results':results
                                 });
                             });
                         } else {
