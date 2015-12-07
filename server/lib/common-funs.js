@@ -8,12 +8,13 @@ module.exports = (function() {
     var request = require(path.join(__dirname,'/../node_modules/request'));
     var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
     var os = require('os');
+    var neo4j_conf=require(path.join(__dirname,'/../conf/neo4j'));
     //var securityLogger = require(path.join(process.env.ROOT, 'server', 'logger', 'security-logger'));
     //var logger = require(path.join(process.env.ROOT, 'server', 'logger', 'server-logger'));
     //var requestOptions = require(path.join(process.env.ROOT, 'server', 'request-options', 'request-options'));
 
     var C = {};
-    C.neo4j_server="http://localhost:7474";
+    C.neo4j_server=neo4j_conf.server+":"+neo4j_conf.port;//"http://localhost:7474";
 
     C.timeout = 180000;
 
@@ -23,7 +24,7 @@ module.exports = (function() {
         var headers = {
             'Content-Type': 'application/json;charset=utf-8',
             'Accept': 'application/json, text/plain, */*',
-            'Authorization':'Basic bmVvNGo6YWRtaW4='
+            'Authorization':'Basic '+new Buffer(neo4j_conf.user+":"+neo4j_conf.password).toString('base64')
         };
 
         var baseoptions = {
@@ -45,8 +46,8 @@ module.exports = (function() {
             options.body = JSON.stringify(postData);
         }
 
-        console.log(options.body?'Making server request:' + options.method + ' '+ server + url + '\n' + options.body:
-        'Making server request:' + options.method + ' '+ server + url );
+        //console.log(options.body?'Making server request:' + options.method + ' '+ server + url + '\n' + options.body:
+        //'Making server request:' + options.method + ' '+ server + url );
         request(options, function(error, response, body) {
             try {
                 if (error) {
