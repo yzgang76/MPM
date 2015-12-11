@@ -19,7 +19,7 @@ module.exports = (function() {
     C.timeout = 99990000;
 
 
-    C.makeQuery = function(server, url, callback, method, postData) {
+    C.makeQuery = function(server, url, callback, method, postData,print) {
 
         var headers = {
             'Content-Type': 'application/json;charset=utf-8',
@@ -45,15 +45,20 @@ module.exports = (function() {
         if ((method) && ((postData)) && (method === 'PUT' || method === 'POST' || method === 'DELETE' || method === 'PATCH')) {
             options.body = JSON.stringify(postData);
         }
+        if(print){
+            console.log(options.body?'Making server request:' + options.method + ' '+ server + url + '\n' + options.body:
+            'Making server request:' + options.method + ' '+ server + url );
+        }
 
-        //console.log(options.body?'Making server request:' + options.method + ' '+ server + url + '\n' + options.body:
-        //'Making server request:' + options.method + ' '+ server + url );
         request(options, function(error, response, body) {
             try {
                 if (error) {
                     callback(error, response, body);
                 } else if (response.statusCode >= 200 && response.statusCode <= 299) {
-                    //console.log('Request completed in ' + (os.uptime() - startTime)+'s');
+                    if(print){
+                        console.log('Request completed in ' + (os.uptime() - startTime)+'s');
+                    }
+
                     var data;
                     if (body) {
                         data = JSON.parse(body);
