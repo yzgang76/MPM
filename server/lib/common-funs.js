@@ -16,7 +16,7 @@ module.exports = (function() {
     var C = {};
     C.neo4j_server=neo4j_conf.server+":"+neo4j_conf.port;//"http://localhost:7474";
 
-    C.timeout = 180000;
+    C.timeout = 99990000;
 
 
     C.makeQuery = function(server, url, callback, method, postData) {
@@ -46,8 +46,8 @@ module.exports = (function() {
             options.body = JSON.stringify(postData);
         }
 
-        console.log(options.body?'Making server request:' + options.method + ' '+ server + url + '\n' + options.body:
-        'Making server request:' + options.method + ' '+ server + url );
+        //console.log(options.body?'Making server request:' + options.method + ' '+ server + url + '\n' + options.body:
+        //'Making server request:' + options.method + ' '+ server + url );
         request(options, function(error, response, body) {
             try {
                 if (error) {

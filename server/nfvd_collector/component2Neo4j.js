@@ -17,7 +17,7 @@ module.exports = (function () {
     var url_neo4j = '/db/data/transaction/commit';
 
     N.collectNFVComponent = function (req, res) {
-
+        console.log("start to collect NFVD component....");
         function _com2Neo4j(com,callback) {
             function _inspectComponent(com,parentID){
                 var rootid=COM.getComponentID(com);
@@ -162,13 +162,7 @@ module.exports = (function () {
 
             var nodes=[];
             _inspectComponent(com);
-            console.log('********************** node: ', nodes.length);
-            _.forIn(_.groupBy(nodes,function(n){
-                return n.label;
-            }),function(v,k){
-                console.log(k+":"+ v.length);
-            });
-            console.log('********************** ');
+
 
             function _createRelationship(rel,callback){
                 //callback(null);
@@ -210,9 +204,20 @@ module.exports = (function () {
                 }, 'POST', payload);
             }
             function _afterCreateAllNodes(err){
+
+                console.log('complete create nodes. start to create relationships... ');
+
                 async.each(rels,_createRelationship,_afterCreateAllRelationships);
             }
             function _afterCreateAllRelationships(err){
+                console.log("complete collect nfvd component");
+                console.log('********************** total node: ', nodes.length);
+                _.forIn(_.groupBy(nodes,function(n){
+                    return n.label;
+                }),function(v,k){
+                    console.log(k+":"+ v.length);
+                });
+                console.log('********************** ');
                 callback(201);
             }
 
