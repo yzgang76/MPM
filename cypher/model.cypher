@@ -34,7 +34,7 @@ match (k:KPI_DEF {id:4}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:
 match (k:KPI_DEF {id:4}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:4}) with k match (k1:KPI_DEF {id:1}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:5,name:"CSSR",type:2,formula:"[4]/[3]"});
+merge (:KPI_DEF {id:5,name:"CSSR",type:1,formula:"[4]/[3]"});
 match (k:KPI_DEF {id:5}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:5}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:5}) with k match (k1:KPI_DEF {id:4}) merge (k)-[:DEPEND_ON]->(k1);

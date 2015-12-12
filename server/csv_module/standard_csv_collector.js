@@ -72,7 +72,7 @@ module.exports = (function() {
                             });
 
                             //connect to kpi definition
-                            statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran create (d)-[:HAS_KPI_VALUE]->(k)'});
+                            statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran create (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
                             console.log(statements);
                             n4j.runCypherStatements(statements);
                         }

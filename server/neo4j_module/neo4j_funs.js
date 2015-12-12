@@ -9,8 +9,6 @@ var C=require(path.join(__dirname,'/../lib/common-funs'));
 module.exports = (function() {
     'use strict';
     var N={};
-
-
     N.getNodes=function(req,res){
         var type=req.params.type;
         var payload={
@@ -46,7 +44,6 @@ module.exports = (function() {
         },'POST',payload);
 
     };
-
     N.runCypherFile=function(file){
         fs.readFile(path.join(__dirname,'/../../cypher/'+file), 'utf-8', function(err, data) {
             if (err) {
@@ -92,12 +89,25 @@ module.exports = (function() {
                     errors:body
                 });
             }else{
-                console.log('reutrn with errors:',body.errors);
+                console.log('makeQuery return with errors:',body.errors);
             }
-
-
         },'POST',{"statements":statements},true);
-
+    };
+    N.runCypherWithReturn=function(statements,callback){
+        var url='/db/data/transaction/commit';
+        C.makeQuery(C.neo4j_server,url,function(err,r,body){
+            if(err){
+                //console.log("getAllNode return with error: ",JSON.stringify(err),body);
+                console.log({
+                    headers: r.headers,
+                    errors:body
+                });
+                callback(err, undefined);
+            }else{
+                console.log('makeQuery return with errors:',body.errors);
+                callback(null, body);
+            }
+        },'POST',{"statements":statements},true);
     };
     return N;
 })();
