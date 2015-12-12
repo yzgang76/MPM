@@ -1,12 +1,14 @@
+match a-[r]->b delete a,r,b;
+match e delete e;
 merge (:TEMPLATE:GRAN {type:"GRAN",desc:""});
 merge (:TEMPLATE:BSC {type:"BSC",desc:""});
 merge (:TEMPLATE:BTS {type:"BTS",desc:""});
 match (gran:TEMPLATE {type:"GRAN"}) with gran match (bsc:TEMPLATE {type:"BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 
-merge (:GRANULARITY {id:0,type:"15mins"});
-merge (:GRANULARITY {id:1,type:"hourly"});
-merge (:GRANULARITY {id:2,type:"daily"});
+merge (:GRANULARITY {id:0,type:"15mins",num:900});
+merge (:GRANULARITY {id:1,type:"hourly",num:3600});
+merge (:GRANULARITY {id:2,type:"daily",num:66400});
 
 merge (:KPI_DEF {id:0,name:"number of service request",type:0,formula:"nbr_call_request"});
 match (k:KPI_DEF {id:0}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);

@@ -73,7 +73,7 @@ module.exports = (function() {
                             errors:body
                         });
                     }else{
-                        console.log(body.results);
+                        console.log('reutrn with errors:',body.errors);
                     }
 
 
@@ -81,6 +81,23 @@ module.exports = (function() {
 
             }
         });
+    };
+    N.runCypherStatements=function(statements){
+        var url='/db/data/transaction/commit';
+        C.makeQuery(C.neo4j_server,url,function(err,r,body){
+            if(err){
+                //console.log("getAllNode return with error: ",JSON.stringify(err),body);
+                console.log({
+                    headers: r.headers,
+                    errors:body
+                });
+            }else{
+                console.log('reutrn with errors:',body.errors);
+            }
+
+
+        },'POST',{"statements":statements},true);
+
     };
     return N;
 })();
