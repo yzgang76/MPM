@@ -5,6 +5,7 @@ var path=require('path');
 //var input=require();
 var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
 var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
+var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 module.exports = (function() {
     'use strict';
     var E = {};
@@ -20,6 +21,11 @@ module.exports = (function() {
         });
         console.log(ret);
         return ret;
+    }
+    function getVars(expression){
+        var r =/K\d*/g;
+        var vs= expression.match(r);
+        return vs;
     }
     E.getKPIValue=function(kpiid, ts){
         var statement='match (k:KPI_DEF)<-[:HAS_KPI]-(t:TEMPLATE) with k ,t match (k1:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where k.id='+kpiid+' and k1.id='+kpiid+' return k,g,t';
@@ -55,6 +61,12 @@ module.exports = (function() {
                             });
                             break;
                         case 1:  //calculate
+                            var vars=_.map(getVars(formula),function(v){
+                                return v.replace('K','');
+                            });
+                            _.forEach(vars,function(kpiid){
+                                console.log(kpiid);
+                            });
                             break;
                         case 2:  //time aggregation
                             var source_kpiid=0;

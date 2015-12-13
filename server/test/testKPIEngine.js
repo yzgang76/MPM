@@ -10,8 +10,8 @@ var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
 
 
 function test(){
-    E.getKPIValue(0,100000000000);
-    //E.getKPIValue(3,100002700000);
+    //E.getKPIValue(0,100000000000);
+    E.getKPIValue(2,100002700000);
 }
 
 test();
