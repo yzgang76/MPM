@@ -7,6 +7,7 @@ var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
 var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 var C=require(path.join(__dirname,'/../lib/common-funs'));
+var Parser = require(path.join(__dirname, '/../lib/parser')).Parser;
 module.exports = (function() {
     'use strict';
     var E = {};
@@ -191,13 +192,22 @@ module.exports = (function() {
                                 //E.getSourceKPI(vars,ts,window_size,nelist,size,skip,order,_afterGetRawKPIs);
                                 forExpression=true;
                                 async.map(vars,_fetchKPIValue,function(err,data){
-                                    console.log('complete fetch all source kpis', C.mergeArrays(data,['ne','ts']));
+                                    if(err){
+                                        console.log('_fetchKPIValue error:',err);
+                                        callback(err,null);
+                                    }else{
+                                        var matrix=C.mergeArrays(data,['ne','ts']);
+                                        //console.log('complete fetch all source kpis', matrix);
+
+                                        var ret=[];
+                                        _.forEach(matrix,function(m){
+                                            ret.push(_.set({
+                                               ne:m.ne,
+                                               ts:m.ts},kpi_name,Parser.evaluate(formula, m)));
+                                        });
+                                        callback(null,ret);
+                                    }
                                 });
-
-
-                                callback(null,null);
-
-
                                 break;
                             case 2:  //time aggregation
                                 var source_kpiid=0;
