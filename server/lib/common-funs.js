@@ -84,7 +84,47 @@ module.exports = (function() {
         });
     };
 
+    C.mergeArrays=function(arrs,keys){
+        var x=[];
+        var kkvs=[];
+        _.forEach(arrs,function(arr){
+            var y=[];
+            _.forEach(arr,function(item){
+                var kk='';
+                var vv={};
+                var kkv={};
+                _.forEach(item,function(v,k){
+                    //console.log(k+":"+v);
 
+                    if(_.includes(keys, k)){
+                        kk=kk+v;
+                        _.set(kkv,k,v);
+                    }else{
+                        _.set(vv,k,v);
+                    }
+                });
+                //var temp={};
+                kkvs.push({key:kk,value:kkv});
+                y.push(_.set({},kk,vv));
+            });
+            x.push(y);
+        });
+        kkvs=(_.uniq(kkvs,function(k){
+            return k.key;
+        }));
+        x=_.reduce(x, function(a,a1){
+            return _.merge(a,a1);
+        });
+        //console.log('x=',x);
+        //console.log('kkvs=',kkvs);
+        var ret=[];
+        _.forEach(kkvs, function (k){
+            ret.push(_.merge(k.value,_.get(_.find(x,function(i){
+                return _.get(i, k.key)!==undefined;
+            }), k.key)));
+        });
+        return ret;
+    };
 
    /* C.makeQueryIfErrorReturnEmptyObject = function(req, server, url, callback, method) {
         //logger.info('C.makeQuery',server+url);
