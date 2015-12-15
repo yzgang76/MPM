@@ -24,12 +24,12 @@ match (k:KPI_DEF {id:2}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_KPI
 match (k:KPI_DEF {id:2}) with k match (k1:KPI_DEF {id:1}) merge (k)-[:DEPEND_ON]->(k1);
 match (k:KPI_DEF {id:2}) with k match (k1:KPI_DEF {id:0}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:3,name:"number of service request",type:2,formula:"sum([0])"});
+merge (:KPI_DEF {id:3,name:"number of service request",type:2,formula:"sum(K0)"});
 match (k:KPI_DEF {id:3}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:3}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:3}) with k match (k1:KPI_DEF {id:0}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:4,name:"number of success service request",type:2,formula:"sum(1)"});
+merge (:KPI_DEF {id:4,name:"number of success service request",type:2,formula:"sum(K1)"});
 match (k:KPI_DEF {id:4}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:4}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:4}) with k match (k1:KPI_DEF {id:1}) merge (k)-[:DEPEND_ON]->(k1);
@@ -40,7 +40,7 @@ match (k:KPI_DEF {id:5}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI
 match (k:KPI_DEF {id:5}) with k match (k1:KPI_DEF {id:4}) merge (k)-[:DEPEND_ON]->(k1);
 match (k:KPI_DEF {id:5}) with k match (k1:KPI_DEF {id:3}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:6,name:"number of service request",type:3,formula:"sum([0])"});
+merge (:KPI_DEF {id:6,name:"number of service request",type:3,formula:"sum(K0)"});
 match (k:KPI_DEF {id:6}) with k match (bsc:TEMPLATE {type:"BSC"}) merge (bsc)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:6}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:6}) with k match (k1:KPI_DEF {id:0}) merge (k)-[:DEPEND_ON]->(k1);

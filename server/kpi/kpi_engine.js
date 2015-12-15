@@ -26,13 +26,10 @@ module.exports = (function() {
         //console.log(ret);
         return ret;
     }
-    function mergeResult(result,matrix){
 
-    }
     function getVars(expression){
         var r =/K\d*/g;
-        var vs= expression.match(r);
-        return vs;
+        return expression.match(r);
     }
 
     E.getSourceKPI = function (kpiids, ts, window_size, nelist, size, skip, order, callback) {
@@ -74,13 +71,13 @@ module.exports = (function() {
         async.each(kpiids, _getKPIDef, _getAllKPIInfo);
     };
 
-    E.getRawKPIBatch=function(kpiids,ts,window_size,nelist,size,skip,order,callback){
-        var getValue0= E.makeCypherForRaw(kpiids,ts,window_size,nelist,size,skip,order);
-
-    };
+    //E.getRawKPIBatch=function(kpiids,ts,window_size,nelist,size,skip,order,callback){
+    //    var getValue0= E.makeCypherForRaw(kpiids,ts,window_size,nelist,size,skip,order);
+    //
+    //};
     /**
      *
-     * @param kpiids : kpids can be a number of an array of nubmber, but if it's an array, all kpis must be raw!!!
+     * @param kpiids : kpiids can be a number of an array of number, but if it's an array, all kpis must be raw!!!
      * @param ts
      * @param window_size
      * @param nelist
@@ -210,15 +207,7 @@ module.exports = (function() {
                                 });
                                 break;
                             case 2:  //time aggregation
-                                var source_kpiid=0;
-                                var getValue2='match (v:KPI_VALUE) where v.id='+source_kpiid+' and '+ (ts-window_size)+'<v.ts<='+ts+' return sum(v.value)';
-                                n4j.runCypherWithReturn([{statement:getValue2}],function(err,result){
-                                    if(err){
-                                        throw new Error('Fail to get KPI (' + kpiid + ') value');
-                                    }else{
-                                        //console.log('get kpi('+kpiid+') value :'+_.get(result,'results[0].data[0].row[0]'));
-                                    }
-                                });
+
                                 callback(null,null);
                                 break;
                             case 3:  //entity aggregation
