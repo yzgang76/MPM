@@ -10,7 +10,7 @@ var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
 
 
 function test(){
-    var id=3;
+    var id=5;
     E.getKPIValue(function(e,d){
         console.log('get kpi:'+id,d);
     },id,100002700000,null,null,null,3);

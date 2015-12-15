@@ -35,12 +35,13 @@ module.exports = (function() {
         var r =/^\w+/g;
         return expression.match(r);
     }
-    function getAggregationResult(method,kpiName,ts,ne,data){
+    function getAggregationResult(method,src_kpi_name,kpiName,ts,ne,data){
+        console.log('*******getAggregationResult',method,src_kpi_name,kpiName,ts,ne);
         var ret;
         switch(method.toLowerCase()){
             case 'sum':
                 ret= _.sum(data,function(obj){
-                    return _.get(obj,kpiName);
+                    return _.get(obj,src_kpi_name);
                 });
                 break;
             case 'avg':
@@ -48,7 +49,7 @@ module.exports = (function() {
                     ret=0;
                 }else{
                     ret= _.sum(data,function(obj){
-                        return _.get(obj,kpiName);
+                        return _.get(obj,src_kpi_name);
                     });
                     ret=ret/data.length;  //TODO: filter invalid data?
                 }
@@ -58,12 +59,12 @@ module.exports = (function() {
                 break;
             case 'min':
                 ret= _.min(data,function(obj){
-                    return _.get(obj,kpiName);
+                    return _.get(obj,src_kpi_name);
                 });
                 break;
             case 'max':
                 ret= _.max(data,function(obj){
-                    return _.get(obj,kpiName);
+                    return _.get(obj,src_kpi_name);
                 });
                 break;
             default:
@@ -200,9 +201,11 @@ module.exports = (function() {
      * @param order
      */
     E.getKPIValueWithinWindow=function(callback,kpiid, ts,window_size,nelist,size,skip,order) {
+        console.log('*************getKPIValueWithinWindow',kpiid, ts,window_size,nelist,size,skip,order);
         E.getKPIDef(kpiid,function(err,def){
             function _fetchKPI(ts,callback){
-                E.getKPIValue(callback,kpiid, ts,nelist,size,skip,order,def);
+
+                E.getKPIValue(callback,kpiid, ts,nelist,size,skip,order,def,true);
             }
             function _afterFetchAllKPI(err,data){
                 if(err){
@@ -210,7 +213,7 @@ module.exports = (function() {
                     callback(err,null);
                 }
                 else{
-                    //console.log('_afterFetchAllKPI:', _.flatten(data));
+                    console.log('_afterFetchAllKPI:', _.flatten(data));
                     callback(null,_.flatten(data));
                 }
 
@@ -243,13 +246,14 @@ module.exports = (function() {
      * @param skip: skip n records
      * @param order: 0 order by ne id asc,, 1: by kpi value
      */
-    E.getKPIValue=function(callback,kpiid, ts,nelist,size,skip,order,kpidef){
+    E.getKPIValue=function(callback,kpiid, ts,nelist,size,skip,order,kpidef,expression){
+        console.log("**************getKPIValue:",kpiid, ts,nelist,size,skip,order,expression);
         //function _afterGetRawKPIs(err,data){
         //    console.log('_afterGetRawKPIs',err,data);
         //    callback(err,data);
         //}
         //callback(null,'223');
-        var forExpression=false;  //TODO:is it safe???
+        var forExpression=expression?expression:false;  //TODO:is it safe???
         function _fetchKPIValue(kpiid,callback,kpidef){
             function _work(callback){
                 function __receiveKPIValueforAggr(err,data){
@@ -261,8 +265,9 @@ module.exports = (function() {
                         //console.log('__receiveKPIValueforAggr', d);
                         var ret=[];
                         _.forEach(d,function(v,k){
-                            ret.push(getAggregationResult(fun,kpi_name,ts,k,v));
+                            ret.push(getAggregationResult(fun,'K'+src,kpi_name,ts,k,v));
                         });
+                        console.log("aggr ret:",ret);
                         callback(null,ret);
                     }
                 }
@@ -308,7 +313,7 @@ module.exports = (function() {
                                 callback(err,null);
                             }else{
                                 var matrix=C.mergeArrays(data,['ne','ts']);
-                                //console.log('complete fetch all source kpis', matrix);
+                                console.log('complete fetch all source kpis', matrix);
 
                                 var ret=[];
                                 _.forEach(matrix,function(m){
