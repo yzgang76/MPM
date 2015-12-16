@@ -26,7 +26,6 @@ module.exports = (function() {
         //console.log(ret);
         return ret;
     }
-
     function getVars(expression){
         var r =/K\d*/g;
         return expression.match(r);
@@ -35,7 +34,7 @@ module.exports = (function() {
         var r =/^\w+/g;
         return expression.match(r);
     }
-    function getAggregationResult(method,src_kpi_name,kpiName,ts,ne,data){
+    function getAggregationResult(method,src_kpi_name,kpiName,ts,ne,data){  //for time aggr
         console.log('*******getAggregationResult',method,src_kpi_name,kpiName,ts,ne);
         var ret;
         switch(method.toLowerCase()){
@@ -77,7 +76,54 @@ module.exports = (function() {
             ts:ts
         },kpiName,ret);
     }
+    function getAggregationResult2(method,ts,kpi_name, data){  //for entity aggr
+        //console.log('getAggregationResult2',method,ts,kpi_name);
+        function _getValue(method,data){
+            var ret;
+            switch(method.toLowerCase()){
+                case 'sum':
+                    ret=_.sum(data);
+                    break;
+                case 'avg':
+                    if(data.length){
+                        ret=0;
+                    }else{
+                        ret= _.sum(data);
+                        ret=ret/data.length;  //TODO: filter invalid data?
+                    }
+                    break;
+                case 'count':
+                    ret=data.length;
+                    break;
+                case 'min':
+                    ret= _.min(data);
+                    break;
+                case 'max':
+                    ret= _.max(data);
+                    break;
+                default:
+                    console.log('Unknown aggregation method: ',method);
+                    break;
+            }
+            return ret;
+        }
+        var ret={};
+        _.forEach(data,function(d){
+            var n= d.row[0];
+            var r=_.get(ret,n);
+            if(!r){
+                _.set(ret,n,[]);
+                r=_.get(ret,n);
+            }
+            r.push(d.row[1]);
+        });
+        var ret2=[];
+        _.forEach(ret,function(v,k){
+            ret2.push(_.set({ne:k, ts:ts},kpi_name,_getValue(method,v)));
+        });
+        return ret2;
 
+    }
 
     E.getSourceKPI = function (kpiids, ts, window_size, nelist, size, skip, order, callback) {
         var matrix = [];
@@ -286,15 +332,40 @@ module.exports = (function() {
                         callback(null,ret);
                     }
                 }
-                function _afterGetNEList(err,data){
-                    if(err){
-                        console.log("err44",err);
-                        callback(err,null);
-                    }else{
-                        console.log('_afterGetNEList',data);
-                        callback(null, data);
+            /*    function eAggr1(child_def,callback){
+                    var srcKPIType=_.get(child_def,'kpi_def.type');
+                    var chType= _.get(child_def,'template.type');
+                    console.log('eAggr1',srcKPIType,chType);
+                    if(srcKPIType===undefined||chType===undefined){
+                        callback(new Error ("Error in KPI definition"),null);
                     }
+                    var stat;
+                    stat='match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE) where e.type="'+neType +'" AND c.type="'+chType+'" ';
+                    if(nelist&& _.isArray(nelist)&&nelist.length>0){
+                        stat=stat+' AND e.id in '+JSON.stringify(nelist);
+                    }
+                    if(srcKPIType===0){
+                        stat=stat+' with e ,c match (c1:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where c1.id=c.id AND k.id='+src+' AND '+(ts-window_size)+'<k.ts<='+ts+' return e.id,c.id,k.value';
+                        n4j.runCypherWithReturn([{statement:stat}],callback);
+                        //callback(null,stat,0);
+                    }else{
+                        stat=stat+' return e.id ,c.id' ;
+                        async.waterfall([
+                                async.apply(n4j.runCypherWithReturn,[{statement:stat}]),
+                                function(data,callback){
+                                    callback(null,data);
+                                },
+                            ],function(err,data){
+
+                        });
+                        //callback(null,stat,1);
+                    }
+
                 }
+                function eAggr2(stat,type,callback){
+                    console.log('eAggr2',stat,type);
+                    n4j.runCypherWithReturn([{statement:stat}],callback);
+                }*/
                 if (!(kpi_def && gran && template)) {
                     throw new Error("Error in KPI definition");
                 }
@@ -358,16 +429,52 @@ module.exports = (function() {
                         });
                         fun=getFun(formula)[0];
                         src=vars[0];
+                        async.waterfall([
+                            async.apply(E.getKPIDef,src),
+                            function(child_def,callback) {
+                                var srcKPIType = _.get(child_def, 'kpi_def.type');
+                                var chType = _.get(child_def, 'template.type');
+                                console.log('eAggr1', srcKPIType, chType);
+                                if (srcKPIType === undefined || chType === undefined) {
+                                    callback(new Error("Error in KPI definition"), null);
+                                }
+                                var stat;
+                                stat = 'match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                if (nelist && _.isArray(nelist) && nelist.length > 0) {
+                                    stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
+                                }
+                                if (srcKPIType === 0) {
+                                    stat = stat + ' with e ,c match (c1:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where c1.id=c.id AND k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts + ' return e.id,k.value';
+                                    n4j.runCypherWithReturn([{statement: stat}], callback);
+                                    //callback(null,stat,0);
+                                } else {
+                                    stat = stat + ' return e.id ,c.id';
+                                    async.waterfall([
+                                        async.apply(n4j.runCypherWithReturn, [{statement: stat}]),
+                                        function (data, callback) {
+                                            callback(null, data);
+                                        }
+                                    ], function (err, data) {
 
-                        var stat;
-                        stat='match (e:INSTANCE) where e.type="'+neType +'" ';
-                        if(nelist&& _.isArray(nelist)&&nelist.length>0){
-                            stat=stat+' AND e.id in '+JSON.stringify(nelist);
-                        }
-                        stat=stat+' return e';
+                                    });
+                                    //callback(null,stat,1);
+                                }
+                            },
+                            function(result,callback){
 
-                        n4j.runCypherWithReturn(stat,_afterGetNEList);
-                        callback(null,null);
+                                var data= _.get(result,'results[0].data');
+                                console.log('22222222222', _.sum(data));
+                                callback(null,result);
+                            }
+                            //async.apply(eAggr2)
+                        ], function (err, result,r2) {
+                            console.log('bbbbbbbbbb',err,result);
+
+                            // result now equals 'done'
+                            callback (err,getAggregationResult2(fun,ts,kpi_name,_.get(result,'results[0].data')));
+                        });
+
+
                         break;
                     default:
                         throw new Error ("Unknown KPI Type:"+type);

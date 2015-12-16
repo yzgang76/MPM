@@ -104,7 +104,7 @@ module.exports = (function() {
                 });
                 callback(err, undefined);
             }else{
-                //console.log('makeQuery return with errors:',body.errors);
+                console.log('makeQuery return :',JSON.stringify(body));
                 callback(null, body);
             }
         },'POST',{"statements":statements},true);

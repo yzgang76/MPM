@@ -12,11 +12,42 @@ var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
 function test(){
     var id=6;
     E.getKPIValue(function(e,d){
-        console.log('get kpi:'+id,d);
+        console.log('get kpi('+id+'):',JSON.stringify(d));
     },id,100002700000,null,null,null,3);
 
 
+  /*  var data=[{row:["BSC1",2]},{"row":["BSC1",3]},{"row":["BSC2",3]}];
+    var data1=_.map(data ,function (a){
+       return {key: a.row[0],value: a.row[1]};
+    });
+    var data2=_.groupBy(data1,'key');
+    console.log(data2);
+    _.forEach(data2,function(v,k){
+        console.log(k+":"+( v.length>1?
+            _.reduce(v,function(a,b){
+              return a.value+ b.value;
+            }): v[0].value)
+        );
+    });
 
+    var data3=_.map(data ,function (a){
+        return _.set({},a.row[0], a.row[1]);
+    });
+    console.log(_.groupBy(data3));
+
+    var ret={};
+    _.forEach(data,function(d){
+        var n= d.row[0];
+        var r=_.get(ret,n);
+        if(!r){
+             _.set(ret,n,[]);
+            r=_.get(ret,n);
+        }
+        r.push(d.row[1]);
+    });
+    _.forEach(ret,function(v,k){
+        console.log(k+":"+ _.sum(v));
+    });*/
 
     //E.getKPIValue(0,100000000000,['BTS2']);   // raw
     //E.getKPIValue(0,100000000000,null,1);   // raw
