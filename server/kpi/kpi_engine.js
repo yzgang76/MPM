@@ -237,6 +237,26 @@ module.exports = (function() {
 
         });
     };
+    E.getKPIValueForNE=function(callback,kpiid,ts,window_size,nelist,size,skip,order){
+        console.log('*************getKPIValueForNE',kpiid, ts,window_size,nelist,size,skip,order);
+        E.getKPIDef(kpiid,function(err,def) {
+            if(err){
+                console.log("err5:",err);
+                callback(err,null);
+            }else{
+                var type= _.get(def,'template.type');
+                if(!type){
+                    callback(new Error('KPI definition Error'),null);
+                }else{
+
+
+
+                    callback(null,'in dev');
+                }
+
+            }
+        });
+    };
     /**
      *
      * @param kpiid : Unique ID of KPI Definition
@@ -248,11 +268,6 @@ module.exports = (function() {
      */
     E.getKPIValue=function(callback,kpiid, ts,nelist,size,skip,order,kpidef,expression){
         console.log("**************getKPIValue:",kpiid, ts,nelist,size,skip,order,expression);
-        //function _afterGetRawKPIs(err,data){
-        //    console.log('_afterGetRawKPIs',err,data);
-        //    callback(err,data);
-        //}
-        //callback(null,'223');
         var forExpression=expression?expression:false;  //TODO:is it safe???
         function _fetchKPIValue(kpiid,callback,kpidef){
             function _work(callback){
@@ -271,11 +286,21 @@ module.exports = (function() {
                         callback(null,ret);
                     }
                 }
+                function _afterGetNEList(err,data){
+                    if(err){
+                        console.log("err44",err);
+                        callback(err,null);
+                    }else{
+                        console.log('_afterGetNEList',data);
+                        callback(null, data);
+                    }
+                }
                 if (!(kpi_def && gran && template)) {
                     throw new Error("Error in KPI definition");
                 }
 
                 var type=_.get(kpi_def,'type');   //TODO: the performance of _.get() ??
+                var neType= _.get(template,'type');
                 var kpi_name= forExpression?'K'+kpiid:_.get(kpi_def ,'name');
                 //var type=kpi_def.type;
                 var formula= _.get(kpi_def,'formula');
@@ -283,9 +308,9 @@ module.exports = (function() {
                 //console.log(type,formula,window_size);
                 var vars;
                 var fun;
+                var src;
                 switch(type){
                     case 0:  //raw counter
-                        //generate cypher
                         var getValue0= E.makeCypherForRaw(kpiid,ts,window_size,nelist,size,skip,order);
                         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
                             if(err){
@@ -300,12 +325,6 @@ module.exports = (function() {
                         vars=_.map(getVars(formula),function(v){
                             return v.replace('K','');
                         });
-                        //var matrix=[];
-                        //_.forEach(vars,function(src){
-                        //    matrix.push(E.getKPIValue(src, ts,nelist,size,skip,order));
-                        //});
-
-                        //E.getSourceKPI(vars,ts,window_size,nelist,size,skip,order,_afterGetRawKPIs);
                         forExpression=true;
                         async.map(vars,_fetchKPIValue,function(err,data){
                             if(err){
@@ -330,13 +349,24 @@ module.exports = (function() {
                             return v.replace('K','');
                         });
                         fun=getFun(formula)[0];
-
-                        var src=vars[0];
-                        //console.log(fun,src,window_size);
-                        E.getKPIValueWithinWindow(__receiveKPIValueforAggr,src,ts,window_size,nelist,size,skip,order) ;
-
+                        src=vars[0];
+                        E.getKPIValueWithinWindow(__receiveKPIValueforAggr,src,ts,window_size,  nelist,size,skip,order) ;
                         break;
                     case 3:  //entity aggregation
+                        vars=_.map(getVars(formula),function(v){
+                            return v.replace('K','');
+                        });
+                        fun=getFun(formula)[0];
+                        src=vars[0];
+
+                        var stat;
+                        stat='match (e:INSTANCE) where e.type="'+neType +'" ';
+                        if(nelist&& _.isArray(nelist)&&nelist.length>0){
+                            stat=stat+' AND e.id in '+JSON.stringify(nelist);
+                        }
+                        stat=stat+' return e';
+
+                        n4j.runCypherWithReturn(stat,_afterGetNEList);
                         callback(null,null);
                         break;
                     default:

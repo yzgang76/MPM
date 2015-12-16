@@ -10,10 +10,14 @@ var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
 
 
 function test(){
-    var id=5;
+    var id=6;
     E.getKPIValue(function(e,d){
         console.log('get kpi:'+id,d);
     },id,100002700000,null,null,null,3);
+
+
+
+
     //E.getKPIValue(0,100000000000,['BTS2']);   // raw
     //E.getKPIValue(0,100000000000,null,1);   // raw
     //E.getKPIValue(0,100000000000,null,1,1,1);   // raw
