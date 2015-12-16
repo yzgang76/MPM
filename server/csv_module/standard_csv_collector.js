@@ -38,14 +38,14 @@ module.exports = (function() {
                                 var parentID=line[0].trim();
                                 if(parentID!=='' && !_.includes(parents,parentID)){
                                     statements.push({statement:'merge (:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"})'});
-                                    statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) create (t)-[:HAS_INSTANCE]->(i)'});
+                                    statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
                                     parents.push(parentID);
                                 }
                                 var myID=line[1].trim();
                                 if(myID!==''&& !_.includes(children,myID)){
                                     statements.push({statement:'merge (:INSTANCE:'+myType+'{id:"'+myID+'",type:"'+myType+'"})'});
-                                    statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t match (i:INSTANCE {id:"'+myID+'"}) create (t)-[:HAS_INSTANCE]->(i)'});
-                                    statements.push({statement:'match (p:INSTANCE {id:"'+parentID+'"}) with p match (c:INSTANCE {id:"'+myID+'"}) create (p)-[:HAS_CHILD]->(c)'});
+                                    statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t match (i:INSTANCE {id:"'+myID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
+                                    statements.push({statement:'match (p:INSTANCE {id:"'+parentID+'"}) with p match (c:INSTANCE {id:"'+myID+'"}) merge (p)-[:HAS_CHILD]->(c)'});
                                     children.push(myID);
                                 }
 
@@ -72,7 +72,7 @@ module.exports = (function() {
                             });
 
                             //connect to kpi definition
-                            statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran create (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
+                            statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran merge (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
                             console.log(statements);
                             n4j.runCypherStatements(statements);
                         }

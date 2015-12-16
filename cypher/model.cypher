@@ -77,7 +77,7 @@ match (k:KPI_DEF {id:12}) with k match (gran:TEMPLATE {type:"GRAN"}) merge (gran
 match (k:KPI_DEF {id:12}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:12}) with k match (k1:KPI_DEF {id:6}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:13,name:"number of success service request",type:3,formula:"sum(Kk)"});
+merge (:KPI_DEF {id:13,name:"number of success service request",type:3,formula:"sum(K7)"});
 match (k:KPI_DEF {id:13}) with k match (gran:TEMPLATE {type:"GRAN"}) merge (gran)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:13}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:13}) with k match (k1:KPI_DEF {id:7}) merge (k)-[:DEPEND_ON]->(k1);
@@ -88,12 +88,12 @@ match (k:KPI_DEF {id:14}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_KP
 match (k:KPI_DEF {id:14}) with k match (k1:KPI_DEF {id:13}) merge (k)-[:DEPEND_ON]->(k1);
 match (k:KPI_DEF {id:14}) with k match (k1:KPI_DEF {id:12}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:15,name:"number of service request",type:2,formula:"sum(K9)"});
+merge (:KPI_DEF {id:15,name:"number of service request",type:2,formula:"sum(K12)"});
 match (k:KPI_DEF {id:15}) with k match (gran:TEMPLATE {type:"GRAN"}) merge (gran)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:15}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:15}) with k match (k1:KPI_DEF {id:9}) merge (k)-[:DEPEND_ON]->(k1);
 
-merge (:KPI_DEF {id:16,name:"number of success service request",type:2,formula:"sum(K10)"});
+merge (:KPI_DEF {id:16,name:"number of success service request",type:2,formula:"sum(K13)"});
 match (k:KPI_DEF {id:16}) with k match (gran:TEMPLATE {type:"GRAN"}) merge (gran)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:16}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:16}) with k match (k1:KPI_DEF {id:10}) merge (k)-[:DEPEND_ON]->(k1);

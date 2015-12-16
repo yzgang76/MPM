@@ -18,6 +18,7 @@ var C=require(path.join(__dirname, '/../csv_module/standard_csv_collector'));
 
 function test(){
     C.collectFile('sample.csv');
+    C.collectFile('inventory.csv');
 }
 
 test();

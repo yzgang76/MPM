@@ -10,10 +10,16 @@ var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
 
 
 function test(){
-    var id=6;
-    E.getKPIValue(function(e,d){
-        console.log('get kpi('+id+'):',JSON.stringify(d));
-    },id,100002700000,null,null,null,3);
+    function t(id){
+        E.getKPIValue(function(e,d){
+            console.log('get kpi('+id+'):',JSON.stringify(d));
+        },id,100002700000,null,null,null,3);
+    }
+
+    for(var id=0;id<18;id++){
+       t(id);
+    }
+
 
 
   /*  var data=[{row:["BSC1",2]},{"row":["BSC1",3]},{"row":["BSC2",3]}];

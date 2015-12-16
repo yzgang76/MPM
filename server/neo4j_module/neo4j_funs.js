@@ -104,10 +104,10 @@ module.exports = (function() {
                 });
                 callback(err, undefined);
             }else{
-                console.log('makeQuery return :',JSON.stringify(body));
+                //console.log('makeQuery return :',JSON.stringify(body));
                 callback(null, body);
             }
-        },'POST',{"statements":statements},true);
+        },'POST',{"statements":statements},false);
     };
     return N;
 })();
