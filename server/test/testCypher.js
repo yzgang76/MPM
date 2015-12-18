@@ -17,7 +17,7 @@ var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 //
 //}
 
-function test2(){
+function test2() {
     n4j.runCypherFile('model.cypher');
 }
 

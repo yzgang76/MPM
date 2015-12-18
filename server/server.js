@@ -12,6 +12,7 @@ var debug=require('debug');
 var csvP=require(path.join(__dirname,'./csv_module/csv_parser'));
 var neo4j=require(path.join(__dirname,'./neo4j_module/neo4j_funs'));
 var nfvd=require(path.join(__dirname,'./nfvd_collector/component2Neo4j'));
+var csv_console=require(path.join(__dirname,'./csv_module/collector_console'));
 //var routes = require('./routes/index');
 //var users = require('./routes/users');
 
@@ -73,6 +74,18 @@ app.post('/collect/nfvd/component',function(req,res){
     nfvd.collectNFVComponent(req,res);
 });
 
+
+//csv collector
+
+app.post('/collect/csv/start',function(req,res){
+    csv_console.startTimer(req,res);
+});
+app.post('/collect/csv/stop',function(req,res){
+    csv_console.stopTimer(req,res);
+});
+app.get('/collect/csv/status',function(req,res){
+    csv_console.status(req,res);
+});
 /***********************************************
  *  end routes
  */

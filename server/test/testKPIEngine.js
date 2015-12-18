@@ -7,18 +7,22 @@ var path=require("path");
 //var job=require(path.join(__dirname,"/../node_modules/node-schedule/lib/schedule"));
 var _ = require(path.join(__dirname, '/../node_modules/lodash/index'));
 var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
-
+var os = require('os');
 
 function test(){
+    var startTime = os.uptime();
     function t(id){
         E.getKPIValue(function(e,d){
             console.log('get kpi('+id+'):',JSON.stringify(d));
+            console.log('Request completed in ' + (os.uptime() - startTime)+'s');
         },id,100002700000,null,null,null,3);
     }
-
+for(var i=0;i<50;i++){
     for(var id=0;id<18;id++){
-       t(id);
+        t(id);
     }
+}
+
 
 
 
