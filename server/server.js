@@ -86,6 +86,9 @@ app.post('/collect/csv/stop',function(req,res){
 app.get('/collect/csv/status',function(req,res){
     csv_console.status(req,res);
 });
+app.get('/collect/csv/history',function(req,res){
+    csv_console.history(req,res);
+});
 /***********************************************
  *  end routes
  */
@@ -94,7 +97,7 @@ app.get('/collect/csv/status',function(req,res){
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  res.send(err);
 });
 
 // error handlers

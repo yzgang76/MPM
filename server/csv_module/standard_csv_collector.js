@@ -15,7 +15,8 @@ module.exports = (function() {
     var P={};
     function renameFile(file,ext,callback){
         try{
-            fs.rename(path.join(__dirname, _.get(conf,'DIR')+file),path.join(__dirname, _.get(conf,'DIR')+file +'.'+ext),callback);
+            //fs.rename(path.join(__dirname, _.get(conf,'DIR')+file),path.join(__dirname, _.get(conf,'DIR')+file +'.'+ext),callback);
+            fs.rename(file,file +'.'+ext,callback);
         }catch(e){
             console.error('renameFile:',e);
             callback(e);
@@ -25,7 +26,8 @@ module.exports = (function() {
     P.collectFile=function(file,callback){
         var start_time=os.uptime();
         var t,logMessage;
-        fs.readFile(path.join(__dirname, _.get(conf,'DIR')+file), 'utf-8', function(err, data) {
+        //fs.readFile(path.join(__dirname, _.get(conf,'DIR')+file), 'utf-8', function(err, data) {
+        fs.readFile(file, 'utf-8', function(err, data) {
             if (err) {
                 console.log('Failed to open csv file '+file+'. Error:'+err);
                 t=os.uptime();

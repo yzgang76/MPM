@@ -14,6 +14,7 @@ module.exports = (function() {
     var timer;
     var status='stopped';
     var latestScan;
+    var logMessages=[];
     S.startTimer=function(req,res){
         if(status==='started'){
             res.send('already started');
@@ -25,9 +26,13 @@ module.exports = (function() {
                 console.log("scan director @",latestScan);
 
                 C.walk(path.join(__dirname, _.get(conf,'DIR')),function(err,files){
-                    console.log(err, _.filter(files,function(file){
-                        return _.endsWith(file,'.csv');
-                    }));
+                    _.forEach(_.filter(files,function(file) {
+                        return _.endsWith(file, '.csv');
+                    }),function(file){
+                        Collector.collectFile(file,function(log){
+                            logMessages.push(log);
+                        });
+                    });
                 });
             }, _.get(conf,'interval'));
             res.send('started');
@@ -47,6 +52,10 @@ module.exports = (function() {
             ret+=' Latest scan at '+latestScan;
         }
         res.send(ret);
+        res.end();
+    };
+    S.history=function(req,res){
+        res.send(logMessages);
         res.end();
     };
 
