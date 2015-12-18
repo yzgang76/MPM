@@ -25,14 +25,18 @@ module.exports = (function() {
     }
     P.collectFile=function(file,callback){
         var start_time=os.uptime();
-        var t,logMessage;
+        var t,tx,logMessage;
+        tx=new Date().toISOString();
+
+
         //fs.readFile(path.join(__dirname, _.get(conf,'DIR')+file), 'utf-8', function(err, data) {
         fs.readFile(file, 'utf-8', function(err, data) {
             if (err) {
                 console.log('Failed to open csv file '+file+'. Error:'+err);
                 t=os.uptime();
+
                 logMessage={
-                    Time:t,
+                    Time:tx,
                     Cost:(t-start_time),
                     Type:'Error',
                     Module:conf.name,
@@ -52,8 +56,9 @@ module.exports = (function() {
                             if(err){
                                 console.log('Failed to parse csv file '+file+'. Error:'+error);
                                 t=os.uptime();
+
                                 logMessage={
-                                    Time:t,
+                                    Time:tx,
                                     Cost:(t-start_time),
                                     Type:'Error',
                                     Module:conf.name,
@@ -123,7 +128,7 @@ module.exports = (function() {
 
                                 t=os.uptime();
                                 logMessage={
-                                    Time:t,
+                                    Time:tx,
                                     Cost:t-start_time,
                                     Type:'INFO',
                                     Module:conf.name,
