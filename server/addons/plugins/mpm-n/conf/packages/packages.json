@@ -1,0 +1,12 @@
+[{
+  "id": "mpm",
+  "name": "MPM Package",
+  "description": "MPM package",
+  "author": "zhigang",
+  "version": "1.0",
+  "roles": [],
+  "icon": "",
+  "active": true,
+  "domain": "mpm",
+  "localizations": []
+}]

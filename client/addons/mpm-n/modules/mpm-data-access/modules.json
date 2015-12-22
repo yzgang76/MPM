@@ -1,0 +1,10 @@
+[{
+	"id": "mpm-data-acess",
+	"name": "MOM Data access Module",
+	"type": "service",
+	"description": "Custom data access service for the MPM plugin",
+	"author": "hp",
+	"version": "1.0",
+	"icon": "filter.png",
+	"location": "/addons/mpm-n/modules/mpm-data-access"
+}]

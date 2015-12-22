@@ -1,0 +1,52 @@
+[
+  {
+    "id": "mpmCollectorManager",
+    "name": "mpmCollectorManagerView",
+    "package": "mpm",
+    "description": "mpm collector manager",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [
+      "Platform Administrator",
+      "Operator_L2",
+      "Operator_L3"
+    ],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "mpmCollectorManagerWidget",
+        "type": "mpm-collector-manager",
+        "title": "Collector Manager",
+        "configuration": {
+
+        }
+      }
+    ]
+  },
+  {
+    "id": "mpmKPIManager",
+    "name": "mpmKPIManagerView",
+    "package": "mpm",
+    "description": "mpm KPI manager",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [
+      "Platform Administrator",
+      "Operator_L2",
+      "Operator_L3"
+    ],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "mpmKPIManagerWidget",
+        "type": "mpm-kpi-manager",
+        "title": "KPI Manager",
+        "configuration": {}
+      }
+    ]
+  }
+]

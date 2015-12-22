@@ -1,0 +1,39 @@
+[{
+    "id": "MPM-N_Collector_Manager",
+    "name": "MPM Collector Manager",
+    "description": "MPM Collector Manager",
+    "package": "mpm",
+    "author": "admin",
+    "version": "1.0",
+    "category": "MPM",
+    "icon": "red_radiant_012.png",
+    "roles": ["Platform Administrator", "Operator_L1", "Operator_L2", "Operator_L3"],
+    "favorite": false,
+    "navigationMode": false,
+    "views": [
+      {
+        "id": "mpmCollectorManager",
+        "name": "MPM Collector Manager",
+        "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
+      }
+    ]
+},{
+  "id": "MPM-N_KPI_Manager",
+  "name": "MPM KPI Manager",
+  "description": "MPM KPI Manager",
+  "package": "mpm",
+  "author": "admin",
+  "version": "1.0",
+  "category": "MPM",
+  "icon": "red_radiant_012.png",
+  "roles": ["Platform Administrator", "Operator_L1", "Operator_L2", "Operator_L3"],
+  "favorite": false,
+  "navigationMode": false,
+  "views": [
+    {
+      "id": "mpmKPIManager",
+      "name": "mpmKPIManager",
+      "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
+    }
+  ]
+}]

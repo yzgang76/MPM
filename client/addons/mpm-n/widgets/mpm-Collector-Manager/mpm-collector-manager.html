@@ -1,0 +1,46 @@
+<div class="nfvd-vdc-chooser">
+    <div class="row header">
+<!--        <div class="col-sm-12 col-md-5 col-lg-5">
+            <ol class="breadcrumb">
+                <li>
+                    <span translate="NFVD_VDC_CHOOSER.BANNER" translate-values="{ name: '{{targetManager | nfvdFiltersFamilyPrint}}'}"></span>
+                    &nbsp;<span class="badge">{{filtered.length}}</span>
+                </li>
+            </ol>
+        </div>-->
+
+        <label class="pull-right col-sm-12 col-md-3 col-lg-2">
+            <input class="form-control ng-pristine ng-valid" ng-model="searchText" placeholder="search...">
+        </label>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>
+                    <translate>Name</translate>
+                </th>
+                <th>
+                    <translate>Description</translate>
+                </th>
+                <th>
+                    <translate>Status</translate>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr  ng-repeat="item in filtered = (collectors | filter:searchText)">
+                <td><i class="fa fa-building"></i> {{item.name}}</td>
+                <td>{{item.status || "No description"}}</td>
+
+                <td class="btn-group-sm">
+                    <button ng-if="!vdc.base" class="btn btn-info" data-ng-click="vdcManagerUrl(item)">
+                        <i class="fa fa-folder-open-o"></i>&nbsp;
+                        Details
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
