@@ -9,12 +9,16 @@ module.exports = (function() {
     var request = require(process.env.ROOT + '/node_modules/request');
     var _ = require(process.env.ROOT + '/node_modules/lodash/index');
     var path = require('path');
-        var os = require('os');
+    var os = require('os');
+    var neo4j_conf = require(process.env.ROOT + '/server/addons/plugins/mpm-n/conf/neo4j');
     //var securityLogger = require(path.join(process.env.ROOT, 'server', 'logger', 'security-logger'));
     //var logger = require(path.join(process.env.ROOT, 'server', 'logger', 'server-logger'));
     //var requestOptions = require(path.join(process.env.ROOT, 'server', 'request-options', 'request-options'));
 
     var C = {};
+    C.neo4j_server=neo4j_conf.server+":"+neo4j_conf.port;//"http://localhost:7474";
+
+    C.timeout = 99990000;
 
     //C.server_fulfill = options.configuration.server_fulfill.protocol + '://' + options.configuration.server_fulfill.host + ':' + options.configuration.server_fulfill.port;
     //C.server_assurance = options.configuration.server_fulfill.protocol + '://' + options.configuration.server_assurance.host + ':' + options.configuration.server_assurance.port;
@@ -25,10 +29,10 @@ module.exports = (function() {
 
 
     C.makeQuery = function(server, url, callback, method, postData,print) {
-
         var headers = {
             'Content-Type': 'application/json;charset=utf-8',
-            'Accept': 'application/json, text/plain, */*'
+            'Accept': 'application/json, text/plain, */*',
+            'Authorization':'Basic '+new Buffer(neo4j_conf.user+":"+neo4j_conf.password).toString('base64')
         };
 
         var baseoptions = {

@@ -24,20 +24,39 @@ define([
                 var logger = $log.getInstance('mpmKPIManagerControllers');
                 $scope.title = "KPI Manager";
                 function refresh(){
-                    //var route1='/kpis';
-                    //var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
-                    //p1.then(
-                    //    function(response) {
-                    //        $scope.kpis=response.data;
-                    //    },
-                    //    function(error) {
-                    //        messageNotifierService.error(JSON.stringify(error));
-                    //        logger.error('Cant get data', route1, error);
-                    //    }
-                    //);
+                     var route1='/kpis/definition';
+                    var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                    p1.then(
+                        function(response) {
+                            $scope.kpis=response.data;
+                        },
+                        function(error) {
+                            messageNotifierService.error(JSON.stringify(error));
+                            logger.error('Cant get data', route1, error);
+                        }
+                    );
                 }
 
-
+                $scope.getType=function(t){
+                    var ret;
+                    switch(t-0){
+                        case 0:
+                            ret='Raw';
+                            break;
+                        case 1:
+                            ret='Calculate';
+                            break;
+                        case 2:
+                            ret='Entity Aggregation';
+                            break;
+                        case 3:
+                            ret='Time Aggregation';
+                            break;
+                        default:
+                            break;
+                    }
+                    return ret;
+                };
                 refresh();
             }
         ]);

@@ -18,19 +18,25 @@
             <thead>
             <tr>
                 <th>
+                    <translate>ID</translate>
+                </th>
+                <th>
+                    <translate>NE</translate>
+                </th>
+                <th>
+                    <translate>Granularity</translate>
+                </th>
+                <th>
                     <translate>Name</translate>
                 </th>
                 <th>
-                    <translate>Description</translate>
+                    <translate>Type</translate>
                 </th>
                 <th>
-                    <translate>Status</translate>
+                    <translate>Formula</translate>
                 </th>
                 <th>
-                    <translate>Operation</translate>
-                </th>
-                <th>
-                    <translate>Latest Collection</translate>
+                    <translate>Unit</translate>
                 </th>
                 <th>
 
@@ -39,23 +45,13 @@
             </thead>
             <tbody>
             <tr  ng-repeat="item in filtered = (kpis | filter:searchText)">
-                <td><i class="fa fa-building"></i> {{item.name}}</td>
-                <td>{{item.desc || "No description"}}</td>
-
-                <td class="btn-group-sm">
-                    {{item.status || "Offline"}}
-
-                </td>
-                <td><button class="btn btn-info" data-ng-click="operate(item)" ng-hide="item.status==='Offline'">
-                    <i ng-class="{'fa fa-play':item.status==='stopped','fa fa-stop':item.status==='started'}"></i>
-                    {{getActionLabel(item)}}
-                </button></td>
-                <td>{{item.lstScan||''}}</td>
-                <td>  <button class="btn btn-info" data-ng-click="refreshStatus(item)">
-                    <i class="fa fa-refresh"></i>
-                    Refresh
-                </button></td>
-               <!-- <td>  {{item}}</td>-->
+                <td><!--<i class="fa fa-signal"></i>--> K{{item.id}}</td>
+                <td>{{item.ne || ''}} </td>
+                <td>{{item.gran || ''}} </td>
+                <td>{{item.name || ''}} </td>
+                <td>{{getType(item.type)||''}}</td>
+                <td>{{item.formula||''}}</td>
+                <td>{{item.unit||''}}</td>
             </tr>
 
             </tbody>

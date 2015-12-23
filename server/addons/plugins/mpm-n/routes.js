@@ -1,6 +1,7 @@
 'use strict';
 var plugin = require(process.env.ROOT + '/server/addons/plugins/plugin');
 var collect= require(process.env.ROOT + '/server/addons/plugins/mpm-n/lib/collector');
+var kpi= require(process.env.ROOT + '/server/addons/plugins/mpm-n/lib/kpi');
 //var _=require('lodash');
 module.exports = function(app) {
     // Register plugin
@@ -18,6 +19,7 @@ module.exports = function(app) {
     //});
     app.get(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
 
+    app.get(prefix+'/kpis/definition',kpi.getKPIDefinitions);
     //Where the more generic logErrors may write request and error information to stderr, loggly, or similar services:
     function logErrors(err, req, res, next) {
         console.error('MPM-N Plugin Plugin ROUTE logErrors: (', (err ? err.stack : err), ')');
