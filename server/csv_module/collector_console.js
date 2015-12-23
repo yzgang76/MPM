@@ -17,7 +17,7 @@ module.exports = (function() {
     var logMessages=[];
     S.startTimer=function(req,res){
         if(status==='started'){
-            res.send('already started');
+            res.send({result:'already started'});
             res.end();
         }else{
             status='started';
@@ -35,27 +35,27 @@ module.exports = (function() {
                     });
                 });
             }, _.get(conf,'interval'));
-            res.send('started');
+            res.send({result:'started'});
             res.end();
         }
     };
     S.stopTimer=function(req,res){
         clearInterval(timer);
         status='stopped';
-        res.send('stopped');
+        res.send({result:'stopped'});
         res.end();
 
     };
     S.status=function(req,res){
-        var ret='The collector is '+status+'.';
-        if(latestScan){
-            ret+=' Latest scan at '+latestScan;
-        }
-        res.send(ret);
+        //var ret='The collector is '+status+'.';
+        //if(latestScan){
+        //    ret+=' Latest scan at '+latestScan;
+        //}
+        res.send({status:status,latestScan: latestScan||''});
         res.end();
     };
     S.history=function(req,res){
-        res.send(logMessages);
+        res.send({history:logMessages});
         res.end();
     };
 

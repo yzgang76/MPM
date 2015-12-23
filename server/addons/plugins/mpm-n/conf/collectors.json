@@ -1,3 +1,4 @@
 [
-{"id":0, "name":"Standard CSV Adaptor","desc":"demo", "url":"localhost:3001"}
+{"id":0, "name":"Standard CSV Adaptor","desc":"demo", "url":"localhost:3001"},
+{"id":1, "name":"Standard CSV Adaptor2","desc":"not exist", "url":"localhost:3002"}
 ]

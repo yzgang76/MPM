@@ -61,7 +61,7 @@ define(
                                 uri += '?' + query;
                             }
 
-                            logger.info('NFV dataAccessService: url=', uri);
+                            logger.info('MPM dataAccessService: url=', uri);
                             return uri;
                         }
 

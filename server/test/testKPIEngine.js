@@ -17,11 +17,11 @@ function test(){
             console.log('Request completed in ' + (os.uptime() - startTime)+'s');
         },id,100002700000,null,null,null,3);
     }
-for(var i=0;i<50;i++){
-    for(var id=0;id<18;id++){
-        t(id);
-    }
-}
+    //for(var i=0;i<50;i++){
+    //    for(var id=0;id<18;id++){
+    //        t(id);
+    //    }
+    //}
 
 
 
@@ -79,6 +79,15 @@ for(var i=0;i<50;i++){
     //console.log(_.union(b,bb));
 
     //E.getKPIValue(2,100000000000);  //calculate
+
+    var arr=[
+        {a:1,b:2},
+        {a:2,b:3}
+    ];
+
+    var c= _.find(arr,{a:1});
+    c.b=3333;
+    console.log(arr);
 }
 
 test();
