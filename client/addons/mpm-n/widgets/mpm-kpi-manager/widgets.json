@@ -1,0 +1,15 @@
+[{
+  "widgetId": "mpm-kpi-manager",
+  "name": "kpi Manager",
+  "description": "MPM kpi Manager",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "addons/mpm-n/widgets/mpm-kpi-manager/mpm-kpi-manager.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]
