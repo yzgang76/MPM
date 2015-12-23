@@ -23,9 +23,8 @@ define([
             function($rootScope, $scope, $log, $timeout,dataExchangeService,dataAccessService,messageNotifierService) {
                 var logger = $log.getInstance('mpmKPIManagerControllers');
                 $scope.title = "KPI Manager";
-                $scope.model='list';
                 function refresh(){
-                     var route1='/kpis/definition';
+                    var route1='/kpis/definition';
                     var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
                     p1.then(
                         function(response) {

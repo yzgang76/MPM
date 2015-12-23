@@ -20,6 +20,11 @@ module.exports = function(app) {
     app.get(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
 
     app.get(prefix+'/kpis/definition',kpi.getKPIDefinitions);
+    app.get(prefix+'/kpis/templates',kpi.getKPITemplates);
+    app.get(prefix+'/kpis/granularity',kpi.getKPIGranularity);
+
+
+
     //Where the more generic logErrors may write request and error information to stderr, loggly, or similar services:
     function logErrors(err, req, res, next) {
         console.error('MPM-N Plugin Plugin ROUTE logErrors: (', (err ? err.stack : err), ')');

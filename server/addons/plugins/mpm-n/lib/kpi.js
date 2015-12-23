@@ -54,6 +54,41 @@ module.exports = (function() {
             }
         });
     };
-
+    K.getKPITemplates=function(req,res){
+        var getValue0= 'MATCH (n:TEMPLATE) return n';
+        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                var ret=[];
+                //var header=_.get(result,'results[0].columns');
+                _.forEach(_.get(result,'results[0].data'),function(r){
+                    ret=ret.concat(r.row);
+                });
+                res.send(ret);
+                res.end();
+            }
+        });
+    };
+    K.getKPIGranularity=function(req,res){
+        var getValue0= 'MATCH (n:GRANULARITY) return n';
+        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                var ret=[];
+                //var header=_.get(result,'results[0].columns');
+                _.forEach(_.get(result,'results[0].data'),function(r){
+                    ret=ret.concat(r.row);
+                });
+                res.send(ret);
+                res.end();
+            }
+        });
+    };
     return K;
 })();

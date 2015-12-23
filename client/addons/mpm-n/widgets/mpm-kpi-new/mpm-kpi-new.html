@@ -1,3 +1,20 @@
 <div>
-   create new KPI
+   <h1>Create New KPI</h1>
+
+    <div class=" col-sm-12 col-md-3 col-lg-2 form-group">
+
+        <translate>Select Entity Type</translate>
+        <select class="form-control" id="neType" ng-model="neType" ng-options=" ne.type for ne in neList" ng-change="neTypeChange()">
+        </select>
+
+        <translate>Select Granularity Type</translate>
+        <select class="form-control" id="neGranularity" ng-model="neGranularity" ng-options=" ne.type for ne in granList" ng-change="granularityTypeChange()">
+        </select>
+
+        <translate>Select KPI Type</translate>
+        <select class="form-control" id="neKPIType" ng-model="neKPIType" ng-options="ne.type for ne in kpiTypeList" ng-change="kpiTypeChange()">
+        </select>
+
+        </div>
+    </div>
 </div>
