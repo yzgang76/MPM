@@ -46,8 +46,8 @@ module.exports = (function() {
 
     };
     S.getCollectorByID=function(req,res){
-        console.log('****************getCollectorByID');
         var id= _.get(req,'params.id');
+        console.log('****************getCollectorByID',id);
         if(!id){
             res.send({});
             res.end();
@@ -75,16 +75,14 @@ module.exports = (function() {
     };
 
     S.startCollectorByID=function(req,res){
-        console.log('****************startCollectorByID');
+        //console.log('****************startCollectorByID');
         var id= _.get(req,'params.id');
-        res.send({a:1});
-       /* if(!id){
+        console.log('****************startCollectorByID',id);
+        if(!id){
             res.status(500).send({Message:"Internal Error."});
             res.end();
         }else{
-            var s=_.find(collectors,function(c){
-                return c.id===id;
-            });
+            var s=_.find(collectors,{id:id-0});
             if(!s){
                 res.status(500).send({Message:"Collector not exists!"});
                 res.end();
@@ -102,7 +100,7 @@ module.exports = (function() {
                     }
                 },'POST',{},true);
             }
-        }*/
+        }
     };
 
     S.stopCollectorByID=function(req,res){
@@ -112,9 +110,7 @@ module.exports = (function() {
             res.status(500).send({Message:"Collector not exists!"});
             res.end();
         }else{
-            var s=_.find(collectors,function(c){
-                return c.id===id;
-            });
+            var s=_.find(collectors,{id:id-0});
             if(!s){
                 res.send({});
                 res.end();

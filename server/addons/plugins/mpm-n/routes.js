@@ -11,6 +11,31 @@ module.exports = function(app) {
 
     app.get(prefix+'/collectors',collect.getCollectors);
     app.get(prefix+'/collectors/:id',collect.getCollectorByID);
-    app.post(prefix+'/collectors/:id/start',collect.startCollectorByID);
-    app.post(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
+    app.get(prefix+'/collectors/:id/start',collect.startCollectorByID);
+    //app.get(prefix+'/collector/:id/start',function(req,res){
+    //    console.log('aaaaaaaaaaaaaaaaaaaaaaa');
+    //    res.send({"r":"a"});
+    //});
+    app.get(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
+
+    //Where the more generic logErrors may write request and error information to stderr, loggly, or similar services:
+    function logErrors(err, req, res, next) {
+        console.error('MPM-N Plugin Plugin ROUTE logErrors: (', (err ? err.stack : err), ')');
+        next(err);
+    }
+
+    //Where clientErrorHandler is defined as the following (note that the error is explicitly passed along to the next):
+    function clientErrorHandler(err, req, res, next) {
+        console.log('MPM-N Plugin ROUTE clientErrorHandler');
+        if (req.xhr) {
+            res.status(500).send({
+                error: err
+            });
+        } else {
+            next(err);
+        }
+    }
+
+    app.use(logErrors);
+    app.use(clientErrorHandler);
 };
