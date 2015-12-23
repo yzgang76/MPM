@@ -1,14 +1,9 @@
-<div class="nfvd-vdc-chooser">
+<div class="nfvd-vdc-chooser" >
     <div class="row header">
-<!--        <div class="col-sm-12 col-md-5 col-lg-5">
-            <ol class="breadcrumb">
-                <li>
-                    <span translate="NFVD_VDC_CHOOSER.BANNER" translate-values="{ name: '{{targetManager | nfvdFiltersFamilyPrint}}'}"></span>
-                    &nbsp;<span class="badge">{{filtered.length}}</span>
-                </li>
-            </ol>
-        </div>-->
-
+        <button class="pull-left col-sm-12 col-md-3 col-lg-2 btn btn-info" data-ng-click="refreshStatus(item)" style="margin-left:15px;" data-ng-click="createNewKPI()">
+            <i class="fa fa-plus-circle"></i>
+            Create
+        </button>
         <label class="pull-right col-sm-12 col-md-3 col-lg-2">
             <input class="form-control ng-pristine ng-valid" ng-model="searchText" placeholder="search...">
         </label>
@@ -44,7 +39,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr  ng-repeat="item in filtered = (kpis | filter:searchText)">
+            <tr  ng-repeat="item in filtered = (kpis | filter:searchText )|orderBy:'id'">
                 <td><!--<i class="fa fa-signal"></i>--> K{{item.id}}</td>
                 <td>{{item.ne || ''}} </td>
                 <td>{{item.gran || ''}} </td>
@@ -55,6 +50,7 @@
             </tr>
 
             </tbody>
+
         </table>
     </div>
 </div>

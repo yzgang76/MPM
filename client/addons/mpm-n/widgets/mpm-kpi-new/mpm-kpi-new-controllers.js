@@ -11,8 +11,8 @@ define([
     ],
     function(angular,_) {
         'use strict';
-        var mpmKPIManagerControllers = angular.module('mpmKPIManagerControllers', [ 'commonsEvents','dataExchangeServices','mpmDataAccessServices']);
-        mpmKPIManagerControllers.controller('mpmKPIManagerController', [
+        var mpmKPINewControllers = angular.module('mpmKPINewControllers', [ 'commonsEvents','dataExchangeServices','mpmDataAccessServices']);
+        mpmKPINewControllers.controller('mpmKPINewController', [
             '$rootScope',
             '$scope',
             '$log',
@@ -21,11 +21,11 @@ define([
             'mpmDataAccessService',
             'messageNotifierService',
             function($rootScope, $scope, $log, $timeout,dataExchangeService,dataAccessService,messageNotifierService) {
-                var logger = $log.getInstance('mpmKPIManagerControllers');
-                $scope.title = "KPI Manager";
+                var logger = $log.getInstance('mpmKPINewControllers');
+                $scope.title = "KPI New";
                 $scope.model='list';
                 function refresh(){
-                     var route1='/kpis/definition';
+                   /*  var route1='/kpis/definition';
                     var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
                     p1.then(
                         function(response) {
@@ -35,7 +35,7 @@ define([
                             messageNotifierService.error(JSON.stringify(error));
                             logger.error('Cant get data', route1, error);
                         }
-                    );
+                    );*/
                 }
 
                 $scope.getType=function(t){
@@ -59,12 +59,9 @@ define([
                     return ret;
                 };
 
-                $scope.createNewAPI=function(){
-
-                };
                 refresh();
             }
         ]);
 
-        return mpmKPIManagerControllers;
+        return mpmKPINewControllers;
     });

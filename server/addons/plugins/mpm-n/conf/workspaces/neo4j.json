@@ -1,6 +1,0 @@
-{
-  "server":"http://localhost",
-  "port":7474,
-  "user":"neo4j",
-  "password":"admin"
-}

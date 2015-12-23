@@ -30,7 +30,6 @@ module.exports = (function() {
     }*/
 
     function makeObj(headers,row){
-        console.log(headers,row);
         var ret={};
         for(var i=0;i<headers.length;i++){
             _.set(ret,headers[i],row[i]);

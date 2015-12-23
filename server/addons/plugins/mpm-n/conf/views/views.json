@@ -48,5 +48,29 @@
         "configuration": {}
       }
     ]
+  },
+  {
+    "id": "mpmKPINew",
+    "name": "mpmKPINewView",
+    "package": "mpm",
+    "description": "mpm create KPI",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [
+      "Platform Administrator",
+      "Operator_L2",
+      "Operator_L3"
+    ],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "mpmKPINewWidget",
+        "type": "mpm-kpi-new",
+        "title": "Create New KPI ",
+        "configuration": {}
+      }
+    ]
   }
 ]

@@ -1,0 +1,15 @@
+[{
+  "widgetId": "mpm-kpi-new",
+  "name": "new kpi",
+  "description": "MPM kpi creation",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "addons/mpm-n/widgets/mpm-kpi-new/mpm-kpi-new.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]
