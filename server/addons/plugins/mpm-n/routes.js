@@ -21,9 +21,9 @@ module.exports = function(app) {
 
     app.get(prefix+'/kpis/definition',kpi.getKPIDefinitions);
     app.get(prefix+'/kpis/templates',kpi.getKPITemplates);
+    app.get(prefix+'/kpis/templates/:type/sub',kpi.getKPISubTemplates);
     app.get(prefix+'/kpis/granularity',kpi.getKPIGranularity);
-
-
+    app.get(prefix+'/kpis/source',kpi.getSourceKPIList);
 
     //Where the more generic logErrors may write request and error information to stderr, loggly, or similar services:
     function logErrors(err, req, res, next) {

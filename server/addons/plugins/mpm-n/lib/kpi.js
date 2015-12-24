@@ -13,6 +13,11 @@ module.exports = (function() {
     //var display = require('./nfvd-artifact-display');
     //var path = require('path');
 
+    var RAW='Raw';
+    var CAL='Calculation';
+    var TA="Time Aggregation";
+    var EA="Entity Aggregation";
+
     var K = {};
     /*function getResult(result,kpi_name){
         var ret=[];
@@ -72,6 +77,25 @@ module.exports = (function() {
             }
         });
     };
+    K.getKPISubTemplates=function(req,res){
+        var type= _.get(req,'params.type');
+        var getValue0= 'MATCH (n:TEMPLATE{type:"'+type+'"})-[:CONTAINS]->(c:TEMPLATE) return c';
+        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                var ret=[];
+                //var header=_.get(result,'results[0].columns');
+                _.forEach(_.get(result,'results[0].data'),function(r){
+                    ret=ret.concat(r.row);
+                });
+                res.send(ret);
+                res.end();
+            }
+        });
+    };
     K.getKPIGranularity=function(req,res){
         var getValue0= 'MATCH (n:GRANULARITY) return n';
         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
@@ -89,6 +113,51 @@ module.exports = (function() {
                 res.end();
             }
         });
+    };
+    K.getSourceKPIList=function(req,res){
+        console.log(req.query);
+        var neType= _.get(req,'query.neType');
+        var neGranularity=_.get(req,'query.neGranularity');
+        var neKPIType=_.get(req,'query.neKPIType');
+        var subNeType=_.get(req,'query.subNeType');
+        var subNeGranularity=_.get(req,'query.subNeGranularity');
+        console.log('getSourceKPIList',neType,neGranularity,neKPIType);
+        var url;
+        switch (neKPIType){
+            case CAL:
+                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{type:"'+neType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+neGranularity+'}) return e';
+                break;
+            case TA:
+                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{type:"'+neType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+subNeGranularity+'}) return e';
+                break;
+            case EA:
+                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{type:"'+subNeType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+neGranularity+'}) return e';
+                break;
+            default:
+                break;
+        }
+        if(!url){
+            res.send([]);
+            res.end();
+        }else{
+            n4j.runCypherWithReturn([{statement:url}],function(err,result){
+                if(err){
+                    res.status(500).send(err);
+                    res.end();
+                }else{
+                    //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                    var ret=[];
+                    //var header=_.get(result,'results[0].columns');
+                    _.forEach(_.get(result,'results[0].data'),function(r){
+                        ret=ret.concat(r.row);
+                    });
+                    res.send(ret);
+                    res.end();
+                }
+            });
+        }
+
+
     };
     return K;
 })();

@@ -11,6 +11,7 @@ var Parser = require(path.join(__dirname, '/../lib/parser')).Parser;
 
 function test(){
     console.log(Parser.evaluate("2 ^ 1", {k1: 3}));
+    console.log(Parser.evaluate("if(a>20, if(a>10,3,2) ,4 ,0)", {a: 14,b:4}));
 }
 
 test();
