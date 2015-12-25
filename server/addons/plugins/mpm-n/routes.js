@@ -12,12 +12,8 @@ module.exports = function(app) {
 
     app.get(prefix+'/collectors',collect.getCollectors);
     app.get(prefix+'/collectors/:id',collect.getCollectorByID);
-    app.get(prefix+'/collectors/:id/start',collect.startCollectorByID);
-    //app.get(prefix+'/collector/:id/start',function(req,res){
-    //    console.log('aaaaaaaaaaaaaaaaaaaaaaa');
-    //    res.send({"r":"a"});
-    //});
-    app.get(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
+    app.post(prefix+'/collectors/:id/start',collect.startCollectorByID);
+    app.post(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
 
     app.get(prefix+'/kpis/definition',kpi.getKPIDefinitions);
     app.get(prefix+'/kpis/templates',kpi.getKPITemplates);

@@ -229,7 +229,26 @@ define([
 
                 };
                 $scope.createNewKPI=function(){
+                    var route1='/kpis/create';
+                    var p1 = dataAccessService.postRouteDeferred(route1, '', {
+                        kpi_name:$scope.kpiName,
+                        kpi_desc:$scope.kpiDesc,
+                        kpi_forumla:$scope.kpiFormula,
+                        kpi_unit:$scope.kpiUnit,
+                        ne_type:$scope.neType.type,
+                        granularity:$scope.neGranularity.id,
+                        kpi_type: _.indexOf($scope.kpiTypeList,$scope.neKPIType)
 
+                    },false).promise;
+                    p1.then(
+                        function(response) {
+                            logger.info('createNewKPI succ', response.data);
+                        },
+                        function(error) {
+                            messageNotifierService.error(JSON.stringify(error));
+                            logger.error('Cant get data', route1, error);
+                        }
+                    );
                 };
                 refresh();
             }

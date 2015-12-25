@@ -157,26 +157,67 @@ module.exports = (function() {
             });
         }
     };
-    K.getKPIID=function(req,res){
+    function getKPIID(callback){
         var url='match (e:KPI_DEF) return max(e.id)';
         if(!KPIID){
             n4j.runCypherWithReturn([{statement:url}],function(err,result){
                 if(err){
-                    res.status(500).send(err);
-                    res.end();
+                    callback(err,null);
                 }else{
-                   KPIID=_.get(result,'results[0].data[0].row[0]');
-                   res.send({ID:++KPIID});
-                   res.end();
+                    KPIID=_.get(result,'results[0].data[0].row[0]');
+                    callback(null,++KPIID);
                 }
             });
         }else{
-            res.send({ID:++KPIID});
-            res.end();
+            callback(null,++KPIID);
         }
+    }
+    K.getKPIID=function(req,res){
+        getKPIID(function(err,id){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                res.send({ID:KPIID});
+                res.end();
+            }
+        });
     };
+
     K.createKPI=function(req,res){
-        res.send({msg:"in dev"});
+        console.log('*********createKPI',req.body);
+        function _createKPIDefinitionNode(id,callback){
+            console.log('*********_createKPIDefinitionNode',id);
+            var data=req.body;
+            var statements=[];
+            statements.push({statement:'create (:KPI_DEF {id:'+id+',name:"'+data.kpi_name+'",type:0,formula:"'+data.kpi_forumla+'",description:"'+(data.kpi_desc||'')+'",type:'+data.kpi_type+',unit:"'+(data.kpi_unit||'')+'"});'});
+            statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (bts:TEMPLATE {type:"'+data.ne_type+'"}) merge (bts)-[:HAS_KPI]->(k);'});
+            statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (g:GRANULARITY {id:'+data.granularity+'}) merge (g)-[:HAS_KPI]->(k);'});
+            n4j.runCypherStatementsReturnErrors(statements,function(err,info){
+                if(err){
+                    callback(err,null);
+                }else{
+                    if(info.length>0){
+                        callback(info,null);
+                    }else{
+                        callback(null,null);
+                    }
+                }
+            });
+        }
+        async.waterfall([
+            async.apply(getKPIID),
+            async.apply(_createKPIDefinitionNode)
+        ],function(err,result){
+            if(err) {
+                res.status(500).send(err);
+                res.end();
+            }else{
+                res.send({result:"successfully"});
+                res.end();
+            }
+        });
+
     };
     return K;
 })();

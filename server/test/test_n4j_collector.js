@@ -36,6 +36,13 @@ function test2(){
     });
 }
 
-test2();
+function test3(){
+    var url='/V1.0/domains/mpm-n/kpis/create';
+    C.makeQuery('http://localhost:3000',url,function(err,r,data){
+        console.log(err,data);
+    },'POST',{},true);
+}
+
+test3();
 
 
