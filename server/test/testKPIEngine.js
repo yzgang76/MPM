@@ -7,6 +7,7 @@ var path=require("path");
 //var job=require(path.join(__dirname,"/../node_modules/node-schedule/lib/schedule"));
 var _ = require(path.join(__dirname, '/../node_modules/lodash/index'));
 var E=require(path.join(__dirname, '/../kpi/kpi_engine'));
+var async=require(path.join(__dirname, '/../node_modules/async/dist/async'));
 var os = require('os');
 
 function test(){
@@ -22,7 +23,6 @@ function test(){
     //        t(id);
     //    }
     //}
-
 
 
 

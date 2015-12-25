@@ -228,8 +228,12 @@ define([
                     }
 
                 };
+                $scope.createNewKPI=function(){
+
+                };
                 refresh();
             }
+
         ]);
 
         return mpmKPINewControllers;

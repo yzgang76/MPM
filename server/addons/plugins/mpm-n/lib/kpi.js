@@ -17,7 +17,7 @@ module.exports = (function() {
     var CAL='Calculation';
     var TA="Time Aggregation";
     var EA="Entity Aggregation";
-
+    var KPIID;
     var K = {};
     /*function getResult(result,kpi_name){
         var ret=[];
@@ -156,8 +156,27 @@ module.exports = (function() {
                 }
             });
         }
-
-
+    };
+    K.getKPIID=function(req,res){
+        var url='match (e:KPI_DEF) return max(e.id)';
+        if(!KPIID){
+            n4j.runCypherWithReturn([{statement:url}],function(err,result){
+                if(err){
+                    res.status(500).send(err);
+                    res.end();
+                }else{
+                   KPIID=_.get(result,'results[0].data[0].row[0]');
+                   res.send({ID:++KPIID});
+                   res.end();
+                }
+            });
+        }else{
+            res.send({ID:++KPIID});
+            res.end();
+        }
+    };
+    K.createKPI=function(req,res){
+        res.send({msg:"in dev"});
     };
     return K;
 })();

@@ -32,6 +32,9 @@
             Description:<input data-ng-model="kpiDesc">
             Formula:<input  data-ng-model="kpiFormula">
             Unit:<input data-ng-model="kpiUnit">
+            <button class="btn btn-info" data-ng-click="createNewKPI()" ng-show="kpiName&&kpiFormula" >
+                Submit
+            </button>
         </form>
     </div>
 
@@ -69,7 +72,6 @@
                 <td>{{item.name || ''}} </td>
                 <td>{{item.unit||''}}</td>
             </tr>
-
             </tbody>
 
         </table>
