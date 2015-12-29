@@ -71,7 +71,7 @@ define([
                 $scope.editKPI=function(id){
                     //var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPINew?kpiid='+id;
                     //$location.url(url);
-                    $window.alert('TO BE DEVELOP');
+                    $window.alert('TO BE DEVELOPED');
                 };
                 refresh();
             }

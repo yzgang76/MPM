@@ -1,6 +1,10 @@
 <div class="MPM-KPI-NEW">
-    <h1>{{title}}</h1>
-
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <h1>{{title}}</h1>
+        <button class="btn btn-warning pull-right  " data-ng-click="back()" >
+            <i class="fa fa-home"></i>
+        </button>
+    </div>
     <div class="col-sm-12 col-md-12 col-lg-12">
         <div class="col-sm-12 col-md-6 col-lg-4 " >
             <translate>Select Entity Type</translate>
@@ -33,28 +37,26 @@
     </div>
 
 
-    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 15px;" data-ng-show="isReadToSearchSourceKPI()">
+    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 25px;" data-ng-show="isReadToSearchSourceKPI()">
         <form class="form-horizontal ">
             <div class="col-sm-12 col-md-12 col-lg-12" style="margin-left: -15px;">
-                <translate class="col-sm-2 col-md-1 col-lg-1 "  >KPI Name:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiName">
+                <translate class="col-sm-2 col-md-2 col-lg-2 "  >KPI Name:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiName">
             </div>
             <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px;margin-left: -15px;">
-                <translate class="col-sm-2 col-md-1 col-lg-1 ">Description:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiDesc">
+                <translate class="col-sm-2 col-md-2 col-lg-2 ">Description:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiDesc">
             </div>
             <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px;margin-left: -15px;">
-                <translate class="col-sm-2 col-md-1 col-lg-1 ">Formula:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiFormula">
+                <translate class="col-sm-2 col-md-2 col-lg-2 ">Formula:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiFormula">
             </div>
             <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px;margin-left: -15px;">
-                <translate class="col-sm-2 col-md-1 col-lg-1 ">Unit:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiUnit">
+                <translate class="col-sm-2 col-md-2 col-lg-2 ">Unit:</translate> <input style="margin-left: 5px;" class="col-sm-10 col-md-6 col-lg-4 " data-ng-model="kpiUnit">
             </div>
 
-            <div class="col-sm-6 col-md-6 col-lg-6" style="margin-top: 10px;">
+            <div class="col-sm-6 col-md-6 col-lg-6" style="margin-top: 20px;">
                 <button class="btn btn-info pull-right col-sm-4 col-md-2 col-lg-2 " data-ng-click="createNewKPI()" ng-show="kpiName&&kpiFormula" >
                     <translate>Submit</translate>
                 </button>
             </div>
-
-
         </form>
     </div>
 
@@ -95,6 +97,9 @@
             </tbody>
 
         </table>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 20px;">
+
     </div>
 </div>
 

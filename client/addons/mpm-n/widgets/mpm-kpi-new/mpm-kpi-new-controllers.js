@@ -17,11 +17,11 @@ define([
             '$rootScope',
             '$scope',
             '$log',
-            '$timeout',
+            '$location',
             'dataExchangeService',
             'mpmDataAccessService',
             'messageNotifierService',
-            function($rootScope, $scope, $log, $timeout,dataExchangeService,dataAccessService,messageNotifierService) {
+            function($rootScope, $scope, $log, $location,dataExchangeService,dataAccessService,messageNotifierService) {
                 var logger = $log.getInstance('mpmKPINewControllers');
 
                 //$scope.neType={};
@@ -191,27 +191,6 @@ define([
 
 
                 }
-
-                /*$scope.getType=function(t){
-                    var ret;
-                    switch(t-0){
-                        case 0:
-                            ret='Raw';
-                            break;
-                        case 1:
-                            ret='Calculate';
-                            break;
-                        case 2:
-                            ret='Time Aggregation';
-                            break;
-                        case 3:
-                            ret='Entity Aggregation';
-                            break;
-                        default:
-                            break;
-                    }
-                    return ret;
-                };*/
                 $scope.isReadToSearchSourceKPI=function(){
                     console.log('*********isReadToSearchSourceKPI');
                     if(!$scope.neKPIType){
@@ -255,6 +234,10 @@ define([
                     //logger.debug($scope.widget.uniqueId, 'event webgui.widgetRefresh');
                     refresh();
                 });
+                $scope.back=function(){
+                    var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPIManager';
+                    $location.url(url);
+                };
                 refresh();
             }
 
