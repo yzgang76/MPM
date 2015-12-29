@@ -16,12 +16,14 @@ define([
             '$rootScope',
             '$scope',
             '$log',
-            '$timeout',
+            '$location',
+            '$window',
             'dataExchangeService',
             'mpmDataAccessService',
             'messageNotifierService',
-            function($rootScope, $scope, $log, $timeout,dataExchangeService,dataAccessService,messageNotifierService) {
+            function($rootScope, $scope, $log, $location,$window,dataExchangeService,dataAccessService,messageNotifierService) {
                 var logger = $log.getInstance('mpmKPIManagerControllers');
+                //logger.warn('ssssssssssssssssssss$',$scope);
                 $scope.title = "KPI Manager";
                 function refresh(){
                     var route1='/kpis/definition';
@@ -58,8 +60,18 @@ define([
                     return ret;
                 };
 
+                $scope.$on('webgui.widgetRefresh', function() {
+                    //logger.debug($scope.widget.uniqueId, 'event webgui.widgetRefresh');
+                    refresh();
+                });
                 $scope.createNewAPI=function(){
-
+                    var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPINew';
+                    $location.url(url);
+                };
+                $scope.editKPI=function(id){
+                    //var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPINew?kpiid='+id;
+                    //$location.url(url);
+                    $window.alert('TO BE DEVELOP');
                 };
                 refresh();
             }

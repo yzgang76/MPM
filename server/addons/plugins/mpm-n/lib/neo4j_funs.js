@@ -109,7 +109,7 @@ module.exports = (function() {
             if(err){
                 console.log("getAllNode return with error: ",JSON.stringify(err),body);
                 console.log({
-                    headers: r.headers,
+                    headers: _.get(r,'headers'),
                     errors:body
                 });
                 callback(err, undefined);

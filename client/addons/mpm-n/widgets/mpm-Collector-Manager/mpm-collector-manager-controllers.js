@@ -83,7 +83,7 @@ define([
                     }
                     function _startCollector(c){
                         var route1='/collectors/'+ c.id+'/start';
-                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                        var p1 = dataAccessService.postRouteDeferred(route1, '', {},false).promise;
                         p1.then(
                             function(response) {
                                 console.log('start '+ c.name+' succ');
@@ -96,7 +96,7 @@ define([
                     }
                     function _stopCollector(c){
                         var route1='/collectors/'+ c.id+'/stop';
-                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                        var p1 = dataAccessService.postRouteDeferred(route1, '', {},false).promise;
                         p1.then(
                             function(response) {
                                 console.log('stop '+ c.name+' succ');
@@ -108,6 +108,10 @@ define([
                         );
                     }
                 };
+                $scope.$on('webgui.widgetRefresh', function() {
+                    //logger.debug($scope.widget.uniqueId, 'event webgui.widgetRefresh');
+                    refresh();
+                });
                 refresh();
             }
         ]);

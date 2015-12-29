@@ -1,6 +1,6 @@
-<div class="nfvd-vdc-chooser" >
+<div class="MPM-KPI-MANAGER" >
     <div class="row header">
-        <button class="pull-left col-sm-12 col-md-3 col-lg-2 btn btn-info" data-ng-click="refreshStatus(item)" style="margin-left:15px;" data-ng-click="createNewKPI()">
+        <button class="pull-left col-sm-12 col-md-3 col-lg-2 btn btn-info"  style="margin-left:15px;" data-ng-click="createNewAPI()">
             <i class="fa fa-plus-circle"></i>
             Create
         </button>
@@ -19,6 +19,9 @@
                     <translate>NE</translate>
                 </th>
                 <th>
+                    <translate>Description</translate>
+                </th>
+                <th>
                     <translate>Granularity</translate>
                 </th>
                 <th>
@@ -34,7 +37,7 @@
                     <translate>Unit</translate>
                 </th>
                 <th>
-
+                    <translate>Data</translate>
                 </th>
             </tr>
             </thead>
@@ -42,11 +45,15 @@
             <tr  ng-repeat="item in filtered = (kpis | filter:searchText )|orderBy:'id'">
                 <td><!--<i class="fa fa-signal"></i>--> K{{item.id}}</td>
                 <td>{{item.ne || ''}} </td>
+                <td>{{item.description || ''}} </td>
                 <td>{{item.gran || ''}} </td>
                 <td>{{item.name || ''}} </td>
                 <td>{{getType(item.type)||''}}</td>
                 <td>{{item.formula||''}}</td>
                 <td>{{item.unit||''}}</td>
+                <td>  <button class="btn btn-info" data-ng-click="editKPI(item.id)">
+                    <i class="fa fa-pencil-square-o"></i>
+                </button></td>
             </tr>
 
             </tbody>

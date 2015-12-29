@@ -12,7 +12,7 @@ define([
     ],
     function(angular,_,async) {
         'use strict';
-        var mpmKPINewControllers = angular.module('mpmKPINewControllers', [ 'commonsEvents','dataExchangeServices','mpmDataAccessServices']);
+        var mpmKPINewControllers = angular.module('mpmKPINewControllers', [ 'commonsEvents','dataExchangeServices','mpmDataAccessServices','messageNotifierServices']);
         mpmKPINewControllers.controller('mpmKPINewController', [
             '$rootScope',
             '$scope',
@@ -23,7 +23,7 @@ define([
             'messageNotifierService',
             function($rootScope, $scope, $log, $timeout,dataExchangeService,dataAccessService,messageNotifierService) {
                 var logger = $log.getInstance('mpmKPINewControllers');
-                $scope.title = "KPI New";
+
                 //$scope.neType={};
                 //$scope.subNeType={};
                 //$scope.neGranularity={};
@@ -37,10 +37,11 @@ define([
                 var CAL='Calculation';
                 var TA="Time Aggregation";
                 var EA="Entity Aggregation";
+                var KPIID=dataExchangeService.getData('kpiid');
+                $scope.title =KPIID?"Edit KPI":"Create New KPI";
                 $scope.kpiTypeList=[{type:RAW},{type:CAL},{type:TA},{type:EA}];
 
                 function refresh(){
-
                     async.parallel({
                         neList:async.apply(_getTemplates),
                         granList:async.apply(_getGranularity)
@@ -250,6 +251,10 @@ define([
                         }
                     );
                 };
+                $scope.$on('webgui.widgetRefresh', function() {
+                    //logger.debug($scope.widget.uniqueId, 'event webgui.widgetRefresh');
+                    refresh();
+                });
                 refresh();
             }
 

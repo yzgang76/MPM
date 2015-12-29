@@ -42,7 +42,7 @@ module.exports = (function() {
         return ret;
     }
     K.getKPIDefinitions=function(req,res){
-        var getValue0= 'MATCH (n:KPI_DEF)<-[:HAS_KPI]-(t:TEMPLATE) with n,t MATCH (n1:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)where n.id=n1.id return n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit';
+        var getValue0= 'MATCH (n:KPI_DEF)<-[:HAS_KPI]-(t:TEMPLATE) with n,t MATCH (n1:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)where n.id=n1.id return n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit,n.description as description';
         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
             if(err){
                 res.status(500).send(err);
