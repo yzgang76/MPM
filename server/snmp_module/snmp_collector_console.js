@@ -173,9 +173,9 @@ module.exports = (function() {
 
 
                 function ___processOID(oid,callback){
-                    async.series([
+                    async.waterfall([
                         async.apply(____collectKPIDefinition,oid),
-                        async.apply(____addCollectSchedule,oid)
+                        async.apply(____addCollectSchedule)
 
                     ],function(err,result){
                         if(err){
@@ -204,10 +204,12 @@ module.exports = (function() {
                                 }else{
                                     kpiid=_.get(result,"results[0].data[0].row[0].id");
                                     if(kpiid){
+                                        console.log("Found kpi id of "+name+'='+kpiid);
                                         callback(null,null); //already define the kpi
                                     }else{
                                         // add kpi definition
                                         //get kpiid
+                                        console.log("create new kpi definition");
                                         C.makeQuery(mpm,url,function(err,r,data){
                                             if(err){
                                                 console.log(snmp_collector_console.messages.ERROR7);
@@ -218,6 +220,7 @@ module.exports = (function() {
                                                     console.log(snmp_collector_console.messages.ERROR7);
                                                     callback(new Error(snmp_collector_console.messages.ERROR7,null));
                                                 }else{
+
                                                     var statements=[];
                                                     statements.push({statement:'create (:KPI_DEF {id:'+kpiid+',name:"'+name+'",type:0,formula:"'+formula+'",description:"'+(description||'')+'",type:0,unit:"'+(unit||'')+'"});'});
                                                     statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (t:TEMPLATE {type:"'+type+'"}) merge (t)-[:HAS_KPI]->(k);'});
@@ -231,7 +234,8 @@ module.exports = (function() {
                                                                 console.log(snmp_collector_console.messages.ERROR8,info);
                                                                 callback(info,null);
                                                             }else{
-                                                                callback(null,null);
+                                                                oid.id=kpiid;
+                                                                callback(null,oid);
                                                             }
                                                         }
                                                     });
@@ -246,7 +250,7 @@ module.exports = (function() {
 
                     }
                     function ____addCollectSchedule(oid,callback){
-
+                        console.log('____addCollectSchedule',oid);
                         callback(null,null);
                     }
                 }
