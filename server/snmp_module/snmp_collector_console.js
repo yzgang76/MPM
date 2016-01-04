@@ -35,18 +35,18 @@ module.exports = (function() {
        /* "300":[
             {
                 "device": {
-                    "ip": "127.0.0.1","communicate": "public", "version": "2c"
+                    "ip": "127.0.0.1","community": "public", "version": "2c"
                 },
                 "jobs":[{
                     id:4
                     method:"get",
                     aggregation:"delta",
-                    oid:"1.3.6."
+                    formula:"1.3.6."
                 },{
                     id:6
                     method:"get",
                     aggregation:"delta",
-                    oid:"1.3.6."
+                    formula:"1.3.6."
                 }]
             }]*/
     };
@@ -168,6 +168,7 @@ module.exports = (function() {
                 var oids= _.get(dev,"OIDs");
 
                 async.each(oids,___processOID,function(err){
+                    console.log('***********Jobs',JSON.stringify(scheduler));
                     callback(null,null);
                 });
 
@@ -205,7 +206,8 @@ module.exports = (function() {
                                     kpiid=_.get(result,"results[0].data[0].row[0].id");
                                     if(kpiid){
                                         console.log("Found kpi id of "+name+'='+kpiid);
-                                        callback(null,null); //already define the kpi
+                                        oid.id=kpiid;
+                                        callback(null,oid); //already define the kpi
                                     }else{
                                         // add kpi definition
                                         //get kpiid
@@ -250,7 +252,29 @@ module.exports = (function() {
 
                     }
                     function ____addCollectSchedule(oid,callback){
-                        console.log('____addCollectSchedule',oid);
+                        //console.log('____addCollectSchedule',oid);
+                        if(oid){
+                            var interval_jobs=_.get(scheduler,oid.interval);
+                            if(!interval_jobs){
+                                _.set(scheduler,oid.interval,[]);
+                                interval_jobs=_.get(scheduler,oid.interval);
+                            }
+                            var d=_.find(interval_jobs,function(job){
+                                return _.get(job,'device.ip')===ip;
+                            });
+                            if(!d){
+                                d={
+                                    device:{
+                                        ip:ip,
+                                        community:community,
+                                        version:version
+                                    },
+                                    jobs:[oid]
+                                };
+                                interval_jobs.push(d);
+                            }
+                        }
+
                         callback(null,null);
                     }
                 }
