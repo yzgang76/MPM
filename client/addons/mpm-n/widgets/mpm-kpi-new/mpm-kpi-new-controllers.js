@@ -213,7 +213,7 @@ define([
                     var p1 = dataAccessService.postRouteDeferred(route1, '', {
                         kpi_name:$scope.kpiName,
                         kpi_desc:$scope.kpiDesc,
-                        kpi_forumla:$scope.kpiFormula,
+                        kpi_formula:$scope.kpiFormula,
                         kpi_unit:$scope.kpiUnit,
                         ne_type:$scope.neType.type,
                         granularity:$scope.neGranularity.id,

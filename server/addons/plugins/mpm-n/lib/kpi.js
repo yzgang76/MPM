@@ -188,23 +188,26 @@ module.exports = (function() {
     K.createKPI=function(req,res){
         console.log('*********createKPI',req.body);
         function _createKPIDefinitionNode(id,callback){
-            console.log('*********_createKPIDefinitionNode',id);
-            var data=req.body;
-            var statements=[];
-            statements.push({statement:'create (:KPI_DEF {id:'+id+',name:"'+data.kpi_name+'",type:0,formula:"'+data.kpi_forumla+'",description:"'+(data.kpi_desc||'')+'",type:'+data.kpi_type+',unit:"'+(data.kpi_unit||'')+'"});'});
-            statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (bts:TEMPLATE {type:"'+data.ne_type+'"}) merge (bts)-[:HAS_KPI]->(k);'});
-            statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (g:GRANULARITY {id:'+data.granularity+'}) merge (g)-[:HAS_KPI]->(k);'});
-            n4j.runCypherStatementsReturnErrors(statements,function(err,info){
-                if(err){
-                    callback(err,null);
-                }else{
-                    if(info.length>0){
-                        callback(info,null);
+            if(!id){
+                callback(new Error("Failed to apply KPI ID"),null);
+            }else{
+                var data=req.body;
+                var statements=[];
+                statements.push({statement:'create (:KPI_DEF {id:'+id+',name:"'+data.kpi_name+'",type:0,formula:"'+data.kpi_formula+'",description:"'+(data.kpi_desc||'')+'",type:'+data.kpi_type+',unit:"'+(data.kpi_unit||'')+'"});'});
+                statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (t:TEMPLATE {type:"'+data.ne_type+'"}) merge (t)-[:HAS_KPI]->(k);'});
+                statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (g:GRANULARITY {num:'+data.granularity+'}) merge (g)-[:HAS_KPI]->(k);'});
+                n4j.runCypherStatementsReturnErrors(statements,function(err,info){
+                    if(err){
+                        callback(err,null);
                     }else{
-                        callback(null,null);
+                        if(info.length>0){
+                            callback(info,null);
+                        }else{
+                            callback(null,null);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         async.waterfall([
             async.apply(getKPIID),
