@@ -117,7 +117,7 @@ module.exports = (function() {
                 //console.log('makeQuery return :',JSON.stringify(body));
                 callback(null, body);
             }
-        },'POST',{"statements":statements},false);
+        },'POST',{"statements":statements},true);
     };
     return N;
 })();

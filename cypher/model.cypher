@@ -3,7 +3,7 @@ match e delete e;
 merge (:TEMPLATE:GRAN {type:"GRAN",desc:""});
 merge (:TEMPLATE:BSC {type:"BSC",desc:""});
 merge (:TEMPLATE:BTS {type:"BTS",desc:""});
-merge (:TEMPLATE:BTS {type:"Windows HOST",desc:"windows7"});
+merge (:TEMPLATE:Windows_Host {type:"Windows_Host",desc:"windows7"});
 match (gran:TEMPLATE {type:"GRAN"}) with gran match (bsc:TEMPLATE {type:"BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 

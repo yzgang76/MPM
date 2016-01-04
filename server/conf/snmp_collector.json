@@ -6,7 +6,7 @@
   "collection": [
     {
       "device_info": {
-        "type": "Windows HOST",
+        "type": "Windows_Host",
         "name": "localhost",
         "IP": "127.0.0.1",
         "community": "public",
