@@ -158,16 +158,17 @@ module.exports = (function() {
         }
     };
     function getKPIID(callback){
-        var url='match (e:KPI_DEF) return max(e.id)';
+        //var url='match (e:KPI_DEF) return max(e.id)';
         if(!KPIID){
-            n4j.runCypherWithReturn([{statement:url}],function(err,result){
+          /*  n4j.runCypherWithReturn([{statement:url}],function(err,result){
                 if(err){
                     callback(err,null);
                 }else{
                     KPIID=_.get(result,'results[0].data[0].row[0]');
                     callback(null,++KPIID);
                 }
-            });
+            });*/
+            callback('Init KPIID Failed',null);
         }else{
             callback(null,++KPIID);
         }
@@ -219,5 +220,15 @@ module.exports = (function() {
         });
 
     };
+    var url='match (e:KPI_DEF) return max(e.id)';
+    n4j.runCypherWithReturn([{statement:url}],function(err,result){
+        if(err){
+            console.error(err);
+        }else{
+            KPIID=_.get(result,'results[0].data[0].row[0]');
+            console.log('Init KPI ID=',KPIID);
+        }
+    });
+
     return K;
 })();

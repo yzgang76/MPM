@@ -43,6 +43,6 @@ function test3(){
     },'POST',{},true);
 }
 
-test3();
+test2();
 
 

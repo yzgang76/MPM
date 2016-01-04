@@ -13,7 +13,8 @@ module.exports = (function() {
     'use strict';
     var P={};
 
-
+    P.get=function(){};
+    P.getAll=function(){};
 
 
     return P;

@@ -13,6 +13,7 @@ var csvP=require(path.join(__dirname,'./csv_module/csv_parser'));
 var neo4j=require(path.join(__dirname,'./neo4j_module/neo4j_funs'));
 var nfvd=require(path.join(__dirname,'./nfvd_collector/component2Neo4j'));
 var csv_console=require(path.join(__dirname,'./csv_module/collector_console'));
+var snmp_console=require(path.join(__dirname,'./snmp_module/snmp_collector_console'));
 //var routes = require('./routes/index');
 //var users = require('./routes/users');
 
@@ -89,6 +90,21 @@ app.get('/collect/csv/status',function(req,res){
 app.get('/collect/csv/history',function(req,res){
     csv_console.history(req,res);
 });
+
+//snmp collector
+
+app.post('/collect/snmp/init',function(req,res){
+    snmp_console.initCollector(req,res);
+});
+//app.post('/collect/csv/stop',function(req,res){
+//    csv_console.stopTimer(req,res);
+//});
+//app.get('/collect/csv/status',function(req,res){
+//    csv_console.status(req,res);
+//});
+//app.get('/collect/csv/history',function(req,res){
+//    csv_console.history(req,res);
+//});
 /***********************************************
  *  end routes
  */

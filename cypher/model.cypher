@@ -3,9 +3,11 @@ match e delete e;
 merge (:TEMPLATE:GRAN {type:"GRAN",desc:""});
 merge (:TEMPLATE:BSC {type:"BSC",desc:""});
 merge (:TEMPLATE:BTS {type:"BTS",desc:""});
+merge (:TEMPLATE:BTS {type:"Windows HOST",desc:"windows7"});
 match (gran:TEMPLATE {type:"GRAN"}) with gran match (bsc:TEMPLATE {type:"BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 
+merge (:GRANULARITY {id:3,type:"5mins",num:300});
 merge (:GRANULARITY {id:0,type:"15mins",num:900});
 merge (:GRANULARITY {id:1,type:"hourly",num:3600});
 merge (:GRANULARITY {id:2,type:"daily",num:66400});
