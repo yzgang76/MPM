@@ -15,6 +15,36 @@ module.exports = (function() {
     'use strict';
     var P={};
 
+    P.collectAndPopulate=function(jobOfOneDevice,ts, callback){
+        P.collect(jobOfOneDevice,function(err,results){
+            if(!err){
+                var statements=[];
+                var device= _.get(jobOfOneDevice,'device');
+                var jobs= _.get(jobOfOneDevice,'jobs');
+                _.forEach(_.flatten(results),function(result){
+                        var j=_.find(jobs,{id:result.id});
+                        if(j){
+                            // create kpi instance
+                            var key=device.id+'_'+ j.name+"_"+ts+'_'+ j.interval;
+                            if(_.isNaN(result.value)){  //string
+                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) with ne match (g:GRANULARITY{num:'+j.interval+'}) with ne,g match (kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:"'+result.value+'",gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
+                            }else {  //number
+                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) with ne match (g:GRANULARITY{num:'+j.interval+'}) with ne,g match (kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:'+result.value+',gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
+                            }
+                        }else{
+                            console.log('jjjjjjjjj',j,result.id);
+                        }
+                    }
+                );
+                console.log('statements:',statements);
+                n4j.runCypherStatementsReturnErrors(statements,function(err,result){
+                    callback(err,result);
+                });
+            }  else{
+                callback(err,null);
+            }
+        });
+    };
     P.collect=function(jobOfOneDevice,callback){
         var device= _.get(jobOfOneDevice,'device');
         var jobs= _.get(jobOfOneDevice,'jobs');
@@ -37,10 +67,7 @@ module.exports = (function() {
         }),function(j){
             getOids=getOids.concat(j.collectArray);
         });
-
-
         console.log('get list:',JSON.stringify(getOids));
-
         async.parallel(
             [
                 async.apply(getAll,session,getOids,getJobs),
@@ -54,8 +81,6 @@ module.exports = (function() {
                 }
             }
         );
-
-
     };
     function walkAll(session,jobs,callback){
         async.map(jobs,_walk,function(err,results){
@@ -119,7 +144,6 @@ module.exports = (function() {
             });
         }
     }
-
     function getAll(session,oids,jobs,callback){
         session.getAll({ oids:oids}, function (error, varbinds) {
             if(error){
@@ -144,7 +168,6 @@ module.exports = (function() {
             }
         });
     }
-
     function makeKey(oid){
         var ret='K';
         oid.forEach(function(d){
@@ -152,7 +175,6 @@ module.exports = (function() {
         });
         return ret;
     }
-
 
     return P;
 })();

@@ -111,7 +111,7 @@ module.exports = (function() {
                                             var kpiname=header[i];
                                             var value=line[i]; //todo validate value
                                             var nValue=parseFloat(value);
-                                            var key=myID+'_'+kpiname+"_"+ts+gran;
+                                            var key=myID+'_'+kpiname+"_"+ts+'_'+gran;
                                             if(_.isNaN(nValue)){  //string
                                                 statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}) with ne create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:"'+value+'",gran:'+gran+', neID:"'+myID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) '});
                                             }else{  //number
@@ -123,17 +123,19 @@ module.exports = (function() {
                                     //connect to kpi definition
                                     statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran merge (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
                                     console.log(statements);
-                                    n4j.runCypherStatements(statements);
+                                    n4j.runCypherStatementsReturnErrors(statements,function(err,result){
+                                        t=os.uptime();
+                                        logMessage={
+                                            Time:tx,
+                                            Cost:t-start_time,
+                                            Type:'INFO',
+                                            Module:conf.name,
+                                            Message:'Success to collect file:'+file+'. Line of content:'+ Math.max((output.length-1),0),
+                                            errors:err
+                                        };
+                                    });
                                 }
-
-                                t=os.uptime();
-                                logMessage={
-                                    Time:tx,
-                                    Cost:t-start_time,
-                                    Type:'INFO',
-                                    Module:conf.name,
-                                    Message:'Success to collect file:'+file+'. Line of content:'+ Math.max((output.length-1),0)
-                                };
+                                //the file will be rename during ingestion
                                 renameFile(file+'.processing','completed',function(ret){
                                     callback(logMessage);
                                 });

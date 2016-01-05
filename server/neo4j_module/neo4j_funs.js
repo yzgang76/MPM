@@ -94,14 +94,18 @@ module.exports = (function() {
         },'POST',{"statements":statements},true);
     };
     N.runCypherStatementsReturnErrors=function(statements,callback){
-        var url='/db/data/transaction/commit';
-        C.makeQuery(C.neo4j_server,url,function(err,r,body){
-            if(err){
-                callback(err,null);
-            }else{
-                callback(null,body.errors);
-            }
-        },'POST',{"statements":statements},true);
+        if(!statements||statements.length<1){
+            callback(null,null);
+        }else{
+            var url='/db/data/transaction/commit';
+            C.makeQuery(C.neo4j_server,url,function(err,r,body){
+                if(err){
+                    callback(err,null);
+                }else{
+                    callback(null,body.errors);
+                }
+            },'POST',{"statements":statements},true);
+        }
     };
     N.runCypherWithReturn=function(statements,callback){
         var url='/db/data/transaction/commit';

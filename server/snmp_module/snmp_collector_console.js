@@ -303,6 +303,7 @@ module.exports = (function() {
                             if(!d){
                                 d={
                                     device:{
+                                        id:id,
                                         ip:ip,
                                         community:community,
                                         version:version
