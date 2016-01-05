@@ -13,7 +13,7 @@ var os=require('os');
 
 
 // Create a Session with explicit default host, port, and community.
-var session = new snmp.Session();
+var session = new snmp.Session({version:1});
 session.get({ oid: [1,3,6,1,2,1,25,2,2,0], host: 'localhost', community: 'public' }, function (error, varbinds) {
     if (error) {
         console.log('Fail :(',error);
@@ -37,7 +37,7 @@ session0.get({ oid: [1,3,6,1,2,1,25,3,3,1,2,7 ], host: 'localhost', community: '
 var session1 = new snmp.Session();
 session1.getAll({ oids:[ [1,3,6,1,2,1,25,2,2,0],[1,3,6,1,2,1,25,3,3,1,2,7 ]], host: 'localhost', community: 'public' }, function (error, varbinds) {
     varbinds.forEach(function (vb) {
-        console.log(vb.oid + ' == ' , vb.value);
+        console.log(vb.oid + ' == ' , vb);
     });
     session1.close();
 });

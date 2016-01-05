@@ -206,7 +206,7 @@ module.exports = (function() {
                 var oids= _.get(dev,"OIDs");
 
                 async.each(oids,___processOID,function(err){
-                    console.log('***********Jobs',JSON.stringify(scheduler));
+                    //console.log('***********Jobs',JSON.stringify(scheduler));
                     callback(null,null);
                 });
 
@@ -325,6 +325,9 @@ module.exports = (function() {
     };
     S.getScheduler=function(req,res){
         res.send(scheduler);
+    };
+    S.startTimer=function(req,res){
+
     };
     return S;
 }());
