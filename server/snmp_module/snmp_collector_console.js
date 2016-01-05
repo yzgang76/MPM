@@ -60,7 +60,7 @@ module.exports = (function() {
             var keys=vars2KeyArray(vars);
             var ef=convertFormula(formula,vars,keys);
             var collectArray=varsStr2Array(vars);
-            oid.vars=vars;
+            //oid.vars=vars;
             oid.keys=keys;
             oid.eFormula=ef;
             oid.collectArray=collectArray;
@@ -290,7 +290,7 @@ module.exports = (function() {
 
                     }
                     function ____addCollectSchedule(oid,callback){
-                        console.log('____addCollectSchedule',oid);
+                        //console.log('____addCollectSchedule',oid);
                         if(oid){
                             var interval_jobs=_.get(scheduler,oid.interval);
                             if(!interval_jobs){
@@ -323,6 +323,8 @@ module.exports = (function() {
         }
 
     };
-
+    S.getScheduler=function(req,res){
+        res.send(scheduler);
+    };
     return S;
 }());

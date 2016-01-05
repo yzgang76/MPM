@@ -46,6 +46,48 @@
           "interval": 300
         }
       ]
+    },{
+      "device_info": {
+        "type": "Windows_Host",
+        "name": "not exists",
+        "IP": "10.0.0.1",
+        "community": "public",
+        "version": "2c"
+      },
+      "OIDs": [
+        {
+          "method": "get",
+          "name": "Physical memory utilization",
+          "formula": "[.1.3.6.1.2.1.25.2.3.1.6.4]/[.1.3.6.1.2.1.25.2.3.1.5.4]",
+          "unit":"%",
+          "interval": 900
+        },
+        {
+          "method": "walk",
+          "aggregation": "avg",
+          "name": "Avg CPU Utilization",
+          "formula": "[.1.3.6.1.2.1.25.3.3.1.2]",
+          "description":"Average CPU Utilization in 5 minutes",
+          "unit":"%",
+          "interval": 900
+        },
+        {
+          "method": "get",
+          "aggregation": "delta",
+          "name": "Bytes In",
+          "formula": "[.1.3.6.1.2.1.2.2.1.10.12]",
+          "unit":"Byte",
+          "interval": 900
+        },
+        {
+          "method": "get",
+          "aggregation": "delta",
+          "name": "Bytes Out",
+          "formula": "[.1.3.6.1.2.1.2.2.1.16.12]",
+          "unit":"Byte",
+          "interval": 900
+        }
+      ]
     }
   ]
 }

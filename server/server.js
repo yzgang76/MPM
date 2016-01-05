@@ -96,6 +96,9 @@ app.get('/collect/csv/history',function(req,res){
 app.post('/collect/snmp/init',function(req,res){
     snmp_console.initCollector(req,res);
 });
+app.get('/collect/snmp/scheduler',function(req,res){
+    snmp_console.getScheduler(req,res);
+});
 //app.post('/collect/csv/stop',function(req,res){
 //    csv_console.stopTimer(req,res);
 //});
