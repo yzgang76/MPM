@@ -5,7 +5,7 @@
 
 var path=require("path");
 var _ = require(path.join(__dirname, '/../node_modules/lodash/index'));
-var Collector=require(path.join(__dirname, '/../snmp_module/snmp_collector'));
+var collector=require(path.join(__dirname, '/../snmp_module/snmp_collector'));
 var C=require(path.join(__dirname, '/../lib/common-funs'));
 var conf=require(path.join(__dirname,'/../conf/snmp_collector'));
 var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
@@ -14,7 +14,9 @@ var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 module.exports = (function() {
     'use strict';
     var S = {};
-
+    var timers=[];
+    var state='stopped';
+    var latestScan;
     var snmp_collector_console={
         messages:{
             INITIALIZED:"Already initialized.",
@@ -315,20 +317,68 @@ module.exports = (function() {
                                 d.jobs.push(enrichOID(oid));
                             }
                         }
-
                         callback(null,null);
                     }
                 }
-
             }
         }
-
     };
     S.getScheduler=function(req,res){
         res.send(scheduler);
     };
     S.startTimer=function(req,res){
-
+        if(status<=0){
+            res.send({result:'Not initialized yet'});
+            res.end();
+        }else if(state==='started'){
+            res.send({result:'already started'});
+            res.end();
+        }else {
+            _.forEach(timers,function(t){
+                clearInterval(t);
+            });
+            timers=[];
+            console.log("starting the timers...");
+            _.forEach(scheduler, function (v, k) {
+                var timer=setInterval(function(){
+                    latestScan=new Date().toISOString();
+                    var ts=Date.now();
+                    async.each(v,function(deviceJob,callback){
+                        collector.collectAndPopulate(deviceJob,ts,function(err,result){
+                            callback(err,result);
+                        });
+                    },function(err){
+                        console.log("completed snmp scan job. interval: ",k," @",new Date().toISOString());
+                    });
+                }, parseInt(k)*100);
+                timers.push(timer);
+            });
+            state='started';
+            res.send({result:'started'});
+            res.end();
+        }
+    };
+    S.stopTimer=function(req,res){
+        if(status<=0){
+            res.send({result:'Not initialized yet'});
+            res.end();
+        }else if(state==='stopped'){
+            res.send({result:'already stopped'});
+            res.end();
+        }else {
+            console.log("stopping the timers...");
+            _.forEach(timers,function(t){
+                clearInterval(t);
+            });
+            timers=[];
+            state='stopped';
+            res.send({result:'stopped'});
+            res.end();
+        }
+    };
+    S.status=function(req,res){
+        res.send({status:state,latestScan: latestScan||''});
+        res.end();
     };
     return S;
 }());

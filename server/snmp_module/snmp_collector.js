@@ -36,7 +36,7 @@ module.exports = (function() {
                         }
                     }
                 );
-                console.log('statements:',statements);
+                //console.log('statements:',statements);
                 n4j.runCypherStatementsReturnErrors(statements,function(err,result){
                     callback(err,result);
                 });
@@ -157,12 +157,17 @@ module.exports = (function() {
                 });
                 //console.log('vvvvvvvvvvvvvv',varbinds);
                 _.forEach(jobs,function(job){
-                    ret.push(
-                        {
-                            id:job.id,
-                            value:Parser.evaluate(job.eFormula, vars)
-                        }
-                    );
+                    try{
+                        ret.push(
+                            {
+                                id:job.id,
+                                value:Parser.evaluate(job.eFormula, vars)
+                            }
+                        );
+                    }catch(e){
+                        console.error('KPI parse error:',JSON.stringify(e));
+                    }
+
                 });
                 callback (null,ret);
             }

@@ -99,13 +99,16 @@ app.post('/collect/snmp/init',function(req,res){
 app.get('/collect/snmp/scheduler',function(req,res){
     snmp_console.getScheduler(req,res);
 });
-//app.post('/collect/csv/stop',function(req,res){
-//    csv_console.stopTimer(req,res);
-//});
-//app.get('/collect/csv/status',function(req,res){
-//    csv_console.status(req,res);
-//});
-//app.get('/collect/csv/history',function(req,res){
+app.post('/collect/snmp/start',function(req,res){
+    snmp_console.startTimer(req,res);
+});
+app.post('/collect/snmp/stop',function(req,res){
+    snmp_console.stopTimer(req,res);
+});
+app.get('/collect/snmp/status',function(req,res){
+    snmp_console.status(req,res);
+});
+//app.get('/collect/snmp/history',function(req,res){
 //    csv_console.history(req,res);
 //});
 /***********************************************
