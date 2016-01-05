@@ -29,6 +29,44 @@ module.exports = (function() {
             ERROR8:"Failed to create KPI definition"
         }
     };
+    function getVars(expression){
+        var r =/\[(\.\d*)*\]/g;
+        return expression.match(r);//.map(function(s){return oidStr2Array(s); });
+    }
+
+    function varsStr2Array(vars){
+        return vars.map(function(v){
+            return v.split('.')
+                .filter(function (s) { return s.length > 0&&s!=='['&&s!==']'; })
+                .map(function (s) { return parseInt(s, 10); });
+        });
+    }
+    function vars2KeyArray(vars){
+        return _.map(vars,function(s){
+            return s.replaceAll('\\.','_').replace('[','K').replace(']','');
+        });
+    }
+    function convertFormula(formula,vars,keys){
+        for(var i=0;i<vars.length;i++){
+            formula=formula.replace(vars[i],keys[i]);
+        }
+        return formula;
+    }
+    function enrichOID(oid){
+        var formula= _.get(oid,'formula');
+        if(formula){
+            var vars= getVars(formula);
+            console.log('vars:',vars);
+            var keys=vars2KeyArray(vars);
+            var ef=convertFormula(formula,vars,keys);
+            var collectArray=varsStr2Array(vars);
+            oid.vars=vars;
+            oid.keys=keys;
+            oid.eFormula=ef;
+            oid.collectArray=collectArray;
+        }
+        return oid;
+    }
 
     var status=0;  //0, init; 1, init succ; -1, init failed
     var scheduler={
@@ -252,7 +290,7 @@ module.exports = (function() {
 
                     }
                     function ____addCollectSchedule(oid,callback){
-                        //console.log('____addCollectSchedule',oid);
+                        console.log('____addCollectSchedule',oid);
                         if(oid){
                             var interval_jobs=_.get(scheduler,oid.interval);
                             if(!interval_jobs){
@@ -269,9 +307,11 @@ module.exports = (function() {
                                         community:community,
                                         version:version
                                     },
-                                    jobs:[oid]
+                                    jobs:[enrichOID(oid)]
                                 };
                                 interval_jobs.push(d);
+                            }else{
+                                d.jobs.push(enrichOID(oid));
                             }
                         }
 
