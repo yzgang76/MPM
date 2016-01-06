@@ -27,9 +27,9 @@ module.exports = (function() {
                             // create kpi instance
                             var key=device.id+'_'+ j.name+"_"+ts+'_'+ j.interval;
                             if(_.isNaN(result.value)){  //string
-                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:"'+result.value+'",gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
+                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:"'+result.value+'",raw:"'+(result.raw||result.value)+'",gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
                             }else {  //number
-                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:'+result.value+',gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
+                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:'+result.value+',raw:'+(result.raw||result.value)+',gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
                             }
                         }else{
                             console.log('jjjjjjjjj',j,result.id);
@@ -156,20 +156,77 @@ module.exports = (function() {
                     _.set(vars,makeKey(v.oid), v.value);
                 });
                 //console.log('vvvvvvvvvvvvvv',varbinds);
-                _.forEach(jobs,function(job){
+                async.each(jobs,function(job,callback){
                     try{
-                        ret.push(
-                            {
-                                id:job.id,
-                                value:Parser.evaluate(job.eFormula, vars)
+                        var method= _.get(job,'aggregation');
+                        if(!method){
+                            ret.push(
+                                {
+                                    id:job.id,
+                                    value:Parser.evaluate(job.eFormula, vars)
+                                }
+                            );
+                            callback(null);
+                        }else{
+                            if(method==='delta'){
+                                //console.log('dddddddddddddddddelta');
+                                var raw= _.get(vars,job.keys[0]);
+                                var statement='match (e:KPI_VALUE{id:'+job.id+'}) return e order by e.ts desc limit 1';
+                                n4j.runCypherWithReturn([{statement:statement}],function(err,result){
+                                    if(err){
+                                        ret.push(
+                                            {
+                                                id:job.id,
+                                                value:0,
+                                                raw:raw||0
+                                            }
+                                        );
+                                    }else{
+                                        //console.log('aaaaaaaaaaaaaa',result);
+                                        var old= _.get(result, 'results[0].data[0].row[0].raw');
+                                        if(!old){
+                                            ret.push(
+                                                {
+                                                    id:job.id,
+                                                    value:0,
+                                                    raw:raw||0
+                                                }
+                                            );
+                                        }else{
+                                            var ots=_.get(result, 'results[0].data[0].row[0].ts');
+                                            var v=0;
+                                            if(ots){
+                                                var interval=Date.now()-ots;  //TODO: not accuracy
+                                                v=parseInt((raw-old)/(interval/job.interval/1000),10);
+                                            }
+                                            ret.push(
+                                                {
+                                                    id:job.id,
+                                                    value:v,
+                                                    raw:raw||0
+                                                }
+                                            );
+                                        }
+
+                                    }
+
+                                    callback(null);
+                                });
+                            }else{
+                                console.log('unknown aggregation method:',job);
+                                callback(null);
                             }
-                        );
+                        }
+
                     }catch(e){
                         console.error('KPI parse error:',JSON.stringify(e));
+                        callback(null);
                     }
 
+                },function(err){
+                    callback (null,ret);
                 });
-                callback (null,ret);
+
             }
         });
     }

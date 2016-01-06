@@ -80,7 +80,6 @@ var scheduler = {
             "collectArray": [[1, 3, 6, 1, 2, 1, 25, 3, 3, 1, 2]]
         }, {
             "method": "get",
-            "aggregation": "delta",
             "name": "Bytes In",
             "formula": "[.1.3.6.1.2.1.2.2.1.10.12]",
             "unit": "Byte",

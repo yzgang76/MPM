@@ -66,9 +66,9 @@ module.exports = (function() {
                     return _.get(obj,src_kpi_name);
                 });
                 break;
-            case 'delta':
-                //TODO
-                break;
+            //case 'delta':
+            //    //TODO
+            //    break;
             default:
                 console.log('Unknown aggregation method: ',method);
                 break;

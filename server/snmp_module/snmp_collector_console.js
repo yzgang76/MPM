@@ -348,7 +348,7 @@ module.exports = (function() {
                     },function(err){
                         console.log("completed snmp scan job. interval: ",k," @",new Date().toISOString());
                     });
-                }, parseInt(k)*100);
+                }, parseInt(k)*1000);
                 timers.push(timer);
             });
             state='started';
