@@ -97,14 +97,14 @@ module.exports = (function() {
                 callback(null,null);
             });
             function __evaluateThresholdNotForRaw(def,callback){
-
                 var threshold_def= _.get(def,'row[0]');
                 var kpi_def=_.get(def,'row[1]');
                 console.log('_evaluateThresholdsNotForRaw',threshold_def,kpi_def);
-                /*kpi_engine.getKPIValue(function(e,d){
-                 console.log('get kpi('+id+'):',JSON.stringify(d));
-                 console.log('Request completed in ' + (os.uptime() - startTime)+'s');
-                 },kpi_def.id,ts,null,null,null,3);*/
+                kpi_engine.getKPIValue(function(e,d){
+                 //console.log('get kpi('+id+'):',JSON.stringify(d));
+                 //console.log('Request completed in ' + (os.uptime() - startTime)+'s');
+                    console.log('dddddddddddd',JSON.stringify(d));
+                 },kpi_def.id,ts);
             }
 
         }

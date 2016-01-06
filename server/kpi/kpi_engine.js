@@ -327,7 +327,7 @@ module.exports = (function() {
      * @param nelist : the list of NE Instance ID, can be null
      * @param size: max return record size
      * @param skip: skip n records
-     * @param order: 0 order by ne id asc,, 1: by kpi value
+     * @param order: 0 order by ne id asc,, 1: by kpi id desc,2, kpi value asc, 3, kpi value desc
      * @param kpidef: optional , the definition object of the kpi, if not has the function will query it
      * @param expression: internal use
      */
