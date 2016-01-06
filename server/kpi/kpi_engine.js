@@ -328,6 +328,8 @@ module.exports = (function() {
      * @param size: max return record size
      * @param skip: skip n records
      * @param order: 0 order by ne id asc,, 1: by kpi value
+     * @param kpidef: optional , the definition object of the kpi, if not has the function will query it
+     * @param expression: internal use
      */
     E.getKPIValue=function(callback,kpiid, ts,nelist,size,skip,order,kpidef,expression){
         //console.log("**************getKPIValue:",kpiid, ts,nelist,size,skip,order,expression);

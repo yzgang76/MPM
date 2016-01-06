@@ -10,7 +10,8 @@ var async=require(path.join(__dirname, '/../node_modules/async/dist/async'));
 var os = require('os');
 
 function test(){
-    E.evaluate(1452053749365,300);
+    //E.evaluateRaw(1452053749365,300);
+    E.evaluateNotRaw(100002700000,3600);
 }
 
 test();

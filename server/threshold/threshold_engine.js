@@ -21,13 +21,13 @@ module.exports = (function() {
     };
     var msg=threshold_engine.messages;
 
-    E.evaluate=function(ts,gran){
-        console.log('evaluating ...');
+    E.evaluateRaw=function(ts,gran){
+        console.log('evaluating for Raw...');
         async.waterfall([
             async.apply(_getThresholdsForRaw,gran),
             async.apply(_evaluateThresholdsForRaw)
         ],function(err,result){
-            console.log('complete threshold evaluation for ',ts,gran);
+            console.log('complete threshold evaluation for Raw-',ts,gran);
         });
         function _getThresholdsForRaw(gran,callback){
             var statement='match (t:THRESHOLD)<-[:HAS_THRESHOLD]-(k:KPI_DEF{type:0})<-[:HAS_KPI]-(g:GRANULARITY{num:'+gran+'}) return t';
@@ -42,11 +42,11 @@ module.exports = (function() {
             });
         }
         function _evaluateThresholdsForRaw(defs,callback){
-            console.log('_evaluateThresholds',defs);
-            async.each(defs,async.apply(__evaluateThreshold),function(err){
+            //console.log('_evaluateThresholds',defs);
+            async.each(defs,async.apply(__evaluateThresholdForRaw),function(err){
                callback(null,null);
             });
-            function __evaluateThreshold(def,callback){
+            function __evaluateThresholdForRaw(def,callback){
                 //console.log('_______________________evaluateThreshold',def.row[0]);
                 var statement='match (a:ACTION)<-[:HAS_ACTION]-(t:THRESHOLD{id:'+def.row[0].id+'})<-[:HAS_THRESHOLD]-(k:KPI_DEF)-[:HAS_KPI_VALUE]->(v:KPI_VALUE)<-[:HAS_KPI_VALUE]-(n:INSTANCE) where '+ def.row[0].condition+' and v.ts<='+ts+' and v.ts>'+(ts-gran*1000)+' return a,v,n,t';
                 n4j.runCypherWithReturn([{statement:statement}],function(err,result){
@@ -70,21 +70,45 @@ module.exports = (function() {
                 });
             }
         }
+    };
+    E.evaluateNotRaw=function(ts,gran){
+        console.log('evaluating for Not Raw...');
+        async.waterfall([
+            async.apply(_getThresholdsNotForRaw,gran),
+            async.apply(_evaluateThresholdsNotForRaw)
+        ],function(err,result){
+            console.log('complete threshold evaluation for Not Raw-',ts,gran);
+        });
+
         function _getThresholdsNotForRaw(gran,callback){
-            var statement='match (t:THRESHOLD)<-[:HAS_THRESHOLD]-(k:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{num:'+gran+'}) where k.type<>0 return t';
+            var statement='match (t:THRESHOLD)<-[:HAS_THRESHOLD]-(k:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{num:'+gran+'}) where k.type<>0 return t,k';
             n4j.runCypherWithReturn([{statement:statement}],function(err,result){
                 if(err){
                     console.log (msg.ERROR1,JSON.stringify(err));
                     callback(err, null);
                 }else{
-                    //console.log('rrrrrrrrr',result.results[0].data);
                     callback(null, _.get(result,'results[0].data'));
                 }
             });
         }
+        function _evaluateThresholdsNotForRaw(defs,callback){
+
+            async.each(defs,async.apply(__evaluateThresholdNotForRaw),function(err){
+                callback(null,null);
+            });
+            function __evaluateThresholdNotForRaw(def,callback){
+
+                var threshold_def= _.get(def,'row[0]');
+                var kpi_def=_.get(def,'row[1]');
+                console.log('_evaluateThresholdsNotForRaw',threshold_def,kpi_def);
+                /*kpi_engine.getKPIValue(function(e,d){
+                 console.log('get kpi('+id+'):',JSON.stringify(d));
+                 console.log('Request completed in ' + (os.uptime() - startTime)+'s');
+                 },kpi_def.id,ts,null,null,null,3);*/
+            }
+
+        }
     };
-
-
 
     return E;
 })();
