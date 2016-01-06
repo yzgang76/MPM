@@ -105,3 +105,8 @@ match (k:KPI_DEF {id:17}) with k match (gran:TEMPLATE {type:"GRAN"}) merge (gran
 match (k:KPI_DEF {id:17}) with k match (g:GRANULARITY {id:1}) merge (g)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:17}) with k match (k1:KPI_DEF {id:16}) merge (k)-[:DEPEND_ON]->(k1);
 match (k:KPI_DEF {id:17}) with k match (k1:KPI_DEF {id:15}) merge (k)-[:DEPEND_ON]->(k1);
+
+create (a:ACTION{id:1,type:"log event"}),(:ACTION{id:2,type:"send SNMP Trap Message",conf:"..."}),(:ACTION{id:3,type:"execute script",script:"..."}), (:ACTION{id:4,type:"invoke API",api:"..."});
+match (k:KPI_DEF{id:25}) , (a:ACTION{id:1}) with k,a create (e:THRESHOLD {id:1,condition: "value>60 and value<=80" ,level:"warning"})  , (k)-[:HAS_THRESHOLD]->(e),(e)-[:HAS_ACTION]->(a) return k,e,a;
+match (k:KPI_DEF{id:25}) , (a:ACTION{id:2}) with k,a create (e:THRESHOLD {id:2,condition: "value>80" ,level:"critical"})  , (k)-[:HAS_THRESHOLD]->(e),(e)-[:HAS_ACTION]->(a) return k,e,a;
+match (k:KPI_DEF{id:25}) , (a:ACTION{id:1}) with k,a create (e:THRESHOLD {id:3,condition: "value>0 and value<=60" ,level:"minor"})  , (k)-[:HAS_THRESHOLD]->(e),(e)-[:HAS_ACTION]->(a) return k,e,a;

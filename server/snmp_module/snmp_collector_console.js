@@ -35,7 +35,6 @@ module.exports = (function() {
         var r =/\[(\.\d*)*\]/g;
         return expression.match(r);//.map(function(s){return oidStr2Array(s); });
     }
-
     function varsStr2Array(vars){
         return vars.map(function(v){
             return v.split('.')
@@ -69,7 +68,6 @@ module.exports = (function() {
         }
         return oid;
     }
-
     var status=0;  //0, init; 1, init succ; -1, init failed
     var scheduler={
        /* "300":[
@@ -91,9 +89,9 @@ module.exports = (function() {
             }]*/
     };
     S.initCollector=function(req,res){
-        if(status!==0){
+        if(status>0){
             res.send({"status":1,"Message":snmp_collector_console.messages.INITIALIZED});
-        }else if(status===0){
+        }else /*if(status===0)*/{
             console.log(JSON.stringify(conf));
 
             var msg=snmp_collector_console.messages.SUCCESSFULLY;
