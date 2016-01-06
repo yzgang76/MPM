@@ -14,7 +14,6 @@ var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 module.exports = (function() {
     'use strict';
     var P={};
-
     P.collectAndPopulate=function(jobOfOneDevice,ts, callback){
         P.collect(jobOfOneDevice,function(err,results){
             if(!err){
