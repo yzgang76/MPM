@@ -21,18 +21,23 @@ module.exports = (function() {
     };
     var history=[];
     var msg=threshold_engine.messages;
-    E.evaluate=function(ts,gran){
-        E.evaluateRaw(ts,gran);
-        E.evaluateNotRaw(ts,gran);
+    E.evaluate=function(ts,gran,callback){
+        async.parallel([
+            async.apply(E.evaluateRaw,ts,gran),
+            async.apply(E.evaluateNotRaw,ts,gran)
+        ],function(err,result){
+            callback(null,null);
+        });
     };
 
-    E.evaluateRaw=function(ts,gran){
+    E.evaluateRaw=function(ts,gran,callback){
         console.log('evaluating for Raw...');
         async.waterfall([
             async.apply(_getThresholdsForRaw,gran),
             async.apply(_evaluateThresholdsForRaw)
         ],function(err,result){
             console.log('complete threshold evaluation for Raw-',ts,gran);
+            callback(null,null);
         });
         function _getThresholdsForRaw(gran,callback){
             var statement='match (t:THRESHOLD)<-[:HAS_THRESHOLD]-(k:KPI_DEF{type:0})<-[:HAS_KPI]-(g:GRANULARITY{num:'+gran+'}) return t';
@@ -78,13 +83,14 @@ module.exports = (function() {
             }
         }
     };
-    E.evaluateNotRaw=function(ts,gran){
+    E.evaluateNotRaw=function(ts,gran,callback){
         console.log('evaluating for Not Raw...');
         async.waterfall([
             async.apply(_getThresholdsNotForRaw,gran),
             async.apply(_evaluateThresholdsNotForRaw)
         ],function(err,result){
             console.log('complete threshold evaluation for Not Raw-',ts,gran);
+            callback(null,null);
         });
 
         function _getThresholdsNotForRaw(gran,callback){
