@@ -21,6 +21,10 @@ module.exports = (function() {
     };
     var history=[];
     var msg=threshold_engine.messages;
+    E.evaluate=function(ts,gran){
+        E.evaluateRaw(ts,gran);
+        E.evaluateNotRaw(ts,gran);
+    };
 
     E.evaluateRaw=function(ts,gran){
         console.log('evaluating for Raw...');
