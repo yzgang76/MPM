@@ -22,7 +22,7 @@ module.exports = (function() {
         console.log('****************getCollectors');
         async.map(collectors,function(c,callback){
             var server= 'http://'+c.url;
-            var url='/collect/csv/status';
+            var url='/collect/'+ c.type+'/status';
             C.makeQuery(server,url,function(err,response,data){
                 if(err){
                     console.log("Failed to connect to collect:", c.name, 'Error:',JSON.stringify((err)));
@@ -61,7 +61,7 @@ module.exports = (function() {
                 res.end();
             }else{
                 var server= 'http://'+s.url;
-                var url='/collect/csv/status';
+                var url='/collect/'+ s.type+'/status';
                 C.makeQuery(server,url,function(err,response,data){
                     if(err){
                         console.log("Failed to connect to collect:", s.name, 'Error:',JSON.stringify((err)));
@@ -88,7 +88,7 @@ module.exports = (function() {
                 res.end();
             }else{
                 var server= 'http://'+s.url;
-                var url='/collect/csv/start';
+                var url='/collect/'+ s.type+'/start';
                 C.makeQuery(server,url,function(err,response,data){
                     if(err){
                         console.log("Failed to start collector ", s.name, 'Error:',JSON.stringify((err)));
@@ -116,7 +116,7 @@ module.exports = (function() {
                 res.end();
             }else{
                 var server= 'http://'+s.url;
-                var url='/collect/csv/stop';
+                var url='/collect/'+ s.type+'/stop';
                 C.makeQuery(server,url,function(err,response,data){
                     if(err){
                         console.log("Failed to stop collector ", s.name, 'Error:',JSON.stringify((err)));
