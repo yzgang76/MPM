@@ -374,6 +374,10 @@ module.exports = (function() {
             res.end();
         }
     };
+    //S.history=function(req,res){
+    //    res.send(collector.history);
+    //    res.end();
+    //};
     S.status=function(req,res){
         res.send({status:state,latestScan: latestScan||''});
         res.end();

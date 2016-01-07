@@ -26,7 +26,7 @@ module.exports = (function() {
             async.apply(E.evaluateRaw,ts,gran),
             async.apply(E.evaluateNotRaw,ts,gran)
         ],function(err,result){
-            callback(null,null);
+            callback(null,history);
         });
     };
 
@@ -36,7 +36,7 @@ module.exports = (function() {
             async.apply(_getThresholdsForRaw,gran),
             async.apply(_evaluateThresholdsForRaw)
         ],function(err,result){
-            console.log('complete threshold evaluation for Raw-',ts,gran);
+            console.log('************** complete threshold evaluation for Raw-',ts,gran);
             callback(null,null);
         });
         function _getThresholdsForRaw(gran,callback){
@@ -89,7 +89,7 @@ module.exports = (function() {
             async.apply(_getThresholdsNotForRaw,gran),
             async.apply(_evaluateThresholdsNotForRaw)
         ],function(err,result){
-            console.log('complete threshold evaluation for Not Raw-',ts,gran);
+            console.log('*********** complete threshold evaluation for Not Raw-',ts,gran);
             callback(null,null);
         });
 
@@ -131,6 +131,7 @@ module.exports = (function() {
                         }
 
                     });
+                    callback(null,null);
                  },kpi_def.id,ts);
             }
 

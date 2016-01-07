@@ -14,6 +14,8 @@ var neo4j=require(path.join(__dirname,'./neo4j_module/neo4j_funs'));
 var nfvd=require(path.join(__dirname,'./nfvd_collector/component2Neo4j'));
 var csv_console=require(path.join(__dirname,'./csv_module/collector_console'));
 var snmp_console=require(path.join(__dirname,'./snmp_module/snmp_collector_console'));
+var threshold_console=require(path.join(__dirname,'./threshold/threshold_console'));
+var kpi_console=require(path.join(__dirname,'./kpi/kpi_console'));
 //var routes = require('./routes/index');
 //var users = require('./routes/users');
 
@@ -108,9 +110,16 @@ app.post('/collect/snmp/stop',function(req,res){
 app.get('/collect/snmp/status',function(req,res){
     snmp_console.status(req,res);
 });
-//app.get('/collect/snmp/history',function(req,res){
-//    csv_console.history(req,res);
-//});
+
+//threshold engine
+app.get('/collect/threshold/evaluate/:gran/:ts',function(req,res){
+    threshold_console.evaluate(req,res);
+});
+
+//kpi engine
+app.post('/collect/kpi/value',function(req,res){
+    kpi_console.getKPI(req,res);
+});
 /***********************************************
  *  end routes
  */
