@@ -14,7 +14,6 @@ module.exports = (function() {
     var S = {};
     S.getKPI=function(req,res){
         var param=req.body;
-        console.log('bbbbbbbbbbbbbb',param);
         if(param){
             /**
              *
