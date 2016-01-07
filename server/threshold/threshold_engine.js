@@ -19,6 +19,7 @@ module.exports = (function() {
             ERROR2:"Failed to evaluate Threshold values"
         }
     };
+    var history=[];
     var msg=threshold_engine.messages;
 
     E.evaluateRaw=function(ts,gran){
@@ -63,7 +64,9 @@ module.exports = (function() {
                             var ne= broken[2];
                             var threshold= broken[3];
                             //TODO: implement action
-                            console.log("[Threshold broken] @",kpiValue.ts,'-condition: ',threshold.condition,' ;value:',kpiValue.value, ";NE:(",ne.type,")",ne.id,'; trigger action:', action.type);
+                            var info="[Threshold broken] @"+kpiValue.ts+'-condition: '+threshold.condition+' ;value:'+kpiValue.value+ ";NE:("+ne.type+")"+ne.id+'; trigger action:'+ action.type;
+                            console.log(info);
+                            history.push(info);
                         }
                         callback(null);
                     }
@@ -81,7 +84,7 @@ module.exports = (function() {
         });
 
         function _getThresholdsNotForRaw(gran,callback){
-            var statement='match (t:THRESHOLD)<-[:HAS_THRESHOLD]-(k:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{num:'+gran+'}) where k.type<>0 return t,k';
+            var statement='match (a:ACTION)<-[:HAS_ACTION]-(t:THRESHOLD)<-[:HAS_THRESHOLD]-(k:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{num:'+gran+'}) where k.type<>0 return t,k,a';
             n4j.runCypherWithReturn([{statement:statement}],function(err,result){
                 if(err){
                     console.log (msg.ERROR1,JSON.stringify(err));
@@ -99,11 +102,25 @@ module.exports = (function() {
             function __evaluateThresholdNotForRaw(def,callback){
                 var threshold_def= _.get(def,'row[0]');
                 var kpi_def=_.get(def,'row[1]');
+                var action=_.get(def,'row[2]');
                 console.log('_evaluateThresholdsNotForRaw',threshold_def,kpi_def);
-                kpi_engine.getKPIValue(function(e,d){
+                kpi_engine.getKPIValue(function(err,data){
                  //console.log('get kpi('+id+'):',JSON.stringify(d));
                  //console.log('Request completed in ' + (os.uptime() - startTime)+'s');
-                    console.log('dddddddddddd',JSON.stringify(d));
+                 //   console.log('dddddddddddd',JSON.stringify(data));
+                    var p=threshold_def.condition.replaceAll("v.value","v");
+                    _.forEach(data,function(k){
+                        try{
+                            if(Parser.evaluate(p, {v: _.get(k,kpi_def.name)})){
+                                var info="[Threshold broken] @"+k.ts+'-condition: '+threshold_def.condition+' ;value:'+ _.get(k,kpi_def.name)+ ";NE:"+ k.ne+'; trigger action:'+ action.type;
+                                console.log(info);
+                                history.push(info);
+                            }
+                        }catch(e){
+                            console.error("Parse error:",e);
+                        }
+
+                    });
                  },kpi_def.id,ts);
             }
 
