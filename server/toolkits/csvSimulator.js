@@ -36,7 +36,7 @@ function makeCSVFile(tag,ts,gran){
             console.log("Start make File "+tag,ts,gran);
 
             var lines=[];
-            var totalLines=1000;
+            var totalLines=10000;
             var pBSC=1000;
             var pBTS=10;
             for (var i= 0;i<totalLines;i++){
@@ -57,7 +57,7 @@ function makeCSVFile(tag,ts,gran){
                 var K10=(Math.random()*100);
                 var K11=(Math.random()*100);
                 lines.push(
-                   bsc+","+bts+","+lts+","+nbr_call_response+","+nbr_call_request+","+K1+","+K2+","+K3+","+K4+","+K5+","+K6+","+K7+","+K8+","+K9+","+K10+"\n"
+                   bsc+","+bts+","+lts+","+gran+","+nbr_call_request+","+nbr_call_response+","+K1+","+K2+","+K3+","+K4+","+K5+","+K6+","+K7+","+K8+","+K9+","+K10+"\n"
                 );
 
             }
@@ -80,5 +80,6 @@ function makeCSVFile(tag,ts,gran){
     });
 
 }
-
-makeCSVFile('group1',Math.round(Date.now()/1000)*1000,900);
+for(var i=4 ;i<5;i++){
+    makeCSVFile('group'+i,Math.round(Date.now()/1000)*1000,900);
+}

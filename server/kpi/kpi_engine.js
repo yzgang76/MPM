@@ -11,6 +11,32 @@ var Parser = require(path.join(__dirname, '/../lib/parser')).Parser;
 module.exports = (function() {
     'use strict';
     var E = {};
+    //[{"ne":"BTS_group48_56","ts":1452334573000,"CSSR":1.0909090909090908},{"ne":"BTS_group49_34","ts":1452334573000,"CSSR":1.0909090909090908}...]
+    function sortAndPagination(result,size,offset,order){
+        if(result.length>2){
+            var kpiName= _.find(_.keys(result[0]),function(k){
+                return k!=='ne'&&k!=='ts';
+            });
+            switch(order){
+                case 0:
+                    result=_.sortByOrder(result, ['ne'], ['asc']);
+                    break;
+                case 1:
+                    result=_.sortByOrder(result, ['ne'], ['desc']);
+                    break;
+                case 2:
+                    result=_.sortByOrder(result, [kpiName], ['asc']);
+                    break;
+                case 3:
+                    result=_.sortByOrder(result, [kpiName], ['desc']);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return _.slice(result,offset?offset:0,size?offset?offset+size:size:result.length);
+    }
 
     function getResult(result,kpi_name){
         var ret=[];
@@ -66,9 +92,6 @@ module.exports = (function() {
                     return _.get(obj,src_kpi_name);
                 });
                 break;
-            //case 'delta':
-            //    //TODO
-            //    break;
             default:
                 console.log('Unknown aggregation method: ',method);
                 break;
@@ -348,7 +371,7 @@ module.exports = (function() {
                             ret.push(getAggregationResult(fun,'K'+src,kpi_name,ts,k,v));
                         });
                         //console.log("aggr ret:",ret);
-                        callback(null,ret);
+                        callback(null,sortAndPagination(ret,size,skip,order));
                     }
                 }
 
@@ -368,7 +391,7 @@ module.exports = (function() {
                 var src;
                 switch(type){
                     case 0:  //raw counter
-                        var getValue0= E.makeCypherForRaw(kpiid,ts,window_size,nelist,size,skip,order);
+                        var getValue0= E.makeCypherForRaw(kpiid,ts,window_size);
                         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
                             if(err){
                                 throw new Error('Fail to get KPI (' + kpiid + ') value');
@@ -388,16 +411,22 @@ module.exports = (function() {
                                 console.log('_fetchKPIValue error:',err);
                                 callback(err,null);
                             }else{
+                                //console.log('dddddddddddddd',data.length,data[0].length,data[1].length);
                                 var matrix=C.mergeArrays(data,['ne','ts']);
                                 //console.log('complete fetch all source kpis', matrix);
 
                                 var ret=[];
                                 _.forEach(matrix,function(m){
-                                    ret.push(_.set({
-                                        ne:m.ne,
-                                        ts:m.ts},kpi_name,Parser.evaluate(formula, m)));
+                                    try{
+                                        ret.push(_.set({
+                                            ne:m.ne,
+                                            ts:m.ts},kpi_name,Parser.evaluate(formula, m)));
+                                    }catch(e){
+                                        console.log('[KPI Engine]: calculate exception:',formula, e);
+                                    }
+
                                 });
-                                callback(null,ret);
+                                callback(null,sortAndPagination(ret,size,skip,order));
                             }
                         });
                         break;
@@ -407,7 +436,7 @@ module.exports = (function() {
                         });
                         fun=getFun(formula)[0];
                         src=vars[0];
-                        E.getKPIValueWithinWindow(__receiveKPIValueforAggr,src,ts,window_size,  nelist,size,skip,order) ;
+                        E.getKPIValueWithinWindow(__receiveKPIValueforAggr,src,ts,window_size) ;
                         break;
                     case 3:  //entity aggregation
                         vars=_.map(getVars(formula),function(v){
@@ -442,7 +471,7 @@ module.exports = (function() {
                                                 var ne=reformatResult(_.get(data,'results[0].data'));
 
                                                 async.map(ne,function(v,callback){
-                                                    E.getKPIValue(callback,src,ts,v,size,skip,order,child_def,false);
+                                                    E.getKPIValue(callback,src,ts,v,null,null,null,child_def,false);
                                                     //callback(null,'1');
                                                 },function(err,results) {
                                                     //[{"row":["BSC2",2]},{"row":["BSC2",1]},{"row":["BSC1",2]},{"row":["BSC1",1]}]}
@@ -482,7 +511,9 @@ module.exports = (function() {
                             //console.log('bbbbbbbbbb',err,JSON.stringify(result));
 
                             // result now equals 'done'
-                            callback (err,getAggregationResult2(fun,ts,kpi_name,_.get(result,'results[0].data')));
+                            callback (err,sortAndPagination(
+                                getAggregationResult2(fun,ts,kpi_name,_.get(result,'results[0].data')),size,skip,order)
+                            );
                         });
 
 

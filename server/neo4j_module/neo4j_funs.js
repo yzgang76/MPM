@@ -9,6 +9,7 @@ var C=require(path.join(__dirname,'/../lib/common-funs'));
 module.exports = (function() {
     'use strict';
     var N={};
+    var printStatement=true;
     N.getNodes=function(req,res){
         var type=req.params.type;
         var payload={
@@ -74,7 +75,7 @@ module.exports = (function() {
                     }
 
 
-                },'POST',{"statements":statements},true);
+                },'POST',{"statements":statements},printStatement);
 
             }
         });
@@ -91,7 +92,7 @@ module.exports = (function() {
             }else{
                 console.log('makeQuery return with errors:',body.errors);
             }
-        },'POST',{"statements":statements},true);
+        },'POST',{"statements":statements},false);
     };
     N.runCypherStatementsReturnErrors=function(statements,callback){
         if(!statements||statements.length<1){
@@ -104,7 +105,7 @@ module.exports = (function() {
                 }else{
                     callback(null,body.errors);
                 }
-            },'POST',{"statements":statements},true);
+            },'POST',{"statements":statements},printStatement);
         }
     };
     N.runCypherWithReturn=function(statements,callback){
@@ -121,7 +122,7 @@ module.exports = (function() {
                 //console.log('makeQuery return :',JSON.stringify(body));
                 callback(null, body);
             }
-        },'POST',{"statements":statements},true);
+        },'POST',{"statements":statements},printStatement);
     };
     return N;
 })();

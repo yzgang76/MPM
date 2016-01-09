@@ -86,6 +86,7 @@ module.exports = (function() {
     };
 
     C.mergeArrays=function(arrs,keys){
+        //console.log('arraaaaaaaaaaaaaa',arrs);
         var x=[];
         var kkvs=[];
         _.forEach(arrs,function(arr){
@@ -108,21 +109,29 @@ module.exports = (function() {
                 kkvs.push({key:kk,value:kkv});
                 y.push(_.set({},kk,vv));
             });
-            x.push(y);
+            //console.log('yyyyyyyyyyyyyyy',JSON.stringify(y));
+            x=x.concat(y);
         });
+        //console.log('xxxxxxxxxxxxxxxxxxxxxx',JSON.stringify(x));
+        //unique key: ne+ts
         kkvs=(_.uniq(kkvs,function(k){
             return k.key;
         }));
-        x=_.reduce(x, function(a,a1){
-            return _.merge(a,a1);
-        });
-        //console.log('x=',x);
-        //console.log('kkvs=',kkvs);
+        //x=_.reduce(x, function(a,a1){
+        //    return _.merge(a,a1);
+        //});
+        //console.log('x=',JSON.stringify(x));
+        //console.log('kkvs=',JSON.stringify(kkvs));
         var ret=[];
         _.forEach(kkvs, function (k){
-            ret.push(_.merge(k.value,_.get(_.find(x,function(i){
-                return _.get(i, k.key)!==undefined;
-            }), k.key)));
+            var kpis=_.filter(x,function(a){
+                //console.log(a,key);
+                return _.has(a,k.key);
+            }) ;
+            var r=_.reduce(kpis,function(a,b){
+                return _.merge(a,b);
+            });
+            ret.push(_.merge(k.value,_.get(r, k.key)));
         });
         return ret;
     };

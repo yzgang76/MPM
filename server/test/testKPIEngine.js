@@ -14,15 +14,15 @@ function test(){
     var startTime = os.uptime();
     function t(id){
         E.getKPIValue(function(e,d){
-            console.log('get kpi('+id+'):',JSON.stringify(d));
+            console.log('get kpi('+id+'):',d);
             console.log('Request completed in ' + (os.uptime() - startTime)+'s');
-        },id,100002700000,null,null,null,3);
+        },id,1452335276000,null,null,null,null);
     }
-    //for(var i=0;i<50;i++){
-    //    for(var id=0;id<18;id++){
-    //        t(id);
-    //    }
-    //}
+    for(var i=0;i<1;i++){
+        for(var id=0;id<18;id++){
+            t(id);
+        }
+    }
 
 
 
@@ -80,14 +80,39 @@ function test(){
 
     //E.getKPIValue(2,100000000000);  //calculate
 
-    var arr=[
-        {a:1,b:2},
-        {a:2,b:3}
-    ];
+    //var arr=[
+    //    {a:1,b:2},
+    //    {a:2,b:3}
+    //];
+    //
+    //var c= _.find(arr,{a:1});
+    //c.b=3333;
+    //console.log(arr);
+  /*  var keys=[{"key":"BTS_group20_11452334432000","value":{"ne":"BTS_group20_1","ts":1452334432000}},{"key":"BTS_group20_11452334432000","value":{"ne":"BTS_group20_2","ts":1452334432000}}];
+var a;
+    console.log(_.slice(keys,1,2));
 
-    var c= _.find(arr,{a:1});
-    c.b=3333;
-    console.log(arr);
+    var a1=[{"BTS_group20_11452334432000":{"K1":65}},{"BTS_group20_21452334432000":{"K1":86}}];
+    var a2=[{"BTS_group20_21452334432000":{"K0":82}},{"BTS_group20_11452334432000":{"K0":62}}];
+    var a3=a1.concat(a2);
+    _.forEach(keys,function(key){
+        var kpis=_.filter(a3,function(a){
+            //console.log(a,key);
+            return _.has(a,key.key);
+        }) ;
+        //console.log(kpis);
+        var k=_.reduce(kpis,function(a,b){
+            return _.merge(a,b);
+        });
+        console.log(k);
+    });
+*/
+    //
+    //console.log(_.merge(_.sortBy(a1,function(v,k){
+    //    return k;
+    //}), _.sortBy(a2,function(v,k){
+    //    return k;
+    //})));
 }
 
 test();

@@ -107,7 +107,7 @@ module.exports = (function() {
         var url='/db/data/transaction/commit';
         C.makeQuery(C.neo4j_server,url,function(err,r,body){
             if(err){
-                console.log("getAllNode return with error: ",JSON.stringify(err),body);
+                //console.log("getAllNode return with error: ",JSON.stringify(err),body);
                 console.log({
                     headers: _.get(r,'headers'),
                     errors:body
