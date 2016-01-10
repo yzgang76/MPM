@@ -446,7 +446,7 @@ module.exports = (function() {
                         src=vars[0];
                         async.waterfall([
                             async.apply(E.getKPIDef,src),
-                            function(child_def,callback) {
+                            function(child_def,callback) {  //get node hierarchy
                                 var srcKPIType = _.get(child_def, 'kpi_def.type');
                                 var srcKPIName= _.get(child_def,'kpi_def.name');
                                 var chType = _.get(child_def, 'template.type');
@@ -455,15 +455,19 @@ module.exports = (function() {
                                     callback(new Error("Error in KPI definition"), null);
                                 }
                                 var stat;
-                                stat = 'match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
-                                if (nelist && _.isArray(nelist) && nelist.length > 0) {
-                                    stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
-                                }
                                 if (srcKPIType === 0) {
-                                    stat = stat + ' with e ,c match (c1:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where c1.id=c.id AND k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts + ' return e.id,k.value';
+                                    stat = 'match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts+' and e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                    if (nelist && _.isArray(nelist) && nelist.length > 0) {
+                                        stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
+                                    }
+                                    stat = stat + ' return e.id ,k.value';
                                     n4j.runCypherWithReturn([{statement: stat}], callback);
                                     //callback(null,stat,0);
                                 } else {
+                                    stat = 'match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                    if (nelist && _.isArray(nelist) && nelist.length > 0) {
+                                        stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
+                                    }
                                     stat = stat + ' return e.id ,c.id';
                                     async.waterfall([
                                             async.apply(n4j.runCypherWithReturn, [{statement: stat}]),
@@ -471,7 +475,8 @@ module.exports = (function() {
                                                 var ne=reformatResult(_.get(data,'results[0].data'));
 
                                                 async.map(ne,function(v,callback){
-                                                    E.getKPIValue(callback,src,ts,v,null,null,null,child_def,false);
+                                                    v=_.uniq(v);
+                                                    E.getKPIValue(callback,src,ts,v ,null,null,null,child_def,false);
                                                     //callback(null,'1');
                                                 },function(err,results) {
                                                     //[{"row":["BSC2",2]},{"row":["BSC2",1]},{"row":["BSC1",2]},{"row":["BSC1",1]}]}
@@ -503,7 +508,6 @@ module.exports = (function() {
                                 }
                             },
                             function(result,callback){
-
                                 var data= _.get(result,'results[0].data');
                                 callback(null,result);
                             }

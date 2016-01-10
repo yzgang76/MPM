@@ -12,14 +12,16 @@ var os = require('os');
 
 function test(){
     var startTime = os.uptime();
+    //100002700000
+    //1452335276000
     function t(id){
         E.getKPIValue(function(e,d){
-            console.log('get kpi('+id+'):',d);
+            console.log('get kpi('+id+'):',JSON.stringify(_.slice(d,0,5)));
             console.log('Request completed in ' + (os.uptime() - startTime)+'s');
         },id,1452335276000,null,null,null,null);
     }
-    for(var i=0;i<1;i++){
-        for(var id=0;id<18;id++){
+    for(var i=0;i<2;i++){
+        for(var id=1;id<18;id++){
             t(id);
         }
     }
@@ -114,5 +116,6 @@ var a;
     //    return k;
     //})));
 }
+
 
 test();

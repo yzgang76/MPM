@@ -88,18 +88,21 @@ module.exports = (function() {
                                         //TODO many duplicate, can optimize
                                         //TODO: change merge to create to improve the performance
                                         var parentID=line[0].trim();
-                                        if(parentID!=='' && !_.includes(parents,parentID)){
-                                            statements.push({statement:'merge (:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"})'});
-                                            statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
+                                        if(parentID!=='' && !_.includes(parents,parentID)){  //create parent node
+                                            statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t merge (i:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
+                                            //statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
                                             parents.push(parentID);
                                         }
                                         var myID=line[1].trim();
-                                        if(myID!==''&& !_.includes(children,myID)){
-                                            statements.push({statement:'create (:INSTANCE:'+myType+'{id:"'+myID+'",type:"'+myType+'"})'});
-                                            statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t match (i:INSTANCE {id:"'+myID+'"}) create (t)-[:HAS_INSTANCE]->(i)'});
-                                            statements.push({statement:'match (p:INSTANCE {id:"'+parentID+'"}) with p match (c:INSTANCE {id:"'+myID+'"}) create (p)-[:HAS_CHILD]->(c)'});
+                                        if(myID!==''&& !_.includes(children,myID)){  //create child node
+                                            statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t merge (i:INSTANCE:'+myType+'{id:"'+myID+'",type:"'+myType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
+                                            //statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t match (i:INSTANCE {id:"'+myID+'"}) create (t)-[:HAS_INSTANCE]->(i)'});
+
                                             children.push(myID);
                                         }
+
+                                        //create relationship between parent and child
+                                        statements.push({statement:'match (p:INSTANCE {id:"'+parentID+'"}) with p merge (c:INSTANCE {id:"'+myID+'"}) create (p)-[:HAS_CHILD]->(c)'});
 
 
                                         var ts=parseInt(line[2]);
@@ -116,9 +119,9 @@ module.exports = (function() {
                                             var nValue=parseFloat(value);
                                             var key=myID+'_'+kpiname+"_"+ts+'_'+gran;
                                             if(_.isNaN(nValue)){  //string
-                                                statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:"'+value+'",gran:'+gran+', neID:"'+myID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
+                                                statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:"'+value+'",gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
                                             }else{  //number
-                                                statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:'+value+',gran:'+gran+', neID:"'+myID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
+                                                statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:'+value+',gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
                                             }
                                         }
                                     });

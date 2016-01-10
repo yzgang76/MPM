@@ -9,7 +9,7 @@ var C=require(path.join(__dirname,'/../lib/common-funs'));
 module.exports = (function() {
     'use strict';
     var N={};
-    var printStatement=true;
+    var printStatement=false;
     N.getNodes=function(req,res){
         var type=req.params.type;
         var payload={

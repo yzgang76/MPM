@@ -26,9 +26,9 @@ module.exports = (function() {
                             // create kpi instance
                             var key=device.id+'_'+ j.name+"_"+ts+'_'+ j.interval;
                             if(_.isNaN(result.value)){  //string
-                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:"'+result.value+'",raw:"'+(result.raw||result.value)+'",gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
+                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:"'+result.value+'",raw:"'+(result.raw||result.value)+'",gran:'+ j.interval+', neID:"'+device.id+'",updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
                             }else {  //number
-                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:'+result.value+',raw:'+(result.raw||result.value)+',gran:'+ j.interval+', neID:"'+device.id+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
+                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:'+result.value+',raw:'+(result.raw||result.value)+',gran:'+ j.interval+', neID:"'+device.id+'",updateTS:'+Date.now()+'"}), (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
                             }
                         }else{
                             console.log('jjjjjjjjj',j,result.id);
