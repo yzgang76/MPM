@@ -11,20 +11,41 @@ var async=require(path.join(__dirname, '/../node_modules/async/dist/async'));
 var os = require('os');
 
 function test(){
-    var startTime = os.uptime();
+
     //100002700000
     //1452335276000
-    function t(id){
+
+    function t(i,callback){
+        var startTime = os.uptime();
+        var id=11;
         E.getKPIValue(function(e,d){
             console.log('get kpi('+id+'):',JSON.stringify(_.slice(d,0,5)));
             console.log('Request completed in ' + (os.uptime() - startTime)+'s');
+            callback(null);
         },id,1452335276000,null,null,null,null);
     }
-    for(var i=0;i<2;i++){
-        for(var id=1;id<18;id++){
-            t(id);
-        }
+    var iterate=[];
+    for(var i=0;i<10;i++){
+        //for(var id=11;id<12;id++){
+        //    t(id);
+        //}
+        iterate.push(i);
     }
+    var t0=Date.now();
+    var parallel=true;
+    if(parallel){
+        async.each(iterate,t,function(err){
+            var t1=Date.now();
+            console.log('***********',(t1-t0)) ;
+        });
+    }else{
+        async.eachSeries(iterate,t,function(err){
+            var t1=Date.now();
+            console.log('***********',(t1-t0)) ;
+        });
+    }
+
+
 
 
 
