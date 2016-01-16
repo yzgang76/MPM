@@ -10,7 +10,7 @@ match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) mer
 merge (:GRANULARITY {id:3,type:"5mins",num:300});
 merge (:GRANULARITY {id:0,type:"15mins",num:900});
 merge (:GRANULARITY {id:1,type:"hourly",num:3600});
-merge (:GRANULARITY {id:2,type:"daily",num:66400});
+merge (:GRANULARITY {id:2,type:"daily",num:86400});
 
 merge (:KPI_DEF {id:0,name:"number of service request",type:0,formula:"nbr_call_request"});
 match (k:KPI_DEF {id:0}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);

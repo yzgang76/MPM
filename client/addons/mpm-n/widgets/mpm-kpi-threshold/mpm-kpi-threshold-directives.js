@@ -1,7 +1,7 @@
 define(
     [
         'angular',
-        'addons/mpm-n/widgets/mpm-kpi-new/mpm-kpi-new-controllers'
+        'addons/mpm-n/widgets/mpm-kpi-threshold/mpm-kpi-threshold-controllers'
         //'addons/nfvd/modules/nfvd-module/nfvd-module-filters'
         //'css!addons/nfvd/widgets/nfvd-vdc-manager/css/vdcmgr_layout.css'
         //'css!addons/nfvd/widgets/nfvd-vdc-manager/css/green.css'
@@ -10,10 +10,10 @@ define(
     function(angular) {
         'use strict';
         // Module definition
-        var mpmKPINewDirectives = angular.module('mpmKPINewDirectives', ['mpmKPINewControllers']);
+        var mpmKPIThresholdDirectives = angular.module('mpmKPIThresholdDirectives', ['mpmKPIThresholdControllers']);
 
 
-        mpmKPINewDirectives.directive('mpmKpiNew', function() {
+        mpmKPIThresholdDirectives.directive('mpmKpiThreshold', function() {
 
             return {
                 restrict: 'E',
@@ -21,11 +21,11 @@ define(
                     widget: '=',
                     context: '='
                 },
-                templateUrl: 'addons/mpm-n/widgets/mpm-kpi-new/mpm-kpi-new.html',
-                controller: 'mpmKPINewController',
+                templateUrl: 'addons/mpm-n/widgets/mpm-kpi-threshold/mpm-kpi-threshold.html',
+                controller: 'mpmKPIThresholdController',
                 link: function(scope, iElement, iAttrs) {
                 }
             };
         }); // Directive
-        return mpmKPINewDirectives;
+        return mpmKPIThresholdDirectives;
     });

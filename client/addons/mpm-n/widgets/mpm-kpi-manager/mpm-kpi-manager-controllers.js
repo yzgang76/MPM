@@ -68,10 +68,15 @@ define([
                     var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPINew';
                     $location.url(url);
                 };
-                $scope.editKPI=function(id){
-                    //var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPINew?kpiid='+id;
+                $scope.onEditKPI=function(item){
+                    //var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPINew?kpiid='+item.id+'&netype='+item.ne+'&kpitype='+item.type+'&gran='+item.gran+'&formula='+item.formula+'&description='+item.description+'&unit='+item.unit;
                     //$location.url(url);
                     $window.alert('TO BE DEVELOPED');
+                };
+                $scope.onManageThreshold=function(item){
+                    var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPIThreshold?kpiid='+item.id+'&netype='+item.ne+'&kpitype='+item.type+'&kpiname='+item.name+'&gran='+item.gran+'&unit='+item.unit;
+                    $location.url(url);
+                    //$window.alert('TO BE DEVELOPED');
                 };
                 refresh();
             }

@@ -72,5 +72,29 @@
         "configuration": {}
       }
     ]
+  },
+  {
+    "id": "mpmKPIThreshold",
+    "name": "mpmKPIThresholdView",
+    "package": "mpm",
+    "description": "mpm create KPI Threshold",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [
+      "Platform Administrator",
+      "Operator_L2",
+      "Operator_L3"
+    ],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "mpmKPIThresholdWidget",
+        "type": "mpm-kpi-threshold",
+        "title": "Manage KPI Thresholds",
+        "configuration": {}
+      }
+    ]
   }
 ]

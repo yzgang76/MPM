@@ -86,7 +86,6 @@ module.exports = (function() {
                                     var children=[];
                                     _.forEach(data,function(line){
                                         //TODO many duplicate, can optimize
-                                        //TODO: change merge to create to improve the performance
                                         var parentID=line[0].trim();
                                         if(parentID!=='' && !_.includes(parents,parentID)){  //create parent node
                                             statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t merge (i:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});

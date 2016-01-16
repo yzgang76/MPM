@@ -37,6 +37,7 @@ define([
                 var CAL='Calculation';
                 var TA="Time Aggregation";
                 var EA="Entity Aggregation";
+
                 var KPIID=dataExchangeService.getData('kpiid');
                 $scope.title =KPIID?"Edit KPI":"Create New KPI";
                 $scope.kpiTypeList=[{type:RAW},{type:CAL},{type:TA},{type:EA}];
@@ -54,6 +55,12 @@ define([
                             $scope.granList=result.granList;
                         }
                     });
+                    if(KPIID){  //edit KPI Definition
+                        //$scope.neType=dataExchangeService.getData('netype');
+                        //$scope.neGranularity=dataExchangeService.getData('gran');
+                        //$scope.neKPIType=dataExchangeService.getData('kpitype');
+                    }
+
                     function _getTemplates(callback){
                         var route1='/kpis/templates';
                         var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;

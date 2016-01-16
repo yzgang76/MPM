@@ -28,7 +28,7 @@
   "icon": "red_radiant_012.png",
   "roles": ["Platform Administrator", "Operator_L1", "Operator_L2", "Operator_L3"],
   "favorite": true,
-  "navigationMode": true,
+  "navigationMode": false ,
   "views": [
     {
       "id": "mpmKPIManager",
@@ -42,6 +42,11 @@
     {
       "id": "mpmKPINew",
       "name": "mpmKPINew",
+      "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
+    },
+    {
+      "id": "mpmKPIThreshold",
+      "name": "mpmKPIThreshold",
       "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
     }
   ]

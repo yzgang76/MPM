@@ -1,0 +1,15 @@
+[{
+  "widgetId": "mpm-kpi-threshold",
+  "name": "kpi threshold",
+  "description": "MPM kpi threshold",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "addons/mpm-n/widgets/mpm-kpi-threshold/mpm-kpi-threshold.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]

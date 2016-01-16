@@ -1,0 +1,49 @@
+<div class="MPM-KPI-THRESHOLD">
+    <button class="btn btn-warning pull-right  " data-ng-click="back()" >
+        <i class="fa fa-home"></i>
+    </button>
+    <div class="KPI Info">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        <translate>ID</translate>
+                    </th>
+                    <th>
+                        <translate>NE</translate>
+                    </th>
+                    <th>
+                        <translate>Granularity</translate>
+                    </th>
+                    <th>
+                        <translate>Name</translate>
+                    </th>
+                    <th>
+                        <translate>Type</translate>
+                    </th>
+                    <th>
+                        <translate>Unit</translate>
+                    </th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>K{{KPIID}}</td>
+                    <td>{{neType}} </td>
+                    <td>{{gran}} </td>
+                    <td>{{KPIName}} </td>
+                    <td>{{getType(KPIType)}} </td>
+                    <td>{{unit||''}}</td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
