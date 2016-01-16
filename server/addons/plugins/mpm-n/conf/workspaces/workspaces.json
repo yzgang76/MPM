@@ -28,7 +28,7 @@
   "icon": "red_radiant_012.png",
   "roles": ["Platform Administrator", "Operator_L1", "Operator_L2", "Operator_L3"],
   "favorite": true,
-  "navigationMode": false ,
+  "navigationMode": true ,
   "views": [
     {
       "id": "mpmKPIManager",

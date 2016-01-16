@@ -31,9 +31,29 @@ define([
                 $scope.gran=dataExchangeService.getData('gran');
                 $scope.unit=dataExchangeService.getData('unit');
 
+                $scope.connector=[
+                    {type:'AND'},{type:'OR'}
+                ];
+                $scope.levels=[
+                    {type:'warning'},{type:'error'},{type:'critical'}
+                ];
+                $scope.actions=[
+                    {type:'Log'},{type:'SNMP Trap'},{type:'Script'}
+                ];
+                $scope.defines=[];
+                $scope.addNewThreshold=function(){
+                    $scope.defines.push({});
+                };
+                $scope.onDeleteThreshold=function(d){
+                    _.remove($scope.defines ,function(f){
+                        return f===d;
+                    })  ;
+                };
                 function refresh(){
 
                 }
+
+
                 $scope.getType=function(t){
                     var ret;
                     switch(t-0){
