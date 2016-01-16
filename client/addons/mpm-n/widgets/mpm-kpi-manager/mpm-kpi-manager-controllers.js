@@ -74,7 +74,7 @@ define([
                     $window.alert('TO BE DEVELOPED');
                 };
                 $scope.onManageThreshold=function(item){
-                    var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPIThreshold?kpiid='+item.id+'&netype='+item.ne+'&kpitype='+item.type+'&kpiname='+item.name+'&gran='+item.gran+'&unit='+item.unit;
+                    var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/mpmKPIThreshold?kpiid='+item.id+'&netype='+item.ne+'&kpitype='+item.type+'&kpiname='+item.name+'&gran='+item.gran+'&unit='+(item.unit||'');
 
                     console.log('rrrrrrrrrrrrrrrr',url);
                     $location.url(url);
