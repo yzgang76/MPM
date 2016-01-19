@@ -117,7 +117,7 @@ module.exports = (function() {
                                             var value=line[i]; //todo validate value
                                             var nValue=parseFloat(value);
                                             var key=myID+'_'+kpiname+"_"+ts+'_'+gran;
-                                            if(_.isNaN(nValue)){  //string
+                                            if(_.isNaN(nValue)){  //string  //TODO there is bug here ,need check template->kpi_def
                                                 statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:"'+value+'",gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
                                             }else{  //number
                                                 statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:'+value+',gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});

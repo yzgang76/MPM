@@ -4,6 +4,7 @@ merge (:TEMPLATE:GRAN {type:"GRAN",desc:""});
 merge (:TEMPLATE:BSC {type:"BSC",desc:""});
 merge (:TEMPLATE:BTS {type:"BTS",desc:""});
 merge (:TEMPLATE:Windows_Host {type:"Windows_Host",desc:"windows7"});
+merge (:TEMPLATE:NFVD_SERVER {type:"NFVD_SERVER",desc:"nfvd GUI server"});
 match (gran:TEMPLATE {type:"GRAN"}) with gran match (bsc:TEMPLATE {type:"BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 
@@ -139,6 +140,18 @@ match (k:KPI_DEF {id:108}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_K
 merge (:KPI_DEF {id:109,name:"KPI10",type:0,formula:"KPI10"});
 match (k:KPI_DEF {id:109}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);
 match (k:KPI_DEF {id:109}) with k match (g:GRANULARITY {id:0}) merge (g)-[:HAS_KPI]->(k);
+
+merge (:KPI_DEF {id:200,name:"num_of_request",type:0,formula:"num_of_request"});
+match (k:KPI_DEF {id:200}) with k match (server:TEMPLATE {type:"NFVD_SERVER"}) merge (server)-[:HAS_KPI]->(k);
+match (k:KPI_DEF {id:200}) with k match (g:GRANULARITY {id:2}) merge (g)-[:HAS_KPI]->(k);
+
+merge (:KPI_DEF {id:201,name:"avg_request_cost",type:0,formula:"avg_request_cost"});
+match (k:KPI_DEF {id:201}) with k match (server:TEMPLATE {type:"NFVD_SERVER"}) merge (server)-[:HAS_KPI]->(k);
+match (k:KPI_DEF {id:201}) with k match (g:GRANULARITY {id:2}) merge (g)-[:HAS_KPI]->(k);
+
+merge (:KPI_DEF {id:202,name:"max_request_cost",type:0,formula:"max_request_cost"});
+match (k:KPI_DEF {id:202}) with k match (server:TEMPLATE {type:"NFVD_SERVER"}) merge (server)-[:HAS_KPI]->(k);
+match (k:KPI_DEF {id:202}) with k match (g:GRANULARITY {id:2}) merge (g)-[:HAS_KPI]->(k);
 
 
 create (a:ACTION{id:1,type:"log event"}),(:ACTION{id:2,type:"send SNMP Trap Message",conf:"..."}),(:ACTION{id:3,type:"execute script",script:"..."}), (:ACTION{id:4,type:"invoke API",api:"..."});

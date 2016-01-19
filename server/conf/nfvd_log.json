@@ -1,0 +1,6 @@
+{
+  "id":"myLaptop",
+  "type":"NFVD_SERVER",
+  "gran":86400,
+  "path":"C:\\sync\\MyCode\\html_js\\oss-cea-nextgen-webgui\\webgui\\logs\\"
+}
