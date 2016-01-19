@@ -6,11 +6,7 @@
     "description": "mpm collector manager",
     "author": "admin",
     "version": "V1.0",
-    "roles": [
-      "Platform Administrator",
-      "Operator_L2",
-      "Operator_L3"
-    ],
+    "roles": [],
     "layout": {
       "id": "layout-1"
     },
@@ -32,11 +28,7 @@
     "description": "mpm KPI manager",
     "author": "admin",
     "version": "V1.0",
-    "roles": [
-      "Platform Administrator",
-      "Operator_L2",
-      "Operator_L3"
-    ],
+    "roles": [],
     "layout": {
       "id": "layout-1"
     },
@@ -56,11 +48,7 @@
     "description": "mpm create KPI",
     "author": "admin",
     "version": "V1.0",
-    "roles": [
-      "Platform Administrator",
-      "Operator_L2",
-      "Operator_L3"
-    ],
+    "roles": [],
     "layout": {
       "id": "layout-1"
     },
@@ -80,11 +68,7 @@
     "description": "mpm create KPI Threshold",
     "author": "admin",
     "version": "V1.0",
-    "roles": [
-      "Platform Administrator",
-      "Operator_L2",
-      "Operator_L3"
-    ],
+    "roles": [],
     "layout": {
       "id": "layout-1"
     },

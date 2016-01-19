@@ -7,14 +7,14 @@
     "version": "1.0",
     "category": "MPM",
     "icon": "red_radiant_012.png",
-    "roles": ["Platform Administrator", "Operator_L1", "Operator_L2", "Operator_L3"],
+    "roles": [],
     "favorite": true,
     "navigationMode": false,
     "views": [
       {
         "id": "mpmCollectorManager",
         "name": "MPM Collector Manager",
-        "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
+        "roles": []
       }
     ]
 },{
@@ -26,28 +26,24 @@
   "version": "1.0",
   "category": "MPM",
   "icon": "red_radiant_012.png",
-  "roles": ["Platform Administrator", "Operator_L1", "Operator_L2", "Operator_L3"],
+  "roles": [],
   "favorite": true,
   "navigationMode": true ,
   "views": [
     {
       "id": "mpmKPIManager",
       "name": "mpmKPIManager",
-      "roles": [
-        "Platform Administrator",
-        "Operator_L2",
-        "Operator_L3"
-      ]
+      "roles": []
     },
     {
       "id": "mpmKPINew",
       "name": "mpmKPINew",
-      "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
+      "roles": []
     },
     {
       "id": "mpmKPIThreshold",
       "name": "mpmKPIThreshold",
-      "roles": ["Platform Administrator", "Operator_L2", "Operator_L3"]
+      "roles": []
     }
   ]
 }]
