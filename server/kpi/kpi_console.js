@@ -35,10 +35,29 @@ module.exports = (function() {
                     res.end();
                 }
             },param.id,param.ts,param.nelist,param.size,param.skip,param.order);
+
+
+
+
+
         }else{
             res.send([]);
             res.end();
         }
     };
+
+    // only for get kpis for NFVD request monitor
+    S.getKPIsForNFVDGUIRequestMonitor=function(req,res){
+        engine.getKPIsForNFVDGUIRequestMonitor(function(err,data){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                res.send(data);
+                res.end();
+            }
+        });
+    };
+
     return S;
 }());

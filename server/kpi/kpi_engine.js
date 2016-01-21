@@ -557,5 +557,72 @@ module.exports = (function() {
         _fetchKPIValue(kpiid,callback,kpidef);
 
     };
+
+    //customized functions
+    E.getKPIsForNFVDGUIRequestMonitor=function(callback){
+        var statement={statement:'match (e:KPI_VALUE)<-[:HAS_KPI_VALUE]-(ne:INSTANCE{id:"myLaptop"}) return e.name, e.ts,e.value order by e.name, e.ts'};
+        n4j.runCypherWithReturn([statement],function(err,results){
+            if(!err){
+                var data=_.groupBy( _.get(results,'results[0].data'),'row[0]');
+                var k1=_.get(data,'num_of_request');
+                var k2=_.get(data,'avg_request_cost');
+                var k3=_.get(data,'max_request_cost');
+                var categories= _.map(k1,'row[1]');
+
+                var s1={
+                    name: 'num_of_request',
+                    data:[]
+                };
+
+                _.forEach(categories,function(date){
+                    var r=_.find(k1,function(kk){
+                        return kk.row[1]===date;
+                    });
+                    if(r){
+                        s1.data.push(r.row[2]);
+                    }else{
+                        s1.data.push(null);
+                    }
+                });
+
+                var s2={
+                    name: 'avg_request_cost',
+                    data:[]
+                };
+
+                _.forEach(categories,function(date){
+                    var r=_.find(k2,function(kk){
+                        return kk.row[1]===date;
+                    });
+                    if(r){
+                        s2.data.push(r.row[2]);
+                    }else{
+                        s2.data.push(null);
+                    }
+                });
+
+                var s3={
+                    name: 'max_request_cost',
+                    data:[]
+                };
+
+                _.forEach(categories,function(date){
+                    var r=_.find(k3,function(kk){
+                        return kk.row[1]===date;
+                    });
+                    if(r){
+                        s3.data.push(r.row[2]);
+                    }else{
+                        s3.data.push(null);
+                    }
+                });
+                var series=[s1,s2,s3];
+
+                callback(null,{categories:categories,series:series});
+            }else{
+                callback(err,null);
+            }
+        });
+    };
     return E;
 })();

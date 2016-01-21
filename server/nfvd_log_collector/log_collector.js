@@ -67,7 +67,7 @@ module.exports = (function() {
                     maxCost=r.cost>maxCost?r.cost:maxCost;
                 }
             });
-            console.log( file.Right(10)+" : ",numOfRequest,totalCost/numOfRequest,maxCost );
+            console.log( file.Right(10)+" : ",numOfRequest,',',totalCost/numOfRequest,',',maxCost );
             var statements=[];
             var kpiname='num_of_request';  //it is hard code.
             var ts=file.Right(10);
@@ -86,8 +86,6 @@ module.exports = (function() {
                 statement='match (ne:INSTANCE{id:"'+conf.id+'"}),(t:TEMPLATE)-[:HAS_KPI]->(d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+conf.gran+' and t.type="'+conf.type+'" with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:"'+ts+'",value:'+maxCost+',gran:'+conf.gran+', neID:"'+conf.id+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id';
                 statements.push({statement:statement});
             }
-
-
             n4j.runCypherStatementsReturnErrors(statements,function(err,result) {
                 if(err){
                     console.log(err);

@@ -23,6 +23,8 @@ module.exports = function(app) {
     app.get(prefix+'/kpis/id',kpi.getKPIID);
     app.post(prefix+'/kpis/create',kpi.createKPI);
 
+    //app.get(prefix+'/kpis/values/nfvdgui',kpi.getKPIsForNFVDGUIRequestMonitor);
+
     //Where the more generic logErrors may write request and error information to stderr, loggly, or similar services:
     function logErrors(err, req, res, next) {
         console.error('MPM-N Plugin Plugin ROUTE logErrors: (', (err ? err.stack : err), ')');

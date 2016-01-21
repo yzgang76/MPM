@@ -120,6 +120,11 @@ app.get('/collect/threshold/evaluate/:gran/:ts',function(req,res){
 app.post('/collect/kpi/value',function(req,res){
     kpi_console.getKPI(req,res);
 });
+
+
+app.get('/collect/kpi/nfvd-gui-request',function(req,res){
+    kpi_console.getKPIsForNFVDGUIRequestMonitor(req,res);
+});
 /***********************************************
  *  end routes
  */

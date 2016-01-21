@@ -1,0 +1,15 @@
+[{
+  "widgetId": "nfvd-monitor-charts",
+  "name": "NFVD GUI Service Monitor Charts",
+  "description": "MPM on NFVD GUI",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "/addons/mpm-n/widgets/nfvd-monitor-charts/nfvd-monitor-charts.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": true,
+    "selectors": false
+  }
+}]

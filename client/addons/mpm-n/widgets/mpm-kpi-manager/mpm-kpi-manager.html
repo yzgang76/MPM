@@ -36,7 +36,7 @@
                 <th>
                     <translate>Unit</translate>
                 </th>
-                <th>
+                <th style="text-align:center;">
                     <translate>Actions</translate>
                 </th>
             </tr>
@@ -51,14 +51,14 @@
                 <td>{{getType(item.type)||''}}</td>
                 <td>{{item.formula||''}}</td>
                 <td>{{item.unit||''}}</td>
-                <td>
-                    <button class="btn btn-info" data-ng-click="onEditKPI(item)" tooltip="Edit KPI Definition">
+                <td style="text-align: center;">
+                    <button class="btn btn-info" data-ng-click="onEditKPI(item)" tooltip="Edit KPI Definition" style="float: none;">
                         <i class="fa fa-pencil-square-o"></i>
                     </button>
-                    <button class="btn btn-info" data-ng-click="onManageThreshold(item)" tooltip="Manage Threshold">
+                    <button class="btn btn-info" data-ng-click="onManageThreshold(item)" tooltip="Manage Threshold" style="float: none;">
                         <i class="fa fa-exclamation-triangle"></i>
                     </button>
-                    <button class="btn btn-info" data-ng-click="onQueryKPI(item)" tooltip="Query KPI Values">
+                    <button class="btn btn-info" data-ng-click="onQueryKPI(item)" tooltip="Query KPI Values" style="float: none;">
                         <i class="fa fa-line-chart"></i>
                     </button>
                 </td>
