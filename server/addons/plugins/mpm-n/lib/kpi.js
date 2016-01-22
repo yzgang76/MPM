@@ -233,5 +233,24 @@ module.exports = (function() {
         }
     });
 
+    K.getKPIsForNFVDGUIRequestMonitor=function(req,res){
+        var url='/collect/kpi/nfvd-gui-request';
+        C.makeQuery('http://localhost:3001',url,function(err,r,body){
+            if(err){
+                //console.log("getAllNode return with error: ",JSON.stringify(err),body);
+                console.log({
+                    headers: _.get(r,'headers'),
+                    errors:body
+                });
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('makeQuery return :',JSON.stringify(body));
+                res.send(body);
+                res.end();
+            }
+        },'GET',null,false);
+    };
+
     return K;
 })();

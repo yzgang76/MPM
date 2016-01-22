@@ -80,5 +80,26 @@
         "configuration": {}
       }
     ]
+  },
+  {
+    "id": "requestMonitor",
+    "name": "requestMonitor",
+    "package": "mpm",
+    "description": "NFVD GUI Request Monitor",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "nfvd-monitor-charts",
+        "type": "nfvd-monitor-charts",
+        "title": "NFVD GUI Server Request Monitor",
+        "configuration": {}
+      }
+    ]
   }
+
 ]

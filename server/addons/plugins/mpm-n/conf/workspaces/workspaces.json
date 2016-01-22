@@ -46,4 +46,24 @@
       "roles": []
     }
   ]
-}]
+},{
+  "id": "NFVD GUI Self Monitor",
+  "name": "NFVD GUI Self Monitor",
+  "description": "NFVD GUI Self Monitor",
+  "package": "mpm",
+  "author": "admin",
+  "version": "1.0",
+  "category": "MPM",
+  "icon": "red_radiant_012.png",
+  "roles": [],
+  "favorite": true,
+  "navigationMode": true ,
+  "views": [
+    {
+      "id": "requestMonitor",
+      "name": "requestMonitor",
+      "roles": []
+    }
+  ]
+ }
+]

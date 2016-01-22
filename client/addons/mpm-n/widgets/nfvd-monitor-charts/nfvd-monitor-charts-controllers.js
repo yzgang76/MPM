@@ -37,7 +37,7 @@ define([
                     },
                     xAxis: [{
                         categories: [
-                            "2015-12-09",
+                           /* "2015-12-09",
                             "2015-12-11",
                             "2015-12-14",
                             "2015-12-15",
@@ -62,7 +62,7 @@ define([
                             "2016-01-14",
                             "2016-01-15",
                             "2016-01-16",
-                            "2016-01-18"],
+                            "2016-01-18"*/],
                         crosshair: true
                     }],
                     yAxis: [{ // Primary yAxis
@@ -125,7 +125,7 @@ define([
                         floating: false,
                         backgroundColor: '#FFFFFF'
                     },
-                    series: [{
+                    series: [/*{
                         name: 'num_of_reqeust',
                         type: 'column',
                         yAxis: 1,
@@ -228,8 +228,47 @@ define([
                         tooltip: {
                             valueSuffix: ' s'
                         }
-                    }]
+                    }*/]
                 };
+                refresh();
+                function refresh(){
+                    var route1='/kpis/values/nfvdgui';
+                    var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                    p1.then(
+                        function(response) {
+                            $scope.data=response.data;
+                            console.log('ddddddddddddd', $scope.data);
+                            vm.configuration.xAxis[0].categories=$scope.data.categories;
+                            $scope.data.series[0].type='column';
+                            $scope.data.series[0].yAxis= 1;
+                            $scope.data.series[0].tooltip= {valueSuffix: '' };
+
+
+                            $scope.data.series[1].type='spline';
+                            $scope.data.series[1].yAxis= 2;
+                            $scope.data.series[1].tooltip= {valueSuffix: ' s' };
+                            $scope.data.series[1].marker= {enabled: false};
+                            $scope.data.series[1].dashStyle='shortdot';
+
+                            $scope.data.series[2].type='spline';
+                            //$scope.data.series[2].yAxis= 3;
+                            $scope.data.series[2].tooltip= {valueSuffix: ' s' };
+                            //$scope.data.series[2].marker= {enabled: false};
+                            //$scope.data.series[2].dashStyle='shortdot';
+
+
+                            vm.configuration.series=$scope.data.series;
+
+
+                            vm.configuration.series=$scope.data.series;
+
+                        },
+                        function(error) {
+                            messageNotifierService.error(JSON.stringify(error));
+                            logger.error('Cant get data', route1, error);
+                        }
+                    );
+                }
             }
         ]);
 
