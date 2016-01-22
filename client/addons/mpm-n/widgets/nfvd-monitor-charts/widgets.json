@@ -9,7 +9,7 @@
   "toolbar": {
     "zoom": false,
     "configuration": false,
-    "refresh": true,
+    "refresh": false,
     "selectors": false
   }
 }]

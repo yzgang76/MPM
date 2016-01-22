@@ -237,7 +237,7 @@ define([
                     p1.then(
                         function(response) {
                             $scope.data=response.data;
-                            console.log('ddddddddddddd', $scope.data);
+                            //console.log('ddddddddddddd', $scope.data);
                             vm.configuration.xAxis[0].categories=$scope.data.categories;
                             $scope.data.series[0].type='column';
                             $scope.data.series[0].yAxis= 1;
