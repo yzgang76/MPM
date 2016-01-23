@@ -217,18 +217,18 @@ module.exports = (function() {
                                         C.makeQuery(mpm,url,function(err,r,data){
                                             if(err){
                                                 console.log(snmp_collector_console.messages.ERROR7);
-                                                callback(new Error(snmp_collector_console.messages.ERROR7,null));
+                                                callback(new Error(snmp_collector_console.messages.ERROR7),null);
                                             }else{
                                                 kpiid=data.ID;
                                                 if(!kpiid){
                                                     console.log(snmp_collector_console.messages.ERROR7);
-                                                    callback(new Error(snmp_collector_console.messages.ERROR7,null));
+                                                    callback(new Error(snmp_collector_console.messages.ERROR7),null);
                                                 }else{
 
                                                     var statements=[];
-                                                    statements.push({statement:'create (:KPI_DEF {id:'+kpiid+',name:"'+name+'",type:0,formula:"'+formula+'",description:"'+(description||'')+'",type:0,unit:"'+(unit||'')+'"});'});
-                                                    statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (t:TEMPLATE {type:"'+type+'"}) merge (t)-[:HAS_KPI]->(k);'});
-                                                    statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (g:GRANULARITY {num:'+interval+'}) merge (g)-[:HAS_KPI]->(k);'});
+                                                    statements.push({statement:'create (:KPI_DEF {id:'+kpiid+',name:"'+name+'",type:0,formula:"'+formula+'",description:"'+(description||'')+'",type:0,unit:"'+(unit||'')+'"})'});
+                                                    statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (t:TEMPLATE {type:"'+type+'"}) merge (t)-[:HAS_KPI]->(k)'});
+                                                    statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (g:GRANULARITY {num:'+interval+'}) merge (g)-[:HAS_KPI]->(k)'});
                                                     n4j.runCypherStatementsReturnErrors(statements,function(err,info){
                                                         if(err){
                                                             console.log(snmp_collector_console.messages.ERROR8,err);

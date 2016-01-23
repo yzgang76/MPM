@@ -20,4 +20,8 @@ function test(){
     C.collect();
 }
 
-test();
+function test2(){
+    C.createModelAndRegisterKPIs();
+}
+
+test2();

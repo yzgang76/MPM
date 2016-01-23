@@ -4,7 +4,7 @@ merge (:TEMPLATE:GRAN {type:"GRAN",desc:""});
 merge (:TEMPLATE:BSC {type:"BSC",desc:""});
 merge (:TEMPLATE:BTS {type:"BTS",desc:""});
 merge (:TEMPLATE:Windows_Host {type:"Windows_Host",desc:"windows7"});
-merge (:TEMPLATE:NFVD_SERVER {type:"NFVD_SERVER",desc:"nfvd GUI server"});
+
 match (gran:TEMPLATE {type:"GRAN"}) with gran match (bsc:TEMPLATE {type:"BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 

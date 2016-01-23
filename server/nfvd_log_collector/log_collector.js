@@ -11,10 +11,115 @@ var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 var C=require(path.join(__dirname, '/../lib/common-funs'));
 var os=require('os');
 var conf=require(path.join(__dirname,'/../conf/nfvd_log'));
+var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 
 module.exports = (function() {
     'use strict';
     var S = {};
+    var kpiName1='Server_Response';
+    var kpiID1;
+    var kpiName2='Server_Request_cost';
+    var kpiID2;
+    S.createModelAndRegisterKPIs=function(){
+        var url= _.get(conf,'mpm_console.url');
+        var mpm_server= _.get(conf,'mpm_console.server');
+        function _createModel(callback){
+            var statements=[];
+            statements.push({statement:'merge (server:TEMPLATE:NFVD_GUI_SERVER {type:"NFVD_GUI_SERVER",desc:"nfvd GUI server"}) with server merge (user:TEMPLATE:NFVD_GUI_USER{type:"NFVD_GUI_USER",desc:"NFVD GUI USER"}) with server, user merge (request:TEMPLATE:NFVD_GUI_SERVER_REQUEST {type:"NFVD_GUI_SERVER_REQUEST",desc:"nfvd GUI server"}) with server, user ,request merge (server)-[:CONTAINS]->(request) with user,request merge (user)-[:CONTAINS]->(request)'}) ;
+            statements.push({statement:'merge (:GRANULARITY {id:999,type:"Real _Time",num:0})'});
+            n4j.runCypherStatementsReturnErrors(statements,function(err,results){
+                if(err){
+                    console.log('Failed to create Model', err);
+                    callback(err,null);
+                }else{
+                    callback(null,results);
+                }
+            });
+
+        }
+        function _crateKPIDefinitions(kpiName,unit,callback){
+            //create KPI definitions
+            var stat='match (k:KPI_DEF{name:"'+kpiName+'",type:0})<-[:HAS_KPI]-(t:TEMPLATE{type:"NFVD_GUI_SERVER_REQUEST"}) with k match (k)<-[:HAS_KPI]-(g:GRANULARITY{num:0}) return k';
+            n4j.runCypherWithReturn([{"statement":stat}],function(err,result){
+                if(err){
+                    console.log('Failed to get KPI definition', kpiName, err);
+                    callback(err,null);
+                }else{
+                    var kpiid=_.get(result,"results[0].data[0].row[0].id");
+                    if(kpiid){
+                        console.log("Found kpi id of "+kpiName+'='+kpiid);
+                        callback(null,kpiid); //already define the kpi
+                    }else{
+                        // add kpi definition
+                        //get kpiid
+                        console.log("create new kpi definition");
+                        C.makeQuery(mpm_server,url,function(err,r,data){
+                            if(err){
+                                console.log('Failed to get new KPIID',err);
+                                callback(err,null);
+                            }else{
+                                kpiid=data.ID;
+                                if(!kpiid){
+                                    console.log('Failed to get new KPIID');
+                                    callback(new Error('Failed to get new KPIID'),null);
+                                }else{
+
+                                    var statements=[];
+                                    statements.push({statement:'match (t:TEMPLATE {type:"NFVD_GUI_SERVER_REQUEST"}), (g:GRANULARITY {num:0}) with t,g create (KD:KPI_DEF {id:'+kpiid+',name:"'+kpiName+'",type:0,formula:"'+kpiName+'",description:"'+''+'",unit:"'+(unit||'')+'"}),(t)-[:HAS_KPI]->(KD), (g)-[:HAS_KPI]->(KD) '});
+
+                                    console.log('match (t:TEMPLATE {type:"NFVD_GUI_SERVER_REQUEST"}), (g:GRANULARITY {num:0}) with t,g create (KD:KPI_DEF {id:'+kpiid+',name:"'+kpiName+'",type:0,formula:"'+kpiName+'",description:"'+''+'",unit:"'+(unit||'')+'"}),(t)-[:HAS_KPI]->(KD), (g)-[:HAS_KPI]->(KD) ');
+                                    n4j.runCypherStatementsReturnErrors(statements,function(err,info){
+                                        if(err){
+                                            console.log('Failed to create new KPI definition',err);
+                                            callback(err,null);
+                                        }else{
+                                            if(info.length>0){
+                                                console.log('Failed to create new KPI definition',info);
+                                                callback(info,kpiid);
+                                            }else{
+                                                callback(null,kpiid);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        },'GET',{},true);
+
+                    }
+                }
+            });
+
+        }
+        function _createServerInstance(callback){
+            var statement='merge (e:INSTANCE:NFVD_GUI_SERVER{id:"'+conf.id+'",type:"NFVD_GUI_SERVER"}) with e match  (server:TEMPLATE {type:"NFVD_GUI_SERVER"}) merge (server)-[:HAS_INSTANCE]->(e)';
+            n4j.runCypherStatementsReturnErrors([{statement:statement}],function(err,result) {
+                console.log(err, result);
+               callback(err,result);
+            });
+        }
+        async.series([
+            async.apply(_createModel),
+            async.apply(_crateKPIDefinitions,kpiName1,null),
+            async.apply(_crateKPIDefinitions,kpiName2,'s'),
+            async.apply(_createServerInstance)
+        ],function(err,results){
+           if(err){
+               console.log('createModelAndRegisterKPIs failed ',err);
+           }else{
+               kpiID1=results[1];
+               kpiID2=results[2];
+               console.log('kpiids:',kpiID1,kpiID2);
+           }
+        });
+    };
+
+    S.collectEx=function(){
+        if(!kpiID1&&kpiID1){
+            return;
+        }
+        // merge server instance
+
+    };
     S.collect=function(){
         console.log(conf);
         var statement='merge (e:INSTANCE:'+conf.type+'{id:"'+conf.id+'",type:"'+conf.type+'"})';

@@ -1,4 +1,8 @@
 {
+  "mpm_console": {
+    "server": "http://localhost:3000",
+    "url": "/V1.0/domains/mpm-n/kpis/ID"
+  },
   "id":"myLaptop",
   "type":"NFVD_SERVER",
   "gran":86400,
