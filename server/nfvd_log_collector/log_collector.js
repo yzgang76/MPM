@@ -113,12 +113,25 @@ module.exports = (function() {
         });
     };
 
-    S.collectEx=function(){
+    S.collectEx=function(date){ //date:  yyyy-mm-dd
         if(!kpiID1&&kpiID1){
             return;
         }
-        // merge server instance
+        C.walk(conf.path,function(err,files){
+            //var r =/nfvd-api.log-\d*-\d*-\d*/g;
+            files=_.filter(files,function(file){
+                if(date){
+                    return _.startsWith(file,'nfvd-api')&& _.endsWith(file,date);
+                }else{
+                    return _.startsWith(file,'nfvd-api.log');
+                }
 
+            });
+            //console.log(files);
+            _.forEach(files,function(f){
+                collectFile(f);
+            });
+        });
     };
     S.collect=function(){
         console.log(conf);
@@ -205,15 +218,26 @@ module.exports = (function() {
         try{
             var context=lineMessage.split(";");
             //console.log('ccccccc',context);
+            var ts=context.slice(1,23);
+
             var user=context[1].split(':')[1].trim();
             var url=context[4].split(':')[1].trim();
             var msg=context[5].split(':')[1].trim();
+
+            console.log('ts===============',ts,user,url,msg);
             //console.log(user,url,msg);
             if(_.startsWith(msg,'Request completed')){
                 return({
                     user:user,
                     url:url,
+                    value:1,
                     cost:parseFloat((msg.split(' ')[3]))
+                });
+            }else if(_.startsWith(msg,'"Can\'t')) {
+                return ({
+                    user: user,
+                    url: url,
+                    value: 0,
                 });
             }
 
