@@ -24,4 +24,8 @@ function test2(){
     C.createModelAndRegisterKPIs();
 }
 
-test2();
+function test3(){
+    C.collectEx();
+}
+
+test3();

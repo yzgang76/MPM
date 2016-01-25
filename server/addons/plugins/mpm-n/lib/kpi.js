@@ -159,7 +159,7 @@ module.exports = (function() {
     };
     function getKPIID(callback){
         //var url='match (e:KPI_DEF) return max(e.id)';
-        if(!KPIID){
+        if(!KPIID&&KPIID!==0){
           /*  n4j.runCypherWithReturn([{statement:url}],function(err,result){
                 if(err){
                     callback(err,null);
@@ -228,8 +228,9 @@ module.exports = (function() {
         if(err){
             console.error(err);
         }else{
-            KPIID=_.get(result,'results[0].data[0].row[0]');
+            KPIID=_.get(result,'results[0].data[0].row[0]')||0;
             console.log('Init KPI ID=',KPIID);
+
         }
     });
 

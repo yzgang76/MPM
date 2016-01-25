@@ -20,6 +20,9 @@ module.exports = (function() {
     var kpiID1;
     var kpiName2='Server_Request_cost';
     var kpiID2;
+
+    var uris=[];
+    var users=[];
     S.createModelAndRegisterKPIs=function(){
         var url= _.get(conf,'mpm_console.url');
         var mpm_server= _.get(conf,'mpm_console.server');
@@ -27,6 +30,8 @@ module.exports = (function() {
             var statements=[];
             statements.push({statement:'merge (server:TEMPLATE:NFVD_GUI_SERVER {type:"NFVD_GUI_SERVER",desc:"nfvd GUI server"}) with server merge (user:TEMPLATE:NFVD_GUI_USER{type:"NFVD_GUI_USER",desc:"NFVD GUI USER"}) with server, user merge (request:TEMPLATE:NFVD_GUI_SERVER_REQUEST {type:"NFVD_GUI_SERVER_REQUEST",desc:"nfvd GUI server"}) with server, user ,request merge (server)-[:CONTAINS]->(request) with user,request merge (user)-[:CONTAINS]->(request)'}) ;
             statements.push({statement:'merge (:GRANULARITY {id:999,type:"Real _Time",num:0})'});
+            //statements.push({s:'merge (:TEMPLATE:NFVD_REQUEST_API {type:"NFVD_REQUEST_API",desc:"REST API URI invoked by GUI"})'});
+
             n4j.runCypherStatementsReturnErrors(statements,function(err,results){
                 if(err){
                     console.log('Failed to create Model', err);
@@ -118,18 +123,20 @@ module.exports = (function() {
             return;
         }
         C.walk(conf.path,function(err,files){
-            //var r =/nfvd-api.log-\d*-\d*-\d*/g;
+            var r =/nfvd-api.log-\d*-\d*-\d*/g;
             files=_.filter(files,function(file){
-                if(date){
-                    return _.startsWith(file,'nfvd-api')&& _.endsWith(file,date);
+                if(date&&date!=='*'){
+                    return  _.endsWith(file,'nfvd-api.log-'+date);
+                }else if(date==='*'){
+                    return file.match(r)||_.endsWith(file,'nfvd-api.log');
                 }else{
-                    return _.startsWith(file,'nfvd-api.log');
+                    return _.endsWith(file,'nfvd-api.log');
                 }
 
             });
-            //console.log(files);
+            console.log(files);
             _.forEach(files,function(f){
-                collectFile(f);
+                collectFileEx(f);
             });
         });
     };
@@ -152,8 +159,7 @@ module.exports = (function() {
         });
 
     };
-    String.prototype.Right = function(len)
-    {
+    String.prototype.Right = function(len){
         if(isNaN(len)||len===null)
         {
             len = this.length;
@@ -212,37 +218,149 @@ module.exports = (function() {
 
         });
     }
-
-    function parseLogMessage(lineMessage){
+    function parseLogMessage(lineMessage) {
         //console.log(lineMessage);
-        try{
-            var context=lineMessage.split(";");
+        try {
+            var context = lineMessage.split(";");
             //console.log('ccccccc',context);
-            var ts=context.slice(1,23);
+            var ts = context.slice(1, 23);
 
-            var user=context[1].split(':')[1].trim();
-            var url=context[4].split(':')[1].trim();
-            var msg=context[5].split(':')[1].trim();
+            var user = context[1].split(':')[1].trim();
+            var url = context[4].split(':')[1].trim();
+            var msg = context[5].split(':')[1].trim();
 
-            console.log('ts===============',ts,user,url,msg);
+            console.log('ts===============', ts, user, url, msg);
             //console.log(user,url,msg);
-            if(_.startsWith(msg,'Request completed')){
-                return({
-                    user:user,
-                    url:url,
-                    value:1,
-                    cost:parseFloat((msg.split(' ')[3]))
-                });
-            }else if(_.startsWith(msg,'"Can\'t')) {
+            if (_.startsWith(msg, 'Request completed')) {
                 return ({
                     user: user,
                     url: url,
-                    value: 0,
+                    value: 1,
+                    cost: parseFloat((msg.split(' ')[3]))
                 });
             }
 
-        }catch(e){
+        } catch (e) {
             //console.log('eeeeeeeeeeee',e);
+            return undefined;
+        }
+    }
+
+    function collectFileEx(file){
+        var numOfRequest=0;
+        var totalCost=0;
+        var maxCost=-1;
+        var statements=[];
+        function _processEvent(r,v){
+            //console.log('_processEvent',r);
+
+            var user= _.get(r,'userName');
+            var uri= _.get(r,'url');
+            if(user&&uri){
+                var statement="";
+                if(!_.includes(users,user)){
+                    //add new instance
+                    statement='match (t:TEMPLATE{type:"NFVD_GUI_USER"}) with t  merge (user:INSTANCE:NFVD_GUI_USER{id:"'+user+'", type:"NFVD_GUI_USER"}) with t ,user merge (t)-[:HAS_INSTANCE]->(user)';
+                    statements.push({statement:statement});
+                    users.push(user);
+                }
+                uri=uri.replaceAll('"','');
+
+                if(!_.includes(uris,uri)){
+                    //add new instance
+                    statement='match (t:TEMPLATE{type:"NFVD_GUI_SERVER_REQUEST"}) with t merge (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) with t, uri merge (t)-[:HAS_INSTANCE]->(uri)';
+                    statements.push({statement:statement});
+                    uris.push(uri);
+                }
+
+                statement='match (user:INSTANCE{id:"'+user+'", type:"NFVD_GUI_USER"}) with user match (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) merge (user)-[:HAS_CHILD]->(uri)' ;
+                statements.push({statement:statement});
+
+                statement='match (server:INSTANCE{id:"'+conf.id+'", type:"NFVD_GUI_SERVER"}) with server match (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) merge (server)-[:HAS_CHILD]->(uri)' ;
+                statements.push({statement:statement});
+
+                var cost= _.get(r,'cost');
+                var ts= _.get(r,'ts');
+                var key;
+                if(cost&&ts){
+                    key=uri+"_Server_Request_cost_"+ts;
+                    statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Request_cost"})<-[:HAS_KPI]-(t:TEMPLATE{type:"NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{id:"'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Request_cost", ts:'+ r.ts+',value:'+parseFloat(cost)+', neID:"'+uri+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id , k.gran=g.num';
+                    statements.push({statement:statement});
+                }
+
+                if(ts){
+                    key=uri+"Server_Response"+ts;
+                    statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Response"})<-[:HAS_KPI]-(t:TEMPLATE{type:"NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{id:"'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Response", ts:'+ r.ts+',value:"'+v+'", neID:"'+uri+'", returnCode:"'+r['return code']+'",method:"'+ r.method+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id, k.gran=g.num';
+                    statements.push({statement:statement});
+                }
+
+            }
+
+
+        }
+        fs.readFile(file,'utf8', function(err, data) {
+            if (err) {
+                throw err;
+            }
+            var lines=data.split('\n');
+
+            _.forEach(lines,function(l){
+                //console.log(l);
+                if(l){
+                    var r=parseLogMessageEx(l);
+                    if(_.get(r,'addon')==='nfvd'){
+                        switch(_.get(r,'message').replaceAll('"','')){
+                            case 'Request completed':
+                                _processEvent(r,0);
+                                break;
+                            case 'Request failed':
+                                _processEvent(r,1);
+                                break;
+                            case 'Request rejected':
+                                _processEvent(r,-1);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            });
+            if(statements.length>0){
+                console.log(statements);
+                n4j.runCypherStatementsReturnErrors(statements,function(err,result){
+                    console.log("result of collect file", file);
+                    console.log(result);
+                });
+            }
+        });
+    }
+
+    function parseLogMessageEx(lineMessage){
+        //2016-01-25 09:56:19.899] [INFO] nfvd-api-logger - addon: nfvd;   userName: wallman@IT_Reseller;   userToken: d6fa255d-90b2-489c-8f42-b9b7db05b478;  userRemoteAddress: ::1;    requestRoute: /V1.0/domains/nfvd/vdcm/tenant/5fdc2ca4-eb4c-4115-9468-81d255f1c2b4/vappGroups;    message: Request completed;  cost: 0.6590000000001055s; method:GET; return code:200; url:http://16.17.88.149:8080/nfvd-ext/domains/907b90a5-8c02-42e7-b0e6-35645733bbb7/organizations/331ca670-9c89-4eb6-af46-fb2a44431475/tenants/5fdc2ca4-eb4c-4115-9468-81d255f1c2b4/vnfs;
+        var ret={};
+        try{
+            var context=lineMessage.split(";");
+            //console.log('ccccccc',context[0]);
+            ret.time=context[0].slice(1,24);
+            var st=ret.time.replaceAll('-','/');
+            ret.addon=_.trim(context[0].split(":")[3]);
+            ret.ts=new Date(st).getTime();
+            for(var i=1;i<context.length;i++){
+                var t=context[i].split(":");
+                if(t.length>1){
+                    var key=_.trim(t[0]);
+                    var value=
+                        key==="url"?
+                        _.trim(t[1])+":"+t[2]+":"+t[3]
+                        :_.trim(t[1]);
+                    _.set(ret, key,value );
+                }
+            }
+            //console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr',ret);
+            return(ret);
+
+        }catch(e){
+            console.log('eeeeeeeeeeee',e,ret);
             return undefined;
         }
 
