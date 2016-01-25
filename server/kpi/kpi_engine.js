@@ -273,7 +273,7 @@ module.exports = (function() {
         });
     };
     E.makeCypherForKPIDefs=function(kpiid){
-        return  'match (k:KPI_DEF)<-[:HAS_KPI]-(t:TEMPLATE) with k ,t match (k1:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where k.id='+kpiid+' and k1.id='+kpiid+' return k,g,t';
+        return  'match (g:GRANULARITY)-[:HAS_KPI]->(k:KPI_DEF)<-[:HAS_KPI]-(t:TEMPLATE)  where k.id='+kpiid+' return k,g,t';
     };
     /**
      *  get kpi in a ts range
@@ -287,10 +287,10 @@ module.exports = (function() {
      * @param order
      */
     E.getKPIValueWithinWindow=function(callback,kpiid, ts,window_size,nelist,size,skip,order) {
-        //console.log('*************getKPIValueWithinWindow',kpiid, ts,window_size,nelist,size,skip,order);
+        console.log('*************getKPIValueWithinWindow',kpiid, ts,window_size,nelist,size,skip,order);
         E.getKPIDef(kpiid,function(err,def){
             function _fetchKPI(ts,callback){
-
+                console.log('to getKPIValue',kpiid, ts,nelist,size,skip,order,def);
                 E.getKPIValue(callback,kpiid, ts,nelist,size,skip,order,def,true);
             }
             function _afterFetchAllKPI(err,data){
@@ -299,7 +299,7 @@ module.exports = (function() {
                     callback(err,null);
                 }
                 else{
-                    //console.log('_afterFetchAllKPI:', _.flatten(data));
+                    console.log('_afterFetchAllKPI:', _.flatten(data));
                     callback(null,_.flatten(data));
                 }
 
@@ -314,8 +314,17 @@ module.exports = (function() {
                     for(var t=ts;t>ts-window_size;t=t-gran*1000){
                         tss.push(t);
                     }
+                    console.log(tss);
                     async.map(tss,_fetchKPI,_afterFetchAllKPI);
+                }else if(gran===0){
+                    //real time
+                    if(def.kpi_def.type!==0){
+                        callback(new Error("Unsupported KPI type"),null);
+                    }else{
+                        //get raw kpis in time range
+                    }
                 }else{
+                    console.log('err3',gran);
                     callback(new Error("KPI definition Error"),null);
                 }
 
@@ -355,7 +364,7 @@ module.exports = (function() {
      * @param expression: internal use
      */
     E.getKPIValue=function(callback,kpiid, ts,nelist,size,skip,order,kpidef,expression){
-        //console.log("**************getKPIValue:",kpiid, ts,nelist,size,skip,order,expression);
+        console.log("**************getKPIValue:",kpiid, ts,nelist,size,skip,order,expression);
         var forExpression=expression?expression:false;  //TODO:is it safe???
         function _fetchKPIValue(kpiid,callback,kpidef){
             function _work(callback){

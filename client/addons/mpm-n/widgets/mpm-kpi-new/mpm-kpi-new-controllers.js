@@ -215,7 +215,7 @@ define([
                     }
 
                 };
-                $scope.createNewKPI=function(){
+                    $scope.createNewKPI=function(){
                     var route1='/kpis/create';
                     var p1 = dataAccessService.postRouteDeferred(route1, '', {
                         kpi_name:$scope.kpiName,
@@ -230,6 +230,7 @@ define([
                     p1.then(
                         function(response) {
                             logger.info('createNewKPI succ', response.data);
+                            $scope.back();
                         },
                         function(error) {
                             messageNotifierService.error(JSON.stringify(error));

@@ -42,7 +42,7 @@ module.exports = (function() {
         return ret;
     }
     K.getKPIDefinitions=function(req,res){
-        var getValue0= 'MATCH (n:KPI_DEF)<-[:HAS_KPI]-(t:TEMPLATE) with n,t MATCH (n1:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)where n.id=n1.id return n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit,n.description as description';
+        var getValue0= 'MATCH (t:TEMPLATE)-[:HAS_KPI]->(n:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)  return n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit,n.description as description';
         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
             if(err){
                 res.status(500).send(err);
@@ -195,7 +195,7 @@ module.exports = (function() {
                 var statements=[];
                 statements.push({statement:'create (:KPI_DEF {id:'+id+',name:"'+data.kpi_name+'",type:0,formula:"'+data.kpi_formula+'",description:"'+(data.kpi_desc||'')+'",type:'+data.kpi_type+',unit:"'+(data.kpi_unit||'')+'"});'});
                 statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (t:TEMPLATE {type:"'+data.ne_type+'"}) merge (t)-[:HAS_KPI]->(k);'});
-                statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (g:GRANULARITY {num:'+data.granularity+'}) merge (g)-[:HAS_KPI]->(k);'});
+                statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (g:GRANULARITY {id:'+data.granularity+'}) merge (g)-[:HAS_KPI]->(k);'});
                 n4j.runCypherStatementsReturnErrors(statements,function(err,info){
                     if(err){
                         callback(err,null);

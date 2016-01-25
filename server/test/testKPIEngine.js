@@ -17,15 +17,15 @@ function test(){
 
     function t(i,callback){
         var startTime = os.uptime();
-        var id=11;
+        var id=7;
         E.getKPIValue(function(e,d){
             console.log('get kpi('+id+'):',JSON.stringify(_.slice(d,0,5)));
             console.log('Request completed in ' + (os.uptime() - startTime)+'s');
             callback(null);
-        },id,1452335276000,null,null,null,null);
+        },id,1453702939089,null,null,null,null);
     }
     var iterate=[];
-    for(var i=0;i<10;i++){
+    for(var i=7;i<8;i++){
         //for(var id=11;id<12;id++){
         //    t(id);
         //}
