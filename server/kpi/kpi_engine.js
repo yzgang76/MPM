@@ -321,7 +321,21 @@ module.exports = (function() {
                     if(def.kpi_def.type!==0){
                         callback(new Error("Unsupported KPI type"),null);
                     }else{
-                        //get raw kpis in time range
+                        //get raw kpis in time range, return as
+                        //[ { ne: 'BTS2', ts: 100002700000, K0: 3 },
+                        //    { ne: 'BTS21', ts: 100002700000, K0: 2 }]
+                        var statement=E.makeCypherForRaw(def.kpi_def.id,ts,window_size,nelist,size,skip,order);
+                        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaa',statement);
+                        n4j.runCypherWithReturn([{statement:statement}],function(err,result){
+                            if(err){
+                                throw new Error('Fail to get KPI (' + def.kpi_def.id + ') value');
+                            }else{
+                                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                                callback (null,getResult(result,'K'+def.kpi_def.id));
+                            }
+                        });
+
+
                     }
                 }else{
                     console.log('err3',gran);
@@ -343,9 +357,6 @@ module.exports = (function() {
                 if(!type){
                     callback(new Error('KPI definition Error'),null);
                 }else{
-
-
-
                     callback(null,'in dev');
                 }
 

@@ -1,11 +1,11 @@
 [{
     "id": "MPM-N_Collector_Manager",
-    "name": "MPM Collector Manager",
-    "description": "MPM Collector Manager",
-    "package": "mpm",
+    "name": "OSSP Collector Manager",
+    "description": "OSSP Collector Manager",
+    "package": "OSSP",
     "author": "admin",
     "version": "1.0",
-    "category": "MPM",
+    "category": "OSSP",
     "icon": "red_radiant_012.png",
     "roles": [],
     "favorite": true,
@@ -13,18 +13,18 @@
     "views": [
       {
         "id": "mpmCollectorManager",
-        "name": "MPM Collector Manager",
+        "name": "OSSP Collector Manager",
         "roles": []
       }
     ]
 },{
   "id": "MPM-N_KPI_Manager",
-  "name": "MPM KPI Manager",
-  "description": "MPM KPI Manager",
-  "package": "mpm",
+  "name": "OSSP KPI Manager",
+  "description": "OSSP KPI Manager",
+  "package": "OSSP",
   "author": "admin",
   "version": "1.0",
-  "category": "MPM",
+  "category": "OSSP",
   "icon": "red_radiant_012.png",
   "roles": [],
   "favorite": true,
@@ -50,10 +50,10 @@
   "id": "NFVD GUI Self Monitor",
   "name": "NFVD GUI Self Monitor",
   "description": "NFVD GUI Self Monitor",
-  "package": "mpm",
+  "package": "OSSP",
   "author": "admin",
   "version": "1.0",
-  "category": "MPM",
+  "category": "OSSP",
   "icon": "red_radiant_012.png",
   "roles": [],
   "favorite": true,

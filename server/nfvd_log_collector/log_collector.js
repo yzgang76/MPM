@@ -45,6 +45,7 @@ module.exports = (function() {
         function _crateKPIDefinitions(kpiName,unit,callback){
             //create KPI definitions
             var stat='match (k:KPI_DEF{name:"'+kpiName+'",type:0})<-[:HAS_KPI]-(t:TEMPLATE{type:"NFVD_GUI_SERVER_REQUEST"}) with k match (k)<-[:HAS_KPI]-(g:GRANULARITY{num:0}) return k';
+            //console.log('ssssssssssss',stat);
             n4j.runCypherWithReturn([{"statement":stat}],function(err,result){
                 if(err){
                     console.log('Failed to get KPI definition', kpiName, err);

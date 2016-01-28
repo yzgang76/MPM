@@ -28,4 +28,5 @@ function test3(){
     C.collectEx();
 }
 
+test2();
 test3();
