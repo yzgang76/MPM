@@ -1,0 +1,39 @@
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h3 class="modal-title">The follow attributes are update but not committed. Commit them before update?
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"> <span aria-hidden="true">&times;</span> </button>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div style="margin-top: 10px;">
+            <p>Modified Attributes ({{vm.tableData.length}}):</p>
+            <table class="nfvd_c_xTbale">
+                <tr>
+                    <th style="text-align: left;">Element</th>
+                    <th>Attribute</th>
+                    <th>Category</th>
+                    <th>Old Value</th>
+                    <th>New Value</th>
+                    <th><input type="checkbox" checked=true ng-click="vm.checkboxClick()"/></th>
+                </tr>
+                <tr ng-repeat="item in vm.tableData" ng-class="{true: 'nfvd_c_tr_evencolor', false: 'nfvd_c_tr_oddcolor'}[item.mIsOdd]">
+                    <td style="text-align: left;"><translate>{{item.componentName}}</translate></td>
+                    <td><translate>{{item.label}}</translate></td>
+                    <td><translate>{{item.category}}</translate></td>
+                    <td>{{item.oldValue}}</td>
+                    <td>{{item.newValue}}</td>
+                    <td><input type="checkbox" value="item.checkValue" ng-model="item.checked" /></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button ng-class="isValid()?'btn btn-primary':'btn btn-warning'"  ng-click="ok()"> Commit </button>
+        <button class="btn btn-default" ng-click="cancel()" > Cancel </button>
+    </div>
+
+
+</div>
