@@ -25,7 +25,7 @@ function test(){
 
 function test2(){
     var arr=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-    var url='/V1.0/domains/mpm-n/kpis/ID';
+    var url='/V1.0/domains/ossp/kpis/ID';
     function p(err,r,d){
         console.log(d,err);
     }
@@ -37,7 +37,7 @@ function test2(){
 }
 
 function test3(){
-    var url='/V1.0/domains/mpm-n/kpis/create';
+    var url='/V1.0/domains/ossp/kpis/create';
     C.makeQuery('http://localhost:3000',url,function(err,r,data){
         console.log(err,data);
     },'POST',{},true);

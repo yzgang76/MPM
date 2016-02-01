@@ -1,7 +1,7 @@
 {
-  "mpm_console": {
+  "ossp_console": {
     "server": "http://localhost:3000",
-    "url": "/V1.0/domains/mpm-n/kpis/ID"
+    "url": "/V1.0/domains/ossp/kpis/ID"
   },
   "collection": [
     {

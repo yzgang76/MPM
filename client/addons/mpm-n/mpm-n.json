@@ -1,7 +1,0 @@
-[{
-  "name": "HPE",
-  "description": "Hewlett-Packard Enterprise Client MPM",
-  "contents": "This directory provides a set of components for MPM",
-  "author": "hpe",
-  "version": "1.0"
-}]

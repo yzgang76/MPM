@@ -1,5 +1,0 @@
-[
-{"id":0, "type":"csv","name":"Standard CSV Adaptor","desc":"demo", "url":"localhost:3001"},
-{"id":1, "type":"csv","name":"Standard CSV Adaptor2","desc":"not exist", "url":"localhost:3002"},
-{"id":2, "type":"snmp","name":"SNMP Adaptor","desc":"", "url":"localhost:3001"}
-]

@@ -1,12 +1,12 @@
 match a-[r]->b delete a,r,b;
 match e delete e;
-merge (:TEMPLATE:GRAN {type:"GRAN",desc:""});
-merge (:TEMPLATE:BSC {type:"BSC",desc:""});
-merge (:TEMPLATE:BTS {type:"BTS",desc:""});
-merge (:TEMPLATE:Windows_Host {type:"Windows_Host",desc:"windows7"});
+merge (:TEMPLATE:GRAN {key:"2G_RAN/GRAN",group:"2G_RAN",type:"GRAN",desc:""});
+merge (:TEMPLATE:BSC {key:"2G_RAN/BSC",group:"2G_RAN",type:"BSC",desc:""});
+merge (:TEMPLATE:BTS {key:"2G_RAN/BTS",group:"2G_RAN",type:"BTS",desc:""});
+merge (:TEMPLATE:Windows_Host {key:"IT/Windows_Host",group:"IT",type:"Windows_Host",desc:"windows7"});
 
-match (gran:TEMPLATE {type:"GRAN"}) with gran match (bsc:TEMPLATE {type:"BSC"}) merge (gran)-[:CONTAINS]->(bsc);
-match (bsc:TEMPLATE {type:"BSC"}) with bsc match (bts:TEMPLATE {type:"BTS"}) merge (bsc)-[:CONTAINS]->(bts);
+match (gran:TEMPLATE {key:"2G_RAN/GRAN"}) with gran match (bsc:TEMPLATE {key:"2G_RAN/BSC"}) merge (gran)-[:CONTAINS]->(bsc);
+match (bsc:TEMPLATE {key:"2G_RAN/BSC"}) with bsc match (bts:TEMPLATE {key:"2G_RAN/BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 
 merge (:GRANULARITY {id:3,type:"5mins",num:300});
 merge (:GRANULARITY {id:0,type:"15mins",num:900});

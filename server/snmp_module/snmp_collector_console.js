@@ -41,7 +41,7 @@ module.exports = (function() {
         messages:{
             INITIALIZED:"Already initialized.",
             SUCCESSFULLY:"Successfully",
-            ERROR1:"Failed to load MPM console configuration.",
+            ERROR1:"Failed to load OSSP console configuration.",
             ERROR2:"Failed to collect data of ",
             ERROR3:"Failed to get definition of ",
             ERROR4:"Failed to get device information",
@@ -66,9 +66,9 @@ module.exports = (function() {
                 status=-1;
                 return;
             }else{
-                var mpm= _.get(conf,"mpm_console.server");
-                var url= _.get(conf,"mpm_console.url");
-                if(!mpm||!url){
+                var ossp= _.get(conf,"ossp_console.server");
+                var url= _.get(conf,"ossp_console.url");
+                if(!ossp||!url){
                     msg=snmp_collector_console.messages.ERROR1;
                     status=-1;
                     return;
@@ -214,7 +214,7 @@ module.exports = (function() {
                                         // add kpi definition
                                         //get kpiid
                                         console.log("create new kpi definition");
-                                        C.makeQuery(mpm,url,function(err,r,data){
+                                        C.makeQuery(ossp,url,function(err,r,data){
                                             if(err){
                                                 console.log(snmp_collector_console.messages.ERROR7);
                                                 callback(new Error(snmp_collector_console.messages.ERROR7),null);
@@ -341,9 +341,9 @@ module.exports = (function() {
                 status=-1;
                 res.send({"result":status,"Message":msg});
             }else{
-                var mpm= _.get(conf,"mpm_console.server");
-                var url= _.get(conf,"mpm_console.url");
-                if(!mpm||!url){
+                var ossp= _.get(conf,"ossp_console.server");
+                var url= _.get(conf,"ossp_console.url");
+                if(!ossp||!url){
                     msg=snmp_collector_console.messages.ERROR1;
                     status=-1;
                     res.send({"result":status,"Message":msg});
@@ -489,7 +489,7 @@ module.exports = (function() {
                                         // add kpi definition
                                         //get kpiid
                                         console.log("create new kpi definition");
-                                        C.makeQuery(mpm,url,function(err,r,data){
+                                        C.makeQuery(ossp,url,function(err,r,data){
                                             if(err){
                                                 console.log(snmp_collector_console.messages.ERROR7);
                                                 callback(new Error(snmp_collector_console.messages.ERROR7,null));
