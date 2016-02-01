@@ -1,0 +1,10 @@
+[{
+	"id": "OSSP-module",
+	"name": "OSSP Module",
+	"type": "filter",
+	"description": "Custom filters,custom controllers and custom services for OSSP addon",
+	"author": "hp",
+	"version": "1.0",
+	"icon": "filter.png",
+	"location": "/addons/ossp/modules/ossp-module"
+}]

@@ -1,0 +1,69 @@
+[{
+    "id": "OSSP_Collector_Manager",
+    "name": "OSSP Collector Manager",
+    "description": "OSSP Collector Manager",
+    "package": "OSSP",
+    "author": "admin",
+    "version": "1.0",
+    "category": "OSSP",
+    "icon": "red_radiant_012.png",
+    "roles": [],
+    "favorite": true,
+    "navigationMode": false,
+    "views": [
+      {
+        "id": "osspCollectorManager",
+        "name": "OSSP Collector Manager",
+        "roles": []
+      }
+    ]
+},{
+  "id": "OSSP_KPI_Manager",
+  "name": "OSSP KPI Manager",
+  "description": "OSSP KPI Manager",
+  "package": "OSSP",
+  "author": "admin",
+  "version": "1.0",
+  "category": "OSSP",
+  "icon": "red_radiant_012.png",
+  "roles": [],
+  "favorite": true,
+  "navigationMode": true ,
+  "views": [
+    {
+      "id": "osspKPIManager",
+      "name": "osspKPIManager",
+      "roles": []
+    },
+    {
+      "id": "osspKPINew",
+      "name": "osspKPINew",
+      "roles": []
+    },
+    {
+      "id": "osspKPIThreshold",
+      "name": "osspKPIThreshold",
+      "roles": []
+    }
+  ]
+},{
+  "id": "NFVD GUI Self Monitor",
+  "name": "NFVD GUI Self Monitor",
+  "description": "NFVD GUI Self Monitor",
+  "package": "OSSP",
+  "author": "admin",
+  "version": "1.0",
+  "category": "OSSP",
+  "icon": "red_radiant_012.png",
+  "roles": [],
+  "favorite": true,
+  "navigationMode": true ,
+  "views": [
+    {
+      "id": "requestMonitor",
+      "name": "requestMonitor",
+      "roles": []
+    }
+  ]
+ }
+]

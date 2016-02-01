@@ -1,0 +1,22 @@
+{
+  "name": "ossp_gui",
+  "version": "1.0.0",
+  "description": "Console for OSS Performance",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.1",
+    "angular": "~1.2.28",
+    "angular-route": "1.2.28",
+    "angular-ui-grid": "~3.0.0-rc.16",
+    "angular-bootstrap": "~0.12.0",
+    "lodash": "~3.10.1",
+    "highcharts":"4.0.4",
+    "async":"~1.5.0"
+  }
+}

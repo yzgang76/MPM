@@ -1,0 +1,105 @@
+[
+  {
+    "id": "osspCollectorManager",
+    "name": "osspCollectorManagerView",
+    "package": "ossp",
+    "description": "ossp collector manager",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "osspCollectorManagerWidget",
+        "type": "ossp-collector-manager",
+        "title": "Collector Manager",
+        "configuration": {
+
+        }
+      }
+    ]
+  },
+  {
+    "id": "osspKPIManager",
+    "name": "osspKPIManagerView",
+    "package": "ossp",
+    "description": "ossp KPI manager",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "osspKPIManagerWidget",
+        "type": "ossp-kpi-manager",
+        "title": "KPI Manager",
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "id": "osspKPINew",
+    "name": "osspKPINewView",
+    "package": "ossp",
+    "description": "ossp create KPI",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "osspKPINewWidget",
+        "type": "ossp-kpi-new",
+        "title": "Create New KPI ",
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "id": "osspKPIThreshold",
+    "name": "osspKPIThresholdView",
+    "package": "ossp",
+    "description": "ossp create KPI Threshold",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "osspKPIThresholdWidget",
+        "type": "ossp-kpi-threshold",
+        "title": "Manage KPI Thresholds",
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "id": "requestMonitor",
+    "name": "requestMonitor",
+    "package": "ossp",
+    "description": "NFVD GUI Request Monitor",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "nfvd-monitor-charts",
+        "type": "nfvd-monitor-charts",
+        "title": "NFVD GUI Server Request Monitor",
+        "configuration": {}
+      }
+    ]
+  }
+
+]
