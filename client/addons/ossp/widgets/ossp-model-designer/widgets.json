@@ -1,0 +1,15 @@
+[{
+  "widgetId": "ossp-model-designer",
+  "name": "Model Designer",
+  "description": "OSSP Model Designer",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "addons/ossp/widgets/ossp-model-designer/ossp-model-designer.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]

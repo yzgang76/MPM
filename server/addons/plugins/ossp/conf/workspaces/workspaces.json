@@ -65,5 +65,25 @@
       "roles": []
     }
   ]
- }
+ },
+  {
+    "id": "OSSP Model Designer",
+    "name": "OSSP Model Designer",
+    "description": "OSSP Model Designer",
+    "package": "OSSP",
+    "author": "admin",
+    "version": "1.0",
+    "category": "OSSP",
+    "icon": "red_radiant_012.png",
+    "roles": [],
+    "favorite": true,
+    "navigationMode": true ,
+    "views": [
+      {
+        "id": "osspModelDesigner",
+        "name": "osspModelDesigner",
+        "roles": []
+      }
+    ]
+  }
 ]

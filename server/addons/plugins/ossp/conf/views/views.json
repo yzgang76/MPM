@@ -100,6 +100,26 @@
         "configuration": {}
       }
     ]
+  },
+  {
+    "id": "osspModelDesigner",
+    "name": "osspModelDesigner",
+    "package": "ossp",
+    "description": "OSSP Monitor Designer",
+    "author": "admin",
+    "version": "V1.0",
+    "roles": [],
+    "layout": {
+      "id": "layout-1"
+    },
+    "widgets": [
+      {
+        "id": "ossp-model-designer",
+        "type": "ossp-model-designer",
+        "title": "OSSP Model Designer",
+        "configuration": {}
+      }
+    ]
   }
 
 ]
