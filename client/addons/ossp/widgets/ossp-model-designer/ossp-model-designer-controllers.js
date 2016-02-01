@@ -23,66 +23,38 @@ define([
             'messageNotifierService',
             function($rootScope, $scope, $log, $location,dataExchangeService,dataAccessService,messageNotifierService) {
                 var logger = $log.getInstance('osspModelDesignerControllers');
-
-                $scope.KPIID=dataExchangeService.getData('kpiid');
-                $scope.KPIName=dataExchangeService.getData('kpiname');
-                $scope.neType=dataExchangeService.getData('neType');
-                $scope.KPIType=dataExchangeService.getData('kpitype');
-                $scope.gran=dataExchangeService.getData('gran');
-                $scope.unit=dataExchangeService.getData('unit');
-
-                $scope.connector=[
-                    {type:'AND'},{type:'OR'}
-                ];
-                $scope.levels=[
-                    {type:'warning'},{type:'error'},{type:'critical'}
-                ];
-                $scope.actions=[
-                    {type:'Log'},{type:'SNMP Trap'},{type:'Script'}
-                ];
-                $scope.defines=[];
-                $scope.addNewThreshold=function(){
-                    $scope.defines.push({});
+                $scope.components={};
+                $scope.shapes= {
+                    "basic": [
+                        {
+                            "type": "basic.Rect",
+                            "size": { "width": 5, "height": 3 },
+                            "attrs": {
+                                "rect": { "rx": 2, "ry": 2, "width": 50, "height": 30, "fill": "#27AE60" },
+                                "text": { "text": "rect", "fill": "#ffffff", "font-size": 10, "stroke": "#000000", "stroke-width": 0 }
+                            }
+                        },{
+                            "type": "basic.Circle",
+                            "size": { "width": 5, "height": 3 },
+                            "attrs": {
+                                "circle": { "width": 50, "height": 30, "fill": "#E74C3C" },
+                                "text": { "text": "ellipse", "fill": "#ffffff", "font-size": 10, "stroke": "#000000", "stroke-width": 0 }
+                            }
+                        }, {
+                            "type": "devs.Atomic",
+                            "size": { "width": 4, "height": 3 },
+                            "inPorts": ["in1","in2"],
+                            "outPorts": ["out"],
+                            "attrs": {
+                                "rect": { "fill": "#8e44ad", "rx": 2, "ry": 2 },
+                                ".label": { "text": "model", "fill": "#ffffff", "font-size": 10, "stroke": "#000000", "stroke-width": 0 },
+                                ".inPorts circle": { "fill": "#f1c40f", "opacity": 0.9 },
+                                ".outPorts circle": { "fill": "#f1c40f", "opacity": 0.9 },
+                                ".inPorts text, .outPorts text": { "font-size": 9 }
+                            }
+                        }
+                    ]
                 };
-                $scope.onDeleteThreshold=function(d){
-                    _.remove($scope.defines ,function(f){
-                        return f===d;
-                    })  ;
-                };
-                function refresh(){
-
-                }
-
-
-                $scope.getType=function(t){
-                    var ret;
-                    switch(t-0){
-                        case 0:
-                            ret='Raw';
-                            break;
-                        case 1:
-                            ret='Calculate';
-                            break;
-                        case 2:
-                            ret='Time Aggregation';
-                            break;
-                        case 3:
-                            ret='Entity Aggregation';
-                            break;
-                        default:
-                            break;
-                    }
-                    return ret;
-                };
-                $scope.$on('webgui.widgetRefresh', function() {
-                    //logger.debug($scope.widget.uniqueId, 'event webgui.widgetRefresh');
-                    refresh();
-                });
-                $scope.back=function(){
-                    var url = '/workspaces/'+_.get($scope,'context.workspace._id') + '/views/osspKPIManager';
-                    $location.url(url);
-                };
-                refresh();
             }
 
         ]);

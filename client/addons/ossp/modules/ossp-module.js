@@ -1,13 +1,13 @@
 'use strict';
-/*require.config({
+require.config({
     paths: {
-        g: '../addons/nfvd/bower_components/joint/src/geometry',
-        V: '../addons/nfvd/bower_components/joint/src/vectorizer',
-        backbone: '../addons/nfvd/bower_components/backbone/backbone',
+        g: '../addons/ossp/bower_components/joint/src/geometry',
+        V: '../addons/ossp/bower_components/joint/src/vectorizer',
+        backbone: '../addons/ossp/bower_components/backbone/backbone',
         //joint:'../addons/nfvd/bower_components/joint/dist/joint.all.clean',
-        joint: '../addons/nfvd/lib/rappid/joint.all.clean',
-        KeyboardJS: '../addons/nfvd/bower_components/keyboardjs/keyboard',
-        angularAnimate: '../addons/nfvd/bower_components/angular-animate/angular-animate.min'
+        joint: '../addons/ossp/lib/rappid/joint.all.clean',
+        KeyboardJS: '../addons/ossp/bower_components/keyboardjs/keyboard',
+        //angularAnimate: '../addons/ossp/bower_components/angular-animate/angular-animate.min'
     },
     shim: {
 
@@ -28,13 +28,13 @@
         joint: {
             deps: ['g', 'V', 'jquery', 'lodash', 'backbone'],
             exports: 'joint'
-          /!*  init: function(geometry, vectorizer) {
+          /*  init: function(geometry, vectorizer) {
                  // JointJS must export geometry and vectorizer otheriwse
                  // they won't be exported due to the AMD nature of those libs and
                  // so JointJS would be missing them.
                  this.g = geometry;
                  this.V = vectorizer;
-            }*!/
+            }*/
         }
 
     },
@@ -43,7 +43,7 @@
             'underscore': 'lodash' //use lodash to replace underscore
         }
     }
-});*/
+});
 
 define([
         'angular',
@@ -55,7 +55,6 @@ define([
     ],
     function(angular) {
         var moduleApp = angular.module('nfvdModule', ['commonsEvents']);
-        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa');
         //moduleApp.run(['$rootScope', '$translatePartialLoader', 'nfvdUserService', 'nfvdModuleService', 'events',
         //    function($rootScope, $translatePartialLoader, nfvdUserService, nfvdModuleService, events) {
         //        // Load module translation data
