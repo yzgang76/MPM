@@ -1,0 +1,22 @@
+[
+    {
+      "domain":"2GRAN",
+      "elements":[
+        {"id":"GRAN","name":"GRAN","desc":""},
+        {"id":"BSC","name":"BSC","desc":""},
+        {"id":"BTS","name":"BTS","desc":""}
+      ],
+      "relationships":[
+        {"parent_id":"GRAN","child_id":"BSC","type":"CONTAINS"},
+        {"parent_id":"BSC","child_id":"BTS","type":"CONTAINS"}
+      ]
+    },
+    {
+      "domain":"IT",
+      "elements":[
+        {"id":"Windows_Host","name":"Windows_Host","desc":""}
+      ],
+      "relationships":[
+      ]
+    }
+]
