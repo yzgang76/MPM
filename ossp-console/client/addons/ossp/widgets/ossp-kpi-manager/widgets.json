@@ -1,0 +1,15 @@
+[{
+  "widgetId": "ossp-kpi-manager",
+  "name": "kpi Manager",
+  "description": "OSSP KPI Manager",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "addons/ossp/widgets/ossp-kpi-manager/ossp-kpi-manager.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]

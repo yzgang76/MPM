@@ -1,0 +1,10 @@
+[{
+	"id": "ossp-data-acess",
+	"name": "OSSP Data access Module",
+	"type": "service",
+	"description": "Custom data access service for the OSSP plugin",
+	"author": "hp",
+	"version": "1.0",
+	"icon": "filter.png",
+	"location": "/addons/ossp/modules/ossp-data-access"
+}]

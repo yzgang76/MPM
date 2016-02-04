@@ -1,0 +1,15 @@
+[{
+  "widgetId": "nfvd-monitor-charts",
+  "name": "NFVD GUI Service Monitor Charts",
+  "description": "OSSP on NFVD GUI",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "/addons/ossp/widgets/nfvd-monitor-charts/nfvd-monitor-charts.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]

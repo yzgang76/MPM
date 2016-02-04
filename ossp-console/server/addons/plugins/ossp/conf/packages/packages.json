@@ -1,0 +1,12 @@
+[{
+  "id": "ossp",
+  "name": "OSSP Package",
+  "description": "OSSP package",
+  "author": "zhigang",
+  "version": "1.0",
+  "roles": [],
+  "icon": "",
+  "active": true,
+  "domain": "ossp",
+  "localizations": []
+}]

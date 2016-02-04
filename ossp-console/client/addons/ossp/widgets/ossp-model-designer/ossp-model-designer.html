@@ -1,0 +1,80 @@
+<div class="OSSP-MODEL-DESIGNER">
+    <!--<div class="container">
+        <h2>Stacked-to-horizontal Example</h2>
+        <div class="row">
+            <div class="col-md-4" style="background-color:pink; height:150px">
+                <h3>First Column</h3>
+                Bootstrap is a sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.
+            </div>
+            <div class="col-md-4" style="background-color:green; height:150px">
+                <h3>Second Column</h3>
+                Bootstrap is a sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.
+            </div>
+            <div class="col-md-4" style="background-color:orange; height:150px">
+                <h3>Third Column</h3>
+                Bootstrap is a sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.
+            </div>
+        </div>
+    </div>-->
+
+
+    <div id="header" class="row">
+        <div class="col-md-3">
+            <h1>OSSP Model Designer</h1>
+        </div>
+        <div class="col-md-2">
+            <form class="form-inline col-md-12">
+                <div class="form-group " style="margin-top: 20px;">
+                    <!--<span for="vappsel">-->
+                        <!--<translate>VDC_MANAGER.VAPP_GROUP</translate>-->
+                        <!--:</span>-->
+                    <select class="form-control" id="vappsel" ng-model="selVappGroups"
+                            ng-options="group.name for group in vappGroups" ng-change="vappGroupChange()">
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="toolbar-container col-md-6" style="margin-top: 20px">
+            <!--<button class="btn btn-info" ng-click="a()">{{index}}</button>-->
+            <button id="btn-undo" class="btn btn-info" data-tooltip="Undo" ng-click="components.commander.undo()">
+                <i class="fa fa-rotate-left fa-lg"></i>
+            </button>
+            <button id="btn-redo" class="btn btn-info" data-tooltip="Redo" ng-click="components.commander.redo()">
+                <i class="fa fa-rotate-right fa-lg"></i>
+            </button>
+            <button id="btn-clear" class="btn btn-info" data-tooltip="Clear Paper" ng-click="components.graph.clear()">
+                <i class="fa fa-trash fa-lg"></i>
+            </button>
+            <button id="btn-svg" class="btn btn-info" data-tooltip="Open as SVG in a New Window" ng-click="components.paper.openAsSVG({ preserveDimensions: true })">
+                <i class="fa fa-image fa-lg"></i>
+            </button>
+            <button id="btn-zoom-in" class="btn btn-info" data-tooltip="Zoom In" ng-click="components.scroller.zoom(.2, { max: 2 })">
+                <i class="fa fa-search-plus fa-lg"></i>
+            </button>
+            <button id="btn-zoom-out" class="btn btn-info" data-tooltip="Zoom Out" ng-click="components.scroller.zoom(-.2, { min: .2 })">
+                <i class="fa fa-search-minus fa-lg"></i>
+            </button>
+            <button id="btn-scale-to-fit" class="btn btn-info" data-tooltip="Zoom To Fit" ng-click="components.scroller.zoomToFit({ padding: 20, scaleGrid: .2, minScale: .2, maxScale: 2 })">
+                <i class="fa fa-eye fa-lg"></i>
+            </button>
+        </div>
+
+    </div>
+    <div id="body" class="row">
+        <div id="stencil" class="stencil-container col-md-2" style="background: lightgrey;">
+            <label>Stencil</label>
+           <!-- <button class="btn-expand" title="Expand all" ng-click="components.stencil.openGroups()">
+                <i class="fa fa-plus-circle"></i>
+            </button>
+            <button class="btn-collapse" title="Collapse all" ng-click="components.stencil.closeGroups()">
+                <i class="fa fa-minus-circle"></i>
+            </button>-->
+            </div>
+        <div id="paper" class="paper-container col-md-7"></div>
+        <div id="inspector" class="inspector-container col-md-3" style="background: lightgrey">
+            <label>Inspector</label>
+        </div>
+    </div>
+
+</div>
+

@@ -1,0 +1,15 @@
+[{
+  "widgetId": "ossp-kpi-threshold",
+  "name": "kpi threshold",
+  "description": "OSSP kpi threshold",
+  "author": "admin",
+  "version": "1.0",
+  "icon": "test.png",
+  "templateUrl": "addons/ossp/widgets/ossp-kpi-threshold/ossp-kpi-threshold.tpl.html",
+  "toolbar": {
+    "zoom": false,
+    "configuration": false,
+    "refresh": false,
+    "selectors": false
+  }
+}]

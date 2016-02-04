@@ -1,0 +1,104 @@
+<div class="OSSP-KPI-NEW" style="margin-top: -30px;">
+	<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 0px;">
+		<div style="border: 1px solid #a0a1a3; height: 40px; background: #e5eaec; padding: 0 10px;">
+			<h1 style="text-align: left; padding: 0px 10px;
+        line-height: 28px; background: #fff; height: 32px; border: 1px solid #a0a1a3; border-bottom: none; margin: 7px 0 0 0; float: left;">{{title}}</h1>
+			<!--button class="btn btn-warning pull-right  " data-ng-click="back()" >
+            <i class="fa fa-home"></i>
+        </button-->
+		</div>
+	</div>
+	<div class="col-sm-12 col-md-12 col-lg-12" style="border: 1px solid #a0a1a3; border-top: none; padding: 0;">
+		<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
+			
+				<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Select Entity Type:</translate>
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;" id="neType" data-ng-model="neType" ng-options=" ne.type for ne in neList" data-ng-change="update()">
+				</select>
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="subNeType" data-ng-show="neKPIType.type==='Entity Aggregation'" data-ng-model="subNeType" ng-options=" ne.type for ne in subNeList" data-ng-change="update()">
+				</select>
+			
+		</div>
+		<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
+			
+				<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Select Granularity Type:</translate>
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="neGranularity" data-ng-model="neGranularity" data-ng-options=" ne.type for ne in granList" data-ng-change="update()">
+				</select>
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="subNeGranularity" data-ng-show="neKPIType.type==='Time Aggregation'" data-ng-model="subNeGranularity" data-ng-options=" ne.type for ne in subGranList" data-ng-change="update()">
+				</select>
+			
+		</div>
+		<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px;">
+			
+				<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Select KPI Type:</translate>
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 0 1px;" id="neKPIType" data-ng-model="neKPIType" data-ng-options="ne.type for ne in kpiTypeList" data-ng-change="update()">
+				</select>
+			
+		</div>
+		<div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 25px; padding: 0;" data-ng-show="isReadToSearchSourceKPI()">
+			<form class="form-horizontal ">
+			<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
+				
+					<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">KPI Name:</translate>
+					<input class="col-sm-12 col-md-10 col-lg-4 "style="margin: 0 0 5px 1px;" data-ng-model="kpiName">
+				
+			</div>
+			<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
+				
+					<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Description:</translate>
+					<input class="col-sm-12 col-md-10 col-lg-4 " style="margin: 0 0 5px 1px;" data-ng-model="kpiDesc">
+				
+			</div>
+			<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
+				
+					<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Formula:</translate>
+					<input class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;" data-ng-model="kpiFormula">
+				
+			</div>
+			<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px;">
+				
+					<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Unit:</translate>
+					<input class="col-sm-12 col-md-10 col-lg-4 " style="margin: 0 0 0px 1px;" data-ng-model="kpiUnit">
+				
+			</div>
+				<div class="col-sm-12 col-md-12 col-lg-12" style="border-top: 1px solid #a0a1a3; background: #eee; padding: 10px;" ng-show="kpiName&&kpiFormula" >
+					<button class="btn btn-info col-sm-4 col-md-2 col-lg-2 " style="background:#42dbd3; color: #fff;" data-ng-click="createNewKPI()">
+					<translate>Submit</translate>
+					</button>
+				</div>
+			</form>
+		</div>
+		<div style="clear: both; font-size: 1px; visibility: hidden;"></div>
+	</div>
+	<div class="table-responsive col-sm-12 col-md-12 col-lg-12"  style="margin-top: 15px; padding: 0;" data-ng-if="isReadToSearchSourceKPI()">
+		<div style="border: 1px solid #a0a1a3; height: 40px; background: #e5eaec; padding: 0 10px;">
+			<h2 style="text-align: left; padding: 0px 10px;
+        line-height: 28px; background: #fff; height: 32px; border: 1px solid #a0a1a3; border-bottom: none; margin: 7px 0 0 0; float: left;"> <B>
+				<translate>Available Source KPI</translate>
+				</B></h2>
+		</div>
+		<div style="padding: 10px; border: 1px solid #a0a1a3; border-top: none;">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th> <translate>ID</translate></th>
+						<th> <translate>NE</translate></th>
+						<th> <translate>Granularity</translate></th>
+						<th> <translate>Name</translate></th>
+						<th> <translate>Unit</translate></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in filtered = (srcKPIs | filter:searchText )|orderBy:'id'">
+						<td><!--<i class="fa fa-signal"></i>-->K{{item.id}}</td>
+						<td>{{item.ne || ''}} </td>
+						<td>{{item.gran || ''}} </td>
+						<td>{{item.name || ''}} </td>
+						<td>{{item.unit||''}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 20px;"> </div>
+	<div style="clear: both; visibility: hidden; font-size: 1px;"></div>
+</div>

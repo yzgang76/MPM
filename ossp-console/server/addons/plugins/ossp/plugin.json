@@ -1,0 +1,8 @@
+{
+    "id": "ossp",
+    "name": "OSS Performance Management",
+    "description": "OSSP Views",
+    "version": "2.0",
+    "author": "HP",
+    "icon" : "demo.png"
+}
