@@ -28,8 +28,9 @@ module.exports = (function() {
 
     }
     P.collectFile=function(file,callback){
-        function _registerKPI(domain,kpiName,neType,gran,callback){
-            var url='"/V1.0/domains/'+ _.get(ossp_console,'workspace')+'/kpis/create?domain='+domain+'&kpi_name='+kpiName+'&kpi_formula='+kpiName+'&kpi_type=0&ne_type='+neType+'&granularity='+gran;
+        var domain= _.get(conf,'domain');
+        function _registerKPI(domain,neType,gran,kpiName,callback){
+            var url='/V1.0/domains/'+ _.get(ossp_console,'workspace')+'/kpis/create?domain='+domain+'&kpi_name='+kpiName+'&kpi_formula='+kpiName+'&kpi_type=0&ne_type='+neType+'&granularity='+gran;
             C.makeQuery(ossp_console.server,url,function(err,r,body){
                 if(err){
                     callback(err,null);
@@ -169,6 +170,7 @@ module.exports = (function() {
                                     var parentType=header[0].trim();
                                     var childType=header[1].trim();
                                     var gran= _.get(output, '[1][3]');
+
                                     if(_.isNaN(gran)){
                                         console.log('File format error. Failed to get granularity');
                                         logMessage={
@@ -182,7 +184,8 @@ module.exports = (function() {
                                     }else{
                                         if(_.get(conf,'auto_register')){
                                             var kpis= _.slice(header,4);
-                                            async.each(kpis,_registerKPI.bind(null,childType,gran),function(err){
+
+                                            async.map(kpis,_registerKPI.bind(this,domain,childType,gran),function(err){
                                                 if(err){
                                                     console.log('Register KPI with errors',err);
                                                 }
