@@ -7,6 +7,7 @@ module.exports = (function() {
     var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
     var M={};
 
+    // cyphers for Modelling
     M.getCypherInjectModel=function(domain,elements,relationships){
         try{
             var statements=[];
@@ -35,6 +36,19 @@ module.exports = (function() {
             throw e;
         }
 
+    };
+
+    //cyphers for standard csv collector
+    M.getCypherInjectNodeInstance=function(domain,type,name){
+        var kp=domain+'/'+type+'/'+name;
+        var statement='match (d:DOMAIN {name:"'+domain+'"})-->(p:TEMPLATE{id:"'+type+'"}) with d,p merge (pi:INSTANCE {key:"'+kp+'",id:"'+name+'",type:"'+type+'"}) with d,p,pi merge (p)-[:HAS_INSTANCE]->(pi)';
+        return [{statement:statement}];
+    };
+    M.getCypherInjectParentAndChildNodeInstances=function(domain,parentType,parentName,childType,childName){
+        var kp=domain+'/'+parentType+'/'+parentName;
+        var kc=domain+'/'+childType+'/'+childName;
+        var statement='match (d:DOMAIN {name:"'+domain+'"})-->(p:TEMPLATE{id:"'+parentType+'"})-->(c:TEMPLATE {id:"'+childType+'"}) with d,p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with d,p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with  d,p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with  d,p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with  d,p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
+        return  [{statement:statement}];
     };
 
     return M;

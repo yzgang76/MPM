@@ -8,7 +8,11 @@ var csv = require(path.join(__dirname,'/../node_modules/csv/lib/index'));
 var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
 var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 var os=require('os');
+var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
+var C=require(path.join(__dirname,'/../lib/common-funs'));
+var ossp_console=require(path.join(__dirname,'/../conf/ossp_console'));
 var conf=require(path.join(__dirname,'/../conf/csv_collector'));
+var cypherMaker=require(path.join(__dirname,'/../lib/cypherMaker'));
 
 module.exports = (function() {
     'use strict';
@@ -24,11 +28,88 @@ module.exports = (function() {
 
     }
     P.collectFile=function(file,callback){
+        function _registerKPI(domain,kpiName,neType,gran,callback){
+            var url='"/V1.0/domains/'+ _.get(ossp_console,'workspace')+'/kpis/create?domain='+domain+'&kpi_name='+kpiName+'&kpi_formula='+kpiName+'&kpi_type=0&ne_type='+neType+'&granularity='+gran;
+            C.makeQuery(ossp_console.server,url,function(err,r,body){
+                if(err){
+                    callback(err,null);
+                }else{
+                    callback(null,body.errors);
+                }
+            },'GET',{},false);
+        }
+        function _collectorData(data,header,parentType,childType){
+             //TODO: pagination
+            var statements=[];
+            var parents=[];
+            var children=[];
+            //_.forEach(data,function(line){
+            //    var parentID=line[0].trim();
+            //    if(parentID!=='' && !_.includes(parents,parentID)){  //create parent node
+            //
+            //        statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t merge (i:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
+            //        //statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
+            //        parents.push(parentID);
+            //    }
+            //    var myID=line[1].trim();
+            //    if(myID!==''&& !_.includes(children,myID)){  //create child node
+            //        statements.push({statement:'match (t:TEMPLATE {type:"'+childType+'"}) with t merge (i:INSTANCE:'+childType+'{id:"'+myID+'",type:"'+myType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
+            //        //statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t match (i:INSTANCE {id:"'+myID+'"}) create (t)-[:HAS_INSTANCE]->(i)'});
+            //
+            //        children.push(myID);
+            //    }
+            //
+            //    //create relationship between parent and child
+            //    statements.push({statement:'match (p:INSTANCE {id:"'+parentID+'"}) with p merge (c:INSTANCE {id:"'+myID+'"}) create (p)-[:HAS_CHILD]->(c)'});
+            //
+            //
+            //    var ts=parseInt(line[2]);
+            //    var gran=parseInt(line[3]);
+            //    if(_.isNaN(ts)|| _.isNaN(gran)){
+            //        console.log("Illegal timestamp or granularity");
+            //        return;
+            //    }
+            //
+            //    //KPIs
+            //    for(var i=4; i<line.length;i++){
+            //        var kpiname=header[i];
+            //        var value=line[i]; //todo validate value
+            //        var nValue=parseFloat(value);
+            //        var key=myID+'_'+kpiname+"_"+ts+'_'+gran;
+            //        if(_.isNaN(nValue)){  //string  //TODO there is bug here ,need check template->kpi_def
+            //            statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:"'+value+'",gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
+            //        }else{  //number
+            //            statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:'+value+',gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
+            //        }
+            //    }
+            //});
+
+            //connect to kpi definition
+            //statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran create (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
+            //console.log(statements);
+            //n4j.runCypherStatementsReturnErrors(statements,function(err,result){
+            //    t=os.uptime();
+            //    logMessage={
+            //        Time:tx,
+            //        Cost:t-start_time,
+            //        Type:'INFO',
+            //        Module:conf.name,
+            //        Message:'Success to collect file:'+file+'. Line of content:'+ Math.max((output.length-1),0),
+            //        errors:err
+            //    };
+            //    renameFile(file+'.processing','completed',function(ret){
+            //        callback(logMessage);
+            //    });
+            //    //callback(logMessage);
+            //});
+        }
+
         var start_time=os.uptime();
         var t,tx,logMessage;
         tx=new Date().toISOString();
         //fs.readFile(path.join(__dirname, _.get(conf,'DIR')+file), 'utf-8', function(err, data) {
         console.log("[CSV Collector]: start to collect file:",file);
+
         fs.readFile(file, 'utf-8', function(err, data) {
             if (err) {
                 console.log('Failed to open csv file '+file+'. Error:'+err);
@@ -63,31 +144,69 @@ module.exports = (function() {
                                     Module:conf.name,
                                     Message:'Fail to parse file:'+file
                                 };
-                                renameFile(file+'.processing','completed',function(ret){
+                                renameFile(file+'.processing','completed',function(err){
+                                    logMessage.Message=err;
                                     callback(logMessage);
                                 });
                             }else{
                                 if(output.length<=1){
                                     console.log('There is no data in file '+file);
-                                    renameFile(file+'.processing','completed',function(ret){
+                                    t=os.uptime();
+
+                                    renameFile(file+'.processing','completed',function(err){
+                                        logMessage={
+                                            Time:tx,
+                                            Cost:(t-start_time),
+                                            Type:'Error',
+                                            Module:conf.name,
+                                            Message:err
+                                        };
                                         callback(logMessage);
                                     });
                                 }else{
                                     var header= output[0];
                                     //console.log("header: ", header);
                                     var parentType=header[0].trim();
-                                    var myType=header[1].trim();
+                                    var childType=header[1].trim();
+                                    var gran= _.get(output, '[1][3]');
+                                    if(_.isNaN(gran)){
+                                        console.log('File format error. Failed to get granularity');
+                                        logMessage={
+                                            Time:tx,
+                                            Cost:(t-start_time),
+                                            Type:'Error',
+                                            Module:conf.name,
+                                            Message:'File format error. Failed to get granularity'
+                                        };
+                                        callback(logMessage);
+                                    }else{
+                                        if(_.get(conf,'auto_register')){
+                                            var kpis= _.slice(header,4);
+                                            async.each(kpis,_registerKPI.bind(null,childType,gran),function(err){
+                                                if(err){
+                                                    console.log('Register KPI with errors',err);
+                                                }
+
+                                                var data= _.drop(output);
+                                                _collectorData(data,header,parentType,childType);
+                                            });
+                                        }else{
+                                            _collectorData(data,header,parentType,childType);
+                                        }
+                                    }
+
+
                                     //var gran=header[3].trim();
 
-                                    var data= _.drop(output);  //TODO: pagination
+                                   /* var data= _.drop(output);  //TODO: pagination
                                     var statements=[];
 
                                     var parents=[];
                                     var children=[];
                                     _.forEach(data,function(line){
-                                        //TODO many duplicate, can optimize
                                         var parentID=line[0].trim();
                                         if(parentID!=='' && !_.includes(parents,parentID)){  //create parent node
+
                                             statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t merge (i:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
                                             //statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
                                             parents.push(parentID);
@@ -125,9 +244,6 @@ module.exports = (function() {
                                         }
                                     });
 
-                                    //connect to kpi definition
-                                    //statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran create (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
-                                    //console.log(statements);
                                     n4j.runCypherStatementsReturnErrors(statements,function(err,result){
                                         t=os.uptime();
                                         logMessage={
@@ -142,12 +258,8 @@ module.exports = (function() {
                                             callback(logMessage);
                                         });
                                         //callback(logMessage);
-                                    });
+                                    });*/
                                 }
-                                ////the file will be rename during ingestion
-                                //renameFile(file+'.processing','completed',function(ret){
-                                //    //callback(logMessage);
-                                //});
                             }
                         });
                     }

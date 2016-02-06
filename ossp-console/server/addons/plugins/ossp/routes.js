@@ -21,6 +21,7 @@ module.exports = function(app) {
     app.get(prefix+'/kpis/granularity',kpi.getKPIGranularity);
     app.get(prefix+'/kpis/source',kpi.getSourceKPIList);
     app.get(prefix+'/kpis/id',kpi.getKPIID);
+    app.get(prefix+'/kpis/create/',kpi.createKPIForExternalGetRequest);
     app.post(prefix+'/kpis/create',kpi.createKPI);
 
     app.get(prefix+'/kpis/values/nfvdgui',kpi.getKPIsForNFVDGUIRequestMonitor);

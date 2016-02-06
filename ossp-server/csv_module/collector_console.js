@@ -30,7 +30,7 @@ module.exports = (function() {
                         return _.endsWith(file, '.csv');
                     }),function(file){
                         Collector.collectFile(file,function(log){
-                            console.log('lllllllllll',log);
+                            //console.log('lllllllllll',log);
                             logMessages.push(log);
                         });
                     });

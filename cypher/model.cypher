@@ -8,10 +8,10 @@ merge (:TEMPLATE:Windows_Host {key:"IT/Windows_Host",group:"IT",type:"Windows_Ho
 match (gran:TEMPLATE {key:"2G_RAN/GRAN"}) with gran match (bsc:TEMPLATE {key:"2G_RAN/BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {key:"2G_RAN/BSC"}) with bsc match (bts:TEMPLATE {key:"2G_RAN/BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 
-merge (:GRANULARITY {id:3,type:"5mins",num:300});
-merge (:GRANULARITY {id:0,type:"15mins",num:900});
-merge (:GRANULARITY {id:1,type:"hourly",num:3600});
-merge (:GRANULARITY {id:2,type:"daily",num:86400});
+merge (:GRANULARITY {id:3,type:"5mins",seconds:300});
+merge (:GRANULARITY {id:0,type:"15mins",seconds:900});
+merge (:GRANULARITY {id:1,type:"hourly",seconds:3600});
+merge (:GRANULARITY {id:2,type:"daily",seconds:86400});
 
 merge (:KPI_DEF {id:0,name:"number of service request",type:0,formula:"nbr_call_request"});
 match (k:KPI_DEF {id:0}) with k match (bts:TEMPLATE {type:"BTS"}) merge (bts)-[:HAS_KPI]->(k);

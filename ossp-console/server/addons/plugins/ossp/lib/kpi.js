@@ -10,6 +10,7 @@ module.exports = (function() {
     var C = require('./ossp-common');
 
     var n4j=require('./neo4j_funs');
+    var cMaker=require('./cypherMaker');
     //var display = require('./nfvd-artifact-display');
     //var path = require('path');
 
@@ -179,7 +180,7 @@ module.exports = (function() {
                 res.status(500).send(err);
                 res.end();
             }else{
-                res.send({ID:KPIID});
+                res.send({ID:id});  //===KPIID
                 res.end();
             }
         });
@@ -192,27 +193,49 @@ module.exports = (function() {
                 callback(new Error("Failed to apply KPI ID"),null);
             }else{
                 var data=req.body;
-                var statements=[];
-                statements.push({statement:'create (:KPI_DEF {id:'+id+',name:"'+data.kpi_name+'",type:0,formula:"'+data.kpi_formula+'",description:"'+(data.kpi_desc||'')+'",type:'+data.kpi_type+',unit:"'+(data.kpi_unit||'')+'"});'});
-                statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (t:TEMPLATE {type:"'+data.ne_type+'"}) merge (t)-[:HAS_KPI]->(k);'});
-                statements.push({statement:'match (k:KPI_DEF {id:'+id+'}) with k match (g:GRANULARITY {id:'+data.granularity+'}) merge (g)-[:HAS_KPI]->(k);'});
-                n4j.runCypherStatementsReturnErrors(statements,function(err,info){
-                    if(err){
-                        callback(err,null);
-                    }else{
-                        if(info.length>0){
-                            callback(info,null);
+                //if kpi already registered
+                async.waterfall([
+                    function (callback){
+                        var statements=cMaker.getCypherForLookupKPIDefinition(data.domain,data.ne_type,data.granularity,data.kpi_name,data.kpi_type,data.kpi_formula);
+                        n4j.runCypherWithReturn(statements,function(err,result){
+                            callback(err,result);
+                        });
+                    },
+                    function(kd,callback){
+                        if(!_.get(kd,'results[0].data[0].row[0]')){
+                            var statements=cMaker.getCypherForRegisterKPIDefinition(data.domain,data.ne_type,data.granularity,id,data.kpi_name,data.kpi_type,data.kpi_formula,data.kpi_unit,data.kpi_desc);
+                            n4j.runCypherStatementsReturnErrors(statements,function(err,info){
+                                if(err){
+                                    callback(err,null);
+                                }else{
+                                    if(info.length>0){
+                                        callback(info,null);
+                                    }else{
+                                        callback(null,null);
+                                    }
+                                }
+                            });
                         }else{
+                            console.log("KPI has defined");
                             callback(null,null);
                         }
+
                     }
+
+
+                ],function(err/*,results*/){
+                    console.log('2222222222');
+                    callback(err,null);
                 });
+
+
+
             }
         }
         async.waterfall([
             async.apply(getKPIID),
             async.apply(_createKPIDefinitionNode)
-        ],function(err,result){
+        ],function(err/*,result*/){
             if(err) {
                 res.status(500).send(err);
                 res.end();
@@ -221,6 +244,20 @@ module.exports = (function() {
                 res.end();
             }
         });
+
+    };
+    K.createKPIForExternalGetRequest=function(req,res){
+        req.body={};
+        _.set(req.body,'domain',_.get(req,'query.domain'));
+        _.set(req.body,'kpi_name',_.get(req,'query.kpi_name'));
+        _.set(req.body,'kpi_formula',_.get(req,'query.kpi_formula'));
+        _.set(req.body,'kpi_desc',_.get(req,'query.kpi_desc'));
+        _.set(req.body,'kpi_type',_.get(req,'query.kpi_type'));
+        _.set(req.body,'kpi_unit',_.get(req,'query.kpi_unit'));
+        _.set(req.body,'ne_type',_.get(req,'query.ne_type'));
+        _.set(req.body,'granularity',_.get(req,'query.granularity'));
+        //console.log('*********createKPIForExternalGetRequest',data);
+        K.createKPI(req,res);
 
     };
     var url='match (e:KPI_DEF) return max(e.id)';
