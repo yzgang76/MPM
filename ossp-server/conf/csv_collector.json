@@ -1,4 +1,5 @@
 {
+  "domain":"2GRAN",
   "name":"Standarnd CSV Collector",
   "DIR":"/../data/",
   "interval":5000,
