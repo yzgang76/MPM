@@ -40,69 +40,66 @@ module.exports = (function() {
             },'GET',{},false);
         }
         function _collectorData(data,header,parentType,childType){
-             //TODO: pagination
             var statements=[];
-            var parents=[];
+            var parents=[];  //avoid to inject same node
             var children=[];
-            //_.forEach(data,function(line){
-            //    var parentID=line[0].trim();
-            //    if(parentID!=='' && !_.includes(parents,parentID)){  //create parent node
-            //
-            //        statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t merge (i:INSTANCE:'+parentType+'{id:"'+parentID+'",type:"'+parentType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
-            //        //statements.push({statement:'match (t:TEMPLATE {type:"'+parentType+'"}) with t match (i:INSTANCE {id:"'+parentID+'"}) merge (t)-[:HAS_INSTANCE]->(i)'});
-            //        parents.push(parentID);
-            //    }
-            //    var myID=line[1].trim();
-            //    if(myID!==''&& !_.includes(children,myID)){  //create child node
-            //        statements.push({statement:'match (t:TEMPLATE {type:"'+childType+'"}) with t merge (i:INSTANCE:'+childType+'{id:"'+myID+'",type:"'+myType+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)'});
-            //        //statements.push({statement:'match (t:TEMPLATE {type:"'+myType+'"}) with t match (i:INSTANCE {id:"'+myID+'"}) create (t)-[:HAS_INSTANCE]->(i)'});
-            //
-            //        children.push(myID);
-            //    }
-            //
-            //    //create relationship between parent and child
-            //    statements.push({statement:'match (p:INSTANCE {id:"'+parentID+'"}) with p merge (c:INSTANCE {id:"'+myID+'"}) create (p)-[:HAS_CHILD]->(c)'});
-            //
-            //
-            //    var ts=parseInt(line[2]);
-            //    var gran=parseInt(line[3]);
-            //    if(_.isNaN(ts)|| _.isNaN(gran)){
-            //        console.log("Illegal timestamp or granularity");
-            //        return;
-            //    }
-            //
-            //    //KPIs
-            //    for(var i=4; i<line.length;i++){
-            //        var kpiname=header[i];
-            //        var value=line[i]; //todo validate value
-            //        var nValue=parseFloat(value);
-            //        var key=myID+'_'+kpiname+"_"+ts+'_'+gran;
-            //        if(_.isNaN(nValue)){  //string  //TODO there is bug here ,need check template->kpi_def
-            //            statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:"'+value+'",gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
-            //        }else{  //number
-            //            statements.push({statement:'match (ne:INSTANCE{id:"'+myID+'"}),   (d:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY) where d.formula="'+kpiname+'" and g.num='+gran+' with ne,d create (k:KPI_VALUE{key:"'+key+'",name:"'+kpiname+'", ts:'+ts+',value:'+value+',gran:'+gran+', neID:"'+myID+',updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
-            //        }
-            //    }
-            //});
+            var skipTheRow=false;
+            _.forEach(data,function(line) {  //build statements for each row
+                skipTheRow = false;
+                // inject inventories
+                var parentName = line[0].trim();
+                var childName = line[1].trim();
+                if (parentName !== '' && childName !== '' && (!_.include(parents, parentName) || !_.include(children, childName))) {
+                    statements=statements.concat(cypherMaker.getCypherInjectParentAndChildNodeInstances(domain, parentType, parentName, childType, childName));
+                    parents.push(parentName);
+                    parents = _.uniq(parents);
+                    children.push(childName);
+                    children = _.uniq(children);
+                } else if (parentName === '' && childName !== '' && !_.include(children, childName)) {
+                    statements=statements.concat(cypherMaker.getCypherInjectNodeInstance(domain, childType, childName));
+                    children = _.uniq(children.push(childName));
+                } else if(parentName === '' && childName === ''){
+                    //skip the line
+                    skipTheRow = true;
+                }
 
-            //connect to kpi definition
-            //statements.push({statement:'match (k:KPI_VALUE) with k match (d:KPI_DEF) where k.name=d.formula match(d)<-[:HAS_KPI]-(g:GRANULARITY) where g.num=k.gran create (d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id'});
-            //console.log(statements);
-            //n4j.runCypherStatementsReturnErrors(statements,function(err,result){
-            //    t=os.uptime();
-            //    logMessage={
-            //        Time:tx,
-            //        Cost:t-start_time,
-            //        Type:'INFO',
-            //        Module:conf.name,
-            //        Message:'Success to collect file:'+file+'. Line of content:'+ Math.max((output.length-1),0),
-            //        errors:err
-            //    };
-            //    renameFile(file+'.processing','completed',function(ret){
-            //        callback(logMessage);
-            //    });
-            //    //callback(logMessage);
-            //});
+                var ts;
+                var gran;
+                if (!skipTheRow) {    //get ts and granularity
+                    ts = parseInt(line[2]);
+                    gran = parseInt(line[3]);
+                    if (_.isNaN(ts) || _.isNaN(gran)) {
+                        console.log("Illegal timestamp or granularity");
+                        skipTheRow = true;
+                    }
+                }
+
+                if (!skipTheRow) { //inject KPI instances
+                    for (var i = 4; i < line.length; i++) {
+                        var kpiname = header[i];
+                        var value = line[i];
+                        //var nValue=parseFloat(value);
+                        statements=statements.concat(cypherMaker.getCypherInjectKPIInstances(domain, childType, childName, gran, kpiname, ts, value, gran));
+                    }
+                }
+            });
+
+            //commit the data
+            n4j.runCypherStatementsReturnErrors(statements,function(err,result){
+                t=os.uptime();
+                logMessage={
+                    Time:tx,
+                    Cost:t-start_time,
+                    Type:'INFO',
+                    Module:conf.name,
+                    Message:'Success to collect file:'+file+'. Line of content:'+ Math.max((data.length),0),
+                    errors:err||result
+                };
+                renameFile(file+'.processing','completed',function(/*ret*/){
+                    callback(logMessage);
+                });
+                //callback(logMessage);
+            });
         }
 
         var start_time=os.uptime();

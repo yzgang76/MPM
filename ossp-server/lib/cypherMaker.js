@@ -48,8 +48,19 @@ module.exports = (function() {
         var kp=domain+'/'+parentType+'/'+parentName;
         var kc=domain+'/'+childType+'/'+childName;
         var statement='match (d:DOMAIN {name:"'+domain+'"})-->(p:TEMPLATE{id:"'+parentType+'"})-->(c:TEMPLATE {id:"'+childType+'"}) with d,p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with d,p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with  d,p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with  d,p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with  d,p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
+        //console.log(statement);
         return  [{statement:statement}];
     };
+    M.getCypherInjectKPIInstances=function(domain,neType,neID,granularity,kpiname,ts,kpivalue,gran){
+        //var key=kpiname+'/'+neID+'/'+ts+'/'+gran;
+        //if have kpiid will improve the performance because it's index
+        var statement= _.isNaN(parseFloat(kpivalue))?
+        'match (ne:INSTANCE{key:"'+domain+'/'+neType+'/'+neID+'"})<--(:TEMPLATE)-->(d:KPI_DEF{type:0,formula:"'+kpiname+'"})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{name:"'+kpiname+'", ts:'+ts+',value:'+kpivalue+',gran:'+gran+', neID:"'+neID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.key=d.id+"/"+ne.key+"/"+k.ts, k.id=d.id, k.updateTS=timestamp()'
+        :'match (ne:INSTANCE{key:"'+domain+'/'+neType+'/'+neID+'"})<--(:TEMPLATE)-->(d:KPI_DEF{type:0,formula:"'+kpiname+'"})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{name:"'+kpiname+'", ts:'+ts+',value:"'+kpivalue+'",gran:'+gran+', neID:"'+neID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.key=d.id+"/"+ne.key+"/"+k.ts, k.id=d.id, k.updateTS=timestamp()';
+        console.log(statement);
+        return  [{statement:statement}];
+    };
+
 
     return M;
 })();

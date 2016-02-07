@@ -6,10 +6,11 @@ var path=require('path');
 var fs = require('fs');
 var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
 var C=require(path.join(__dirname,'/../lib/common-funs'));
+var neo4j_conf=require(path.join(__dirname,'/../conf/neo4j'));
 module.exports = (function() {
     'use strict';
     var N={};
-    var printStatement=true;
+    var printStatement=neo4j_conf.printStatement;
     N.getNodes=function(req,res){
         var type=req.params.type;
         var payload={
@@ -100,6 +101,7 @@ module.exports = (function() {
         }else{
             var url='/db/data/transaction/commit';
             C.makeQuery(C.neo4j_server,url,function(err,r,body){
+                console.log(err, r.body);
                 if(err){
                     callback(err,null);
                 }else{
