@@ -9,7 +9,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var debug=require('debug');
 
-var csvP=require(path.join(__dirname,'./csv_module/csv_parser'));
+//var csvP=require(path.join(__dirname,'./csv_module/csv_parser'));
 var neo4j=require(path.join(__dirname,'./neo4j_module/neo4j_funs'));
 var nfvd=require(path.join(__dirname,'./nfvd_collector/component2Neo4j'));
 var csv_console=require(path.join(__dirname,'./csv_module/collector_console'));
@@ -51,12 +51,6 @@ app.use(cookieParser());
 // Home page
 app.get('/', function (req, res) {
     res.render('index.html');
-});
-
-
-app.get('/test',function(req,res){
-    //res.send(require('./data/test.json'));
-    csvP.test(req,res);
 });
 
 

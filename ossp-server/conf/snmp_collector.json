@@ -1,94 +1,90 @@
-{
-  "ossp_console": {
-    "server": "http://localhost:3000",
-    "url": "/V1.0/domains/ossp/kpis/ID"
+[
+  {
+    "device_info": {
+      "domain": "IT",
+      "type": "Windows_Host",
+      "name": "localhost",
+      "IP": "127.0.0.1",
+      "community": "public",
+      "version": "2c"
+    },
+    "OIDs": [
+      {
+        "method": "get",
+        "name": "Physical memory utilization",
+        "formula": "[.1.3.6.1.2.1.25.2.3.1.6.4]/[.1.3.6.1.2.1.25.2.3.1.5.4]*100",
+        "unit": "%",
+        "interval": 300
+      },
+      {
+        "method": "walk",
+        "aggregation": "avg",
+        "name": "Avg CPU Utilization",
+        "formula": "[.1.3.6.1.2.1.25.3.3.1.2]",
+        "description": "Average CPU Utilization in 5 minutes",
+        "unit": "%",
+        "interval": 300
+      },
+      {
+        "method": "get",
+        "name": "Bytes In",
+        "formula": "[.1.3.6.1.2.1.2.2.1.10.12]",
+        "unit": "Byte",
+        "interval": 300
+      },
+      {
+        "method": "get",
+        "aggregation": "delta",
+        "name": "Bytes Out",
+        "formula": "[.1.3.6.1.2.1.2.2.1.16.12]",
+        "unit": "Byte",
+        "interval": 300
+      }
+    ]
   },
-  "collection": [
-    {
-      "device_info": {
-        "domain":"IT",
-        "type": "Windows_Host",
-        "name": "localhost",
-        "IP": "127.0.0.1",
-        "community": "public",
-        "version": "2c"
+  {
+    "device_info": {
+      "type": "Windows_Host",
+      "name": "not exists",
+      "IP": "10.0.0.1",
+      "community": "public",
+      "version": "2c"
+    },
+    "OIDs": [
+      {
+        "method": "get",
+        "name": "Physical memory utilization",
+        "formula": "[.1.3.6.1.2.1.25.2.3.1.6.4]/[.1.3.6.1.2.1.25.2.3.1.5.4]*100",
+        "unit": "%",
+        "interval": 900
       },
-      "OIDs": [
-        {
-          "method": "get",
-          "name": "Physical memory utilization",
-          "formula": "[.1.3.6.1.2.1.25.2.3.1.6.4]/[.1.3.6.1.2.1.25.2.3.1.5.4]*100",
-          "unit":"%",
-          "interval": 300
-        },
-        {
-          "method": "walk",
-          "aggregation": "avg",
-          "name": "Avg CPU Utilization",
-          "formula": "[.1.3.6.1.2.1.25.3.3.1.2]",
-          "description":"Average CPU Utilization in 5 minutes",
-          "unit":"%",
-          "interval": 300
-        },
-        {
-          "method": "get",
-          "name": "Bytes In",
-          "formula": "[.1.3.6.1.2.1.2.2.1.10.12]",
-          "unit":"Byte",
-          "interval": 300
-        },
-        {
-          "method": "get",
-          "aggregation": "delta",
-          "name": "Bytes Out",
-          "formula": "[.1.3.6.1.2.1.2.2.1.16.12]",
-          "unit":"Byte",
-          "interval": 300
-        }
-      ]
-    },{
-      "device_info": {
-        "type": "Windows_Host",
-        "name": "not exists",
-        "IP": "10.0.0.1",
-        "community": "public",
-        "version": "2c"
+      {
+        "method": "walk",
+        "aggregation": "avg",
+        "name": "Avg CPU Utilization",
+        "formula": "[.1.3.6.1.2.1.25.3.3.1.2]",
+        "description": "Average CPU Utilization in 5 minutes",
+        "unit": "%",
+        "interval": 900
       },
-      "OIDs": [
-        {
-          "method": "get",
-          "name": "Physical memory utilization",
-          "formula": "[.1.3.6.1.2.1.25.2.3.1.6.4]/[.1.3.6.1.2.1.25.2.3.1.5.4]*100",
-          "unit":"%",
-          "interval": 900
-        },
-        {
-          "method": "walk",
-          "aggregation": "avg",
-          "name": "Avg CPU Utilization",
-          "formula": "[.1.3.6.1.2.1.25.3.3.1.2]",
-          "description":"Average CPU Utilization in 5 minutes",
-          "unit":"%",
-          "interval": 900
-        },
-        {
-          "method": "get",
-          "aggregation": "delta",
-          "name": "Bytes In",
-          "formula": "[.1.3.6.1.2.1.2.2.1.10.12]",
-          "unit":"Byte",
-          "interval": 900
-        },
-        {
-          "method": "get",
-          "aggregation": "delta",
-          "name": "Bytes Out",
-          "formula": "[.1.3.6.1.2.1.2.2.1.16.12]",
-          "unit":"Byte",
-          "interval": 900
-        }
-      ]
-    }
-  ]
-}
+      {
+        "method": "get",
+        "aggregation": "delta",
+        "name": "Bytes In",
+        "formula": "[.1.3.6.1.2.1.2.2.1.10.12]",
+        "unit": "Byte",
+        "interval": 900
+      },
+      {
+        "method": "get",
+        "aggregation": "delta",
+        "name": "Bytes Out",
+        "formula": "[.1.3.6.1.2.1.2.2.1.16.12]",
+        "unit": "Byte",
+        "interval": 900
+      }
+    ]
+  }
+]
+
 

@@ -120,7 +120,7 @@ module.exports = (function() {
                     Module:conf.name,
                     Message:'Fail to open file:'+file
                 };
-                renameFile(file,'completed',function(err){
+                renameFile(file,'completed',function(/*err*/){
                     callback(logMessage);
                 });
 

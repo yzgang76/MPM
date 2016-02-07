@@ -3,12 +3,12 @@
  */
 var path=require('path');
 //var fs = require('fs');
-var csv = require(path.join(__dirname,'/../node_modules/csv/lib/index'));
+//var csv = require(path.join(__dirname,'/../node_modules/csv/lib/index'));
 var snmp = require(path.join(__dirname,'/../node_modules/snmp-native/lib/snmp'));
 var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
 var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 var Parser = require(path.join(__dirname, '/../lib/parser')).Parser;
-var os=require('os');
+//var os=require('os');
 var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 //var conf=require(path.join(__dirname,'/../conf/csv_collector'));
 module.exports = (function() {
@@ -82,14 +82,6 @@ module.exports = (function() {
         );
     };
     function walkAll(session,jobs,callback){
-        async.map(jobs,_walk,function(err,results){
-            if(err){
-                console.log('walkAll return error',err);
-                callback(err,null);
-            }else{
-                callback(null,results);
-            }
-        });
         function _walk(job,callback){
             var oid= _.get(job,'collectArray[0]');
             var method= _.get(job,'aggregation');
@@ -142,6 +134,15 @@ module.exports = (function() {
                 }
             });
         }
+        async.map(jobs,_walk,function(err,results){
+            if(err){
+                console.log('walkAll return error',err);
+                callback(err,null);
+            }else{
+                callback(null,results);
+            }
+        });
+
     }
     function getAll(session,oids,jobs,callback){
         session.getAll({ oids:oids}, function (error, varbinds) {
@@ -222,7 +223,7 @@ module.exports = (function() {
                         callback(null);
                     }
 
-                },function(err){
+                },function(/*err*/){
                     callback (null,ret);
                 });
 
