@@ -10,7 +10,7 @@ var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 var os=require('os');
 var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
 var C=require(path.join(__dirname,'/../lib/common-funs'));
-var ossp_console=require(path.join(__dirname,'/../conf/ossp_console'));
+//var ossp_console=require(path.join(__dirname,'/../conf/ossp_console'));
 var conf=require(path.join(__dirname,'/../conf/csv_collector'));
 var cypherMaker=require(path.join(__dirname,'/../lib/cypherMaker'));
 
@@ -29,16 +29,17 @@ module.exports = (function() {
     }
     P.collectFile=function(file,callback){
         var domain= _.get(conf,'domain');
-        function _registerKPI(domain,neType,gran,kpiName,callback){
-            var url='/V1.0/domains/'+ _.get(ossp_console,'workspace')+'/kpis/create?domain='+domain+'&kpi_name='+kpiName+'&kpi_formula='+kpiName+'&kpi_type=0&ne_type='+neType+'&granularity='+gran;
-            C.makeQuery(ossp_console.server,url,function(err,r,body){
-                if(err){
-                    callback(err,null);
-                }else{
-                    callback(null,body.errors);
-                }
-            },'GET',{},false);
-        }
+        //function _registerKPI(domain,neType,gran,kpiName,callback){
+        //    var url='/V1.0/domains/'+ _.get(ossp_console,'workspace')+'/kpis/create?domain='+domain+'&kpi_name='+kpiName+'&kpi_formula='+kpiName+'&kpi_type=0&ne_type='+neType+'&granularity='+gran;
+        //    C.makeQuery(ossp_console.server,url,function(err,r,body){
+        //        if(err){
+        //            callback(err,null);
+        //        }else{
+        //            callback(null,body.errors);
+        //        }
+        //    },'GET',{},false);
+        //}
+
         function _collectorData(data,header,parentType,childType){
             var statements=[];
             var parents=[];  //avoid to inject same node
@@ -182,10 +183,11 @@ module.exports = (function() {
                                         if(_.get(conf,'auto_register')){
                                             var kpis= _.slice(header,4);
 
-                                            async.map(kpis,_registerKPI.bind(this,domain,childType,gran),function(err){
+                                            async.map(kpis, C.registerKPI.bind(this,domain,childType,gran,null,null,null),function(err,results){
                                                 if(err){
                                                     console.log('Register KPI with errors',err);
                                                 }
+                                                //results store the kpiiids for each kpi. can use it to optimize the collection cypher
 
                                                 var data= _.drop(output);
                                                 _collectorData(data,header,parentType,childType);

@@ -346,7 +346,7 @@ module.exports = (function() {
 
         });
     };
-    E.getKPIValueForNE=function(callback,kpiid,ts,window_size,nelist,size,skip,order){
+    E.getKPIValueForNE=function(callback,kpiid/*,ts,window_size,nelist,size,skip,order*/){
         //console.log('*************getKPIValueForNE',kpiid, ts,window_size,nelist,size,skip,order);
         E.getKPIDef(kpiid,function(err,def) {
             if(err){
@@ -502,7 +502,7 @@ module.exports = (function() {
                                                     //[{"row":["BSC2",2]},{"row":["BSC2",1]},{"row":["BSC1",2]},{"row":["BSC1",1]}]}
                                                     //console.log('aaaaaaaaaaaaaaaa',JSON.stringify(results));
 
-                                                    var ob={};
+                                                    //var ob={};
                                                     var ret=[];
                                                     _.forEach(results,function(v,k){
                                                         _.forEach(v,function(i){
@@ -528,7 +528,7 @@ module.exports = (function() {
                                 }
                             },
                             function(result,callback){
-                                var data= _.get(result,'results[0].data');
+                                //var data= _.get(result,'results[0].data');
                                 callback(null,result);
                             }
                         ], function (err, result) {

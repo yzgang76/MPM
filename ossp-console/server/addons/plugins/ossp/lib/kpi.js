@@ -14,7 +14,7 @@ module.exports = (function() {
     //var display = require('./nfvd-artifact-display');
     //var path = require('path');
 
-    var RAW='Raw';
+    //var RAW='Raw';
     var CAL='Calculation';
     var TA="Time Aggregation";
     var EA="Entity Aggregation";
@@ -187,7 +187,7 @@ module.exports = (function() {
     };
 
     K.createKPI=function(req,res){
-        console.log('*********createKPI',req.body);
+        //console.log('*********createKPI',req.body);
         function _createKPIDefinitionNode(id,callback){
             if(!id){
                 callback(new Error("Failed to apply KPI ID"),null);
@@ -202,30 +202,32 @@ module.exports = (function() {
                         });
                     },
                     function(kd,callback){
-                        if(!_.get(kd,'results[0].data[0].row[0]')){
+                        var _id=_.get(kd,'results[0].data[0].row[0]');
+                        if(!_id){
                             var statements=cMaker.getCypherForRegisterKPIDefinition(data.domain,data.ne_type,data.granularity,id,data.kpi_name,data.kpi_type,data.kpi_formula,data.kpi_unit,data.kpi_desc);
                             n4j.runCypherStatementsReturnErrors(statements,function(err,info){
+                                console.log('iiiiiiiiiiiiiii',id,info);
                                 if(err){
-                                    callback(err,null);
+                                    callback(err,id);
                                 }else{
                                     if(info.length>0){
-                                        callback(info,null);
+                                        callback(info,id);
                                     }else{
-                                        callback(null,null);
+                                        callback(null,id);
                                     }
                                 }
                             });
                         }else{
                             console.log("KPI has defined");
-                            callback(null,null);
-                        }
 
+                            //TODO: shall decrease the KPIID?
+                            callback(null,_id);
+                        }
                     }
 
 
-                ],function(err/*,results*/){
-                    console.log('2222222222');
-                    callback(err,null);
+                ],function(err,results){
+                    callback(err,results);
                 });
 
 
@@ -235,12 +237,12 @@ module.exports = (function() {
         async.waterfall([
             async.apply(getKPIID),
             async.apply(_createKPIDefinitionNode)
-        ],function(err/*,result*/){
+        ],function(err,result){
             if(err) {
                 res.status(500).send(err);
                 res.end();
             }else{
-                res.send({result:"successfully"});
+                res.send({id:result});
                 res.end();
             }
         });
@@ -256,7 +258,7 @@ module.exports = (function() {
         _.set(req.body,'kpi_unit',_.get(req,'query.kpi_unit'));
         _.set(req.body,'ne_type',_.get(req,'query.ne_type'));
         _.set(req.body,'granularity',_.get(req,'query.granularity'));
-        //console.log('*********createKPIForExternalGetRequest',data);
+        //console.log('*********createKPIForExternalGetRequest',req.body);
         K.createKPI(req,res);
 
     };

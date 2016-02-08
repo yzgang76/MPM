@@ -3,7 +3,7 @@
  */
 module.exports = (function() {
     'use strict';
-    var _ = require(process.env.ROOT + '/node_modules/lodash/index');
+    //var _ = require(process.env.ROOT + '/node_modules/lodash/index');
     var K = {};
     //For KPI Manager
     K.getCypherForLookupKPIDefinition=function(domain,neType,granularity,kpiName,kpiType,kpiFormula){
@@ -15,6 +15,7 @@ module.exports = (function() {
         match (k:KPI_DEF {id:1}) with k match (t:TEMPLATE {id:"BTS"}) merge (t)-[:HAS_KPI]->(k)
         match (k:KPI_DEF {id:1}) with k match (g:GRANULARITY {seconds:900}) merge (g)-[:HAS_KPI]->(k);*/
         var statement='match (d:DOMAIN{name:"'+domain+'"})-->(t:TEMPLATE {id:"'+neType+'"}) with t match (g:GRANULARITY {seconds:'+granularity+'}) with t,g merge(kd:KPI_DEF {id:'+kpiID+',name:"'+kpiName+'",type:'+kpiType+',formula:"'+kpiFormula+'",description:"'+(kpiDesc||"")+'",unit:"'+(kpiUnit||"")+'"}) with t,g,kd merge (g)-[:HAS_KPI]->(kd) with t,g,kd merge (t)-[:HAS_KPI]->(kd)';
+        console.log('rgeeeeeeeeeeeeeeeeeeeeee',statement);
         return  [{statement:statement}];
     };
 

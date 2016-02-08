@@ -9,6 +9,7 @@ module.exports = (function() {
     var _ = require(path.join(__dirname,'/../node_modules/lodash/index'));
     var os = require('os');
     var neo4j_conf=require(path.join(__dirname,'/../conf/neo4j'));
+    var ossp_console=require(path.join(__dirname,'/../conf/ossp_console'));
     var fs=require('fs');
     //var securityLogger = require(path.join(process.env.ROOT, 'server', 'logger', 'security-logger'));
     //var logger = require(path.join(process.env.ROOT, 'server', 'logger', 'server-logger'));
@@ -215,6 +216,26 @@ module.exports = (function() {
         });
         return _(ret).toString();
     };
-
+    C.registerKPI=function(domain,neType,gran,formula,desc,unit,kpiName,callback){
+        var url='/V1.0/domains/'+ _.get(ossp_console,'workspace')+'/kpis/create?domain='+domain+'&kpi_name='+kpiName+'&kpi_type=0&ne_type='+neType+'&granularity='+gran;
+        if(desc){
+            url=url+'&kpi_desc='+desc;
+        }
+        if(unit){
+            url=url+'&kpi_unit='+unit;
+        }
+        if(formula){
+            url=url+'&kpi_formula='+formula;
+        }else{
+            url=url+'&kpi_formula='+kpiName;
+        }
+        C.makeQuery(ossp_console.server,url,function(err,r,body){
+            if(err){
+                callback(err,null);
+            }else{
+                callback(null,body.id);
+            }
+        },'GET',{},false);
+    };
     return C;
 })();

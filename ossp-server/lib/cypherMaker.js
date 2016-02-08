@@ -62,8 +62,8 @@ module.exports = (function() {
     };
 
     //cypher for SNMP collector
-    M.getCypherQueryTemplate=function(type){
-        var statement='match (e:TEMPLATE {type:"'+type+'"}) return e';
+    M.getCypherQueryTemplate=function(domain,type){
+        var statement='match(d:DOMAIN{name:"'+domain+'"})-->(e:TEMPLATE {id:"'+type+'"}) return e';
         return  [{statement:statement}];
     };
 

@@ -60,9 +60,9 @@ module.exports = (function() {
             //var oids=_.get(collection,'OIDs');
             function __collectDevice(dev,callback){
                 //console.log('_collectDevice',dev);
-                function ___getDeviceDefinition(type,callback){
+                function ___getDeviceDefinition(domain,type,callback){
                       //the template shall be predefined
-                    n4j.runCypherWithReturn(cypherMaker.getCypherQueryTemplate(type),function(err,result){
+                    n4j.runCypherWithReturn(cypherMaker.getCypherQueryTemplate(domain,type),function(err,result){
                         //console.log(result);
                         var def= _.get(result,'results[0].data[0].row[0]');
                         var errors=_.get(result,'errors');
@@ -101,8 +101,9 @@ module.exports = (function() {
                     }
                 }
                 var type= _.get(dev,'device_info.type');
+                var domain=_.get(dev,'device_info.domain');
                 async.waterfall([
-                    async.apply(___getDeviceDefinition,type),
+                    async.apply(___getDeviceDefinition,domain,type),
                     async.apply(___ingestDeviceInstance)
                 ],function(err/*,result*/){
                     if(err) {
@@ -123,7 +124,7 @@ module.exports = (function() {
                 var version= _.get(dev,'device_info.version');
 
                 var oids= _.get(dev,"OIDs");
-                function ___processOID(oid,callback){
+                function ___processOID(oid,callback){  //get/create KPIID
                     function ____collectKPIDefinition(oid,callback){
                         //var method= _.get(oid,"method");
                         var name=_.get(oid,"name");
@@ -132,63 +133,18 @@ module.exports = (function() {
                         var interval=_.get(oid,"interval");
                         var unit=_.get(oid,"unit");
                         var description=_.get(oid,"description");
-                        var kpiid;
-                        var stat='match (k:KPI_DEF{name:"'+name+'",type:0})<-[:HAS_KPI]-(t:TEMPLATE{type:"'+type+'"}) with k match (k)<-[:HAS_KPI]-(g:GRANULARITY{num:'+interval+'}) return k';
-                        n4j.runCypherWithReturn([{"statement":stat}],function(err,result){
-                                if(err){
-                                    console.log(snmp_collector_console.messages.ERROR6+ name);
-                                    callback(new Error(snmp_collector_console.messages.ERROR6+ name),null);
-                                }else{
-                                    kpiid=_.get(result,"results[0].data[0].row[0].id");
-                                    if(kpiid){
-                                        console.log("Found kpi id of "+name+'='+kpiid);
-                                        oid.id=kpiid;
-                                        callback(null,oid); //already define the kpi
-                                    }else{
-                                        // add kpi definition
-                                        //get kpiid
-                                        console.log("create new kpi definition");
-                                       /* C.makeQuery(ossp,url,function(err,r,data){
-                                            if(err){
-                                                console.log(snmp_collector_console.messages.ERROR7);
-                                                callback(new Error(snmp_collector_console.messages.ERROR7),null);
-                                            }else{
-                                                kpiid=data.ID;
-                                                if(!kpiid){
-                                                    console.log(snmp_collector_console.messages.ERROR7);
-                                                    callback(new Error(snmp_collector_console.messages.ERROR7),null);
-                                                }else{
-
-                                                    var statements=[];
-                                                    statements.push({statement:'create (:KPI_DEF {id:'+kpiid+',name:"'+name+'",type:0,formula:"'+formula+'",description:"'+(description||'')+'",type:0,unit:"'+(unit||'')+'"})'});
-                                                    statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (t:TEMPLATE {type:"'+type+'"}) merge (t)-[:HAS_KPI]->(k)'});
-                                                    statements.push({statement:'match (k:KPI_DEF {id:'+kpiid+'}) with k match (g:GRANULARITY {num:'+interval+'}) merge (g)-[:HAS_KPI]->(k)'});
-                                                    n4j.runCypherStatementsReturnErrors(statements,function(err,info){
-                                                        if(err){
-                                                            console.log(snmp_collector_console.messages.ERROR8,err);
-                                                            callback(err,null);
-                                                        }else{
-                                                            if(info.length>0){
-                                                                console.log(snmp_collector_console.messages.ERROR8,info);
-                                                                callback(info,null);
-                                                            }else{
-                                                                oid.id=kpiid;
-                                                                callback(null,oid);
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        },'GET',{},true);*/
-
-                                    }
-                                }
+                        //var kpiid;
+                        C.registerKPI(domain,type,interval,formula,description,unit,name,function(err,results){
+                            if(!err){
+                                oid.id=results;
+                                callback(null,oid);
+                            }else{
+                                callback(err, null);
                             }
-                        );
-
+                        });
                     }
                     function ____addCollectSchedule(oid,callback){
-                        //console.log('____addCollectSchedule',oid);
+                        console.log('____addCollectSchedule',oid);
                         if(oid){
                             var interval_jobs=_.get(scheduler,oid.interval);
                             if(!interval_jobs){
@@ -420,9 +376,9 @@ module.exports = (function() {
 
                     });
                     function ____collectKPIDefinition(oid,callback){
-                        var method= _.get(oid,"method");
+                        //var method= _.get(oid,"method");
                         var name=_.get(oid,"name");
-                        var aggregation=_.get(oid,"aggregation");
+                        //var aggregation=_.get(oid,"aggregation");
                         var formula=_.get(oid,"formula");
                         var interval=_.get(oid,"interval");
                         var unit=_.get(oid,"unit");
@@ -549,7 +505,7 @@ module.exports = (function() {
                     res.send({"result":status,"Message":msg});
                 }else{
                     var collections= _.get(conf,"collection");
-                    async.each(collections,_processCollection,function(err){
+                    async.each(collections,_processCollection,function(/*err*/){
                         status=1;
                         res.send({"result":status,"Message":msg});
                     });
@@ -557,8 +513,6 @@ module.exports = (function() {
                 }
             }
         }
-
-
     };
     S.getScheduler=function(req,res){
         res.send(scheduler);

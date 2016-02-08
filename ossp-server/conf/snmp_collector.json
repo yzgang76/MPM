@@ -44,6 +44,7 @@
   },
   {
     "device_info": {
+      "domain": "IT",
       "type": "Windows_Host",
       "name": "not exists",
       "IP": "10.0.0.1",
