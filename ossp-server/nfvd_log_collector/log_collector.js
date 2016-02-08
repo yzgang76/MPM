@@ -110,8 +110,8 @@ module.exports = (function() {
 
         }*/
         function _createServerInstance(callback){
-            var statement='merge (e:INSTANCE:NFVD_GUI_SERVER{id:"'+conf.id+'",type:"NFVD_GUI_SERVER"}) with e match  (server:TEMPLATE {type:"NFVD_GUI_SERVER"}) merge (server)-[:HAS_INSTANCE]->(e)';
-            n4j.runCypherStatementsReturnErrors([{statement:statement}],function(err,result) {
+            //var statement='merge (e:INSTANCE:NFVD_GUI_SERVER{id:"'+conf.id+'",type:"NFVD_GUI_SERVER"}) with e match  (server:TEMPLATE {type:"NFVD_GUI_SERVER"}) merge (server)-[:HAS_INSTANCE]->(e)';
+            n4j.runCypherStatementsReturnErrors(cypherMaker.getCypherInjectNFVDGUIServerInstance(conf.id),function(err,result) {
                 console.log(err, result);
                callback(err,result);
             });
@@ -168,38 +168,39 @@ module.exports = (function() {
                 var statement="";
                 if(!_.includes(users,user)){
                     //add new instance
-                    statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_USER"}) with t  merge (user:INSTANCE:NFVD_GUI_USER{id:"'+user+'", type:"NFVD_GUI_USER"}) with t ,user merge (t)-[:HAS_INSTANCE]->(user)';
-                    statements.push({statement:statement});
+                    statements=statements.concat(cypherMaker.getCypherInjectNFVDGUIUserInstance(user));
+                    //statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_USER"}) with t  merge (user:INSTANCE{key:"NFVD/NFVD_GUI_USER/"+user,id:"'+user+'", type:"NFVD_GUI_USER"}) with t ,user merge (t)-[:HAS_INSTANCE]->(user)';
+                    //statements.push({statement:statement});
                     users.push(user);
                 }
                 uri=uri.replaceAll('"','');
 
                 if(!_.includes(uris,uri)){
                     //add new instance
-                    statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"}) with t merge (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) with t, uri merge (t)-[:HAS_INSTANCE]->(uri)';
-                    statements.push({statement:statement});
+                    //statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"}) with t merge (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) with t, uri merge (t)-[:HAS_INSTANCE]->(uri)';
+                    //statements.push({statement:statement});
+                    statements=statements.concat(cypherMaker.getCypherInjectNFVDGUIUriInstance(uri));
                     uris.push(uri);
                 }
 
-                statement='match (user:INSTANCE{id:"'+user+'", type:"NFVD_GUI_USER"}) with user match (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) merge (user)-[:HAS_CHILD]->(uri)' ;
-                statements.push({statement:statement});
 
-                statement='match (server:INSTANCE{id:"'+conf.id+'", type:"NFVD_GUI_SERVER"}) with server match (uri:INSTANCE:NFVD_GUI_SERVER_REQUEST{id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) merge (server)-[:HAS_CHILD]->(uri)' ;
-                statements.push({statement:statement});
+                statements=statements.concat(cypherMaker.getCypherInjectNFVDInventoryRelationships(conf.id,user,uri));
 
                 var cost= _.get(r,'cost');
                 var ts= _.get(r,'ts');
                 var key;
                 if(cost&&ts){
-                    key=uri+"_Server_Request_cost_"+ts;
-                    statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Request_cost"})<-[:HAS_KPI]-(t:TEMPLATE{id:"NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{id:"'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Request_cost", ts:'+ r.ts+',value:'+parseFloat(cost)+', neID:"'+uri+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id , k.gran=g.num';
-                    statements.push({statement:statement});
+                    //key=uri+"_Server_Request_cost_"+ts;
+                    //statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Request_cost"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{key:"NFVD/NFVD_GUI_REQUEST/'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Request_cost", ts:'+ r.ts+',value:'+parseFloat(cost)+', neID:"'+uri+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id , k.gran=g.num';
+                    //statements.push({statement:statement});
+                    statements=statements.concat(cypherMaker.getCypherInjectServerRequestCost(uri,ts,cost));
                 }
 
                 if(ts){
-                    key=uri+"Server_Response"+ts;
-                    statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Response"})<-[:HAS_KPI]-(t:TEMPLATE{id:"NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{id:"'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Response", ts:'+ r.ts+',value:"'+v+'", neID:"'+uri+'", returnCode:"'+r['return code']+'",method:"'+ r.method+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id, k.gran=g.num';
-                    statements.push({statement:statement});
+                    //key=uri+"Server_Response"+ts;
+                    //statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Response"})<-[:HAS_KPI]-(t:TEMPLATE{id:"NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{id:"'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Response", ts:'+ r.ts+',value:"'+v+'", neID:"'+uri+'", returnCode:"'+r['return code']+'",method:"'+ r.method+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id, k.gran=g.num';
+                    //statements.push({statement:statement});
+                    statements=statements.concat(cypherMaker.getCypherInjectServerReponse(uri,ts,r['return code'],r.method,v));
                 }
 
             }
