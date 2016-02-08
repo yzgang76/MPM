@@ -14,7 +14,8 @@ module.exports = (function() {
             var statement='merge (d:DOMAIN{name:"'+domain+'"})';
             statements.push({statement:statement});
             _.forEach(elements,function(e){
-                statement='match (d:DOMAIN{name:"'+domain+'"}) with d merge (t:TEMPLATE {id:"'+ e.id+'"';
+                var key=domain+'/'+ e.id;
+                statement='match (d:DOMAIN{name:"'+domain+'"}) with d merge (t:TEMPLATE {key:"'+ key+'" ,id:"'+ e.id+'"';
                 _.forIn(e,function(v,k){
                     if(k!=='id'){
                         if(_.isNumber(v)){
@@ -28,7 +29,9 @@ module.exports = (function() {
                 statements.push({statement:statement});
             });
             _.forEach(relationships,function(r){
-                statement='match (p:TEMPLATE {id:"'+ _.get(r,'parent_id')+'"}) with p merge (c:TEMPLATE {id:"'+ _.get(r,'child_id')+'"}) merge (p)-[:'+r.type+']->(c)';
+                var keyp=domain+'/'+ _.get(r,'parent_id');
+                var keyc=domain+'/'+ _.get(r,'child_id');
+                statement='match (p:TEMPLATE {key:"'+keyp+'"}) with p match (c:TEMPLATE {key:"'+keyc+'"}) merge (p)-[:'+r.type+']->(c)';
                 statements.push({statement:statement});
             });
             return statements;
@@ -41,13 +44,13 @@ module.exports = (function() {
     //cyphers for standard csv collector
     M.getCypherInjectNodeInstance=function(domain,type,name){
         var kp=domain+'/'+type+'/'+name;
-        var statement='match (d:DOMAIN {name:"'+domain+'"})-->(p:TEMPLATE{id:"'+type+'"}) with d,p merge (pi:INSTANCE {key:"'+kp+'",id:"'+name+'",type:"'+type+'"}) with d,p,pi merge (p)-[:HAS_INSTANCE]->(pi)';
+        var statement='match (p:TEMPLATE{key:"'+domain+'/'+type+'"}) with p merge (pi:INSTANCE {key:"'+kp+'",id:"'+name+'",type:"'+type+'"}) with p,pi merge (p)-[:HAS_INSTANCE]->(pi)';
         return [{statement:statement}];
     };
     M.getCypherInjectParentAndChildNodeInstances=function(domain,parentType,parentName,childType,childName){
         var kp=domain+'/'+parentType+'/'+parentName;
         var kc=domain+'/'+childType+'/'+childName;
-        var statement='match (d:DOMAIN {name:"'+domain+'"})-->(p:TEMPLATE{id:"'+parentType+'"})-->(c:TEMPLATE {id:"'+childType+'"}) with d,p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with d,p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with  d,p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with  d,p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with  d,p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
+        var statement='match (p:TEMPLATE{key:"'+domain+'/'+parentType+'"})-->(c:TEMPLATE {key:"'+domain+'/'+childType+'"}) with p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
         //console.log(statement);
         return  [{statement:statement}];
     };
@@ -63,13 +66,13 @@ module.exports = (function() {
 
     //cypher for SNMP collector
     M.getCypherQueryTemplate=function(domain,type){
-        var statement='match(d:DOMAIN{name:"'+domain+'"})-->(e:TEMPLATE {id:"'+type+'"}) return e';
+        var statement='match (e:TEMPLATE {key:"'+domain+'/'+type+'"}) return e';
         return  [{statement:statement}];
     };
 
     M.getCypherInjectSNMPNodeInstances=function(domain,type,id,ip,community,version){
         var key=domain+'/'+type+'/'+id;
-        var statement='match(d:DOMAIN{name:"'+domain+'"})-->(t:TEMPLATE{id:"'+type+'"}) with t merge (i:INSTANCE{key:"'+key+'",id:"'+id+'",type:"'+type+'", ip:"'+ip+'",community:"'+community+'",version:"'+version+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)';
+        var statement='match (t:TEMPLATE{key:"'+domain+'/'+type+'"}) with t merge (i:INSTANCE{key:"'+key+'",id:"'+id+'",type:"'+type+'", ip:"'+ip+'",community:"'+community+'",version:"'+version+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)';
         //console.log(statement);
         return  [{statement:statement}];
     };
@@ -86,8 +89,18 @@ module.exports = (function() {
         _.isNaN(kpivalue)?  //string
             'match (ne:INSTANCE{key:"'+domain+'/'+devicetype+'/'+devicename+'"})<--(:TEMPLATE)-->(d:KPI_DEF{id:'+kpiid+'})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{key:"'+key+'",id:'+kpiid+',name:"'+kpiname+'", ts:'+ts+',value:"'+kpivalue+'",gran:'+gran+', neID:"'+devicename+'",raw:"'+kpiraw+'"}) , (ne)-[:HAS_KPI_INSTANCE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.updateTS=timestamp()':
         'match (ne:INSTANCE{key:"'+domain+'/'+devicetype+'/'+devicename+'"})<--(:TEMPLATE)-->(d:KPI_DEF{id:'+kpiid+'})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{key:"'+key+'",id:'+kpiid+',name:"'+kpiname+'", ts:'+ts+',value:'+kpivalue+',gran:'+gran+', neID:"'+devicename+'",raw:'+kpiraw+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.updateTS=timestamp()';
-        console.log('nnnnnnnnnnnnnnnnnn',statement);
+        //console.log('nnnnnnnnnnnnnnnnnn',statement);
         return  [{statement:statement}];
+    };
+
+    //cypher for NFVD log collector
+    M.getCypherInjectNFVDGUIModel=function(){
+        var statements=[
+            {statement:'merge (domain:DOMAIN{name:"NFVD"})-[:HAS]->(server:TEMPLATE {key:"NFVD/NFVD_GUI_SERVER",id:"NFVD_GUI_SERVER",desc:"nfvd GUI server"})-[:CONTAINS]->(request:TEMPLATE {key:"NFVD/NFVD_GUI_SERVER_REQUEST",id:"NFVD_GUI_SERVER_REQUEST",desc:"nfvd GUI server"}) with request,domain merge (domain)-[:HAS]->(user:TEMPLATE{key:"NFVD/NFVD_GUI_USER",id:"NFVD_GUI_USER",desc:"NFVD GUI USER"})-[:CONTAINS]->(request) with domain,request merge (domain)-[:HAS]->(request)'},
+            {statement:'merge (:GRANULARITY {id:-1,type:"Real _Time",seconds:0})'}
+        ];
+        return statements;
+
     };
     return M;
 })();
