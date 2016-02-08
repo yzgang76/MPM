@@ -60,7 +60,8 @@ module.exports = (function() {
         var r =/^\w+/g;
         return expression.match(r);
     }
-    function getAggregationResult(method,src_kpi_name,kpiName,ts,ne,data){  //for time aggr
+    function getAggregationResult(method,src_kpi_name,kpiName,ts,ne,data){
+        //for time aggr
         //console.log('*******getAggregationResult',method,src_kpi_name,kpiName,ts,ne);
         var ret;
         switch(method.toLowerCase()){

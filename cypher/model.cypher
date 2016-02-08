@@ -8,6 +8,7 @@ merge (:TEMPLATE:Windows_Host {key:"IT/Windows_Host",group:"IT",type:"Windows_Ho
 match (gran:TEMPLATE {key:"2G_RAN/GRAN"}) with gran match (bsc:TEMPLATE {key:"2G_RAN/BSC"}) merge (gran)-[:CONTAINS]->(bsc);
 match (bsc:TEMPLATE {key:"2G_RAN/BSC"}) with bsc match (bts:TEMPLATE {key:"2G_RAN/BTS"}) merge (bsc)-[:CONTAINS]->(bts);
 
+merge (:GRANULARITY {id:4,type:"1mins",seconds:60});
 merge (:GRANULARITY {id:3,type:"5mins",seconds:300});
 merge (:GRANULARITY {id:0,type:"15mins",seconds:900});
 merge (:GRANULARITY {id:1,type:"hourly",seconds:3600});

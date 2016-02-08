@@ -10,77 +10,11 @@ var n4j=require(path.join(__dirname, '/../neo4j_module/neo4j_funs'));
 var Parser = require(path.join(__dirname, '/../lib/parser')).Parser;
 //var os=require('os');
 var async=require(path.join(__dirname,'/../node_modules/async/dist/async'));
+var cypherMaker=require(path.join(__dirname,'/../lib/cypherMaker'));
 //var conf=require(path.join(__dirname,'/../conf/csv_collector'));
 module.exports = (function() {
     'use strict';
     var P={};
-    P.collectAndPopulate=function(jobOfOneDevice,ts, callback){
-        P.collect(jobOfOneDevice,function(err,results){
-            if(!err){
-                var statements=[];
-                var device= _.get(jobOfOneDevice,'device');
-                var jobs= _.get(jobOfOneDevice,'jobs');
-                _.forEach(_.flatten(results),function(result){
-                        var j=_.find(jobs,{id:result.id});
-                        if(j){
-                            // create kpi instance
-                            var key=device.id+'_'+ j.name+"_"+ts+'_'+ j.interval;
-                            if(_.isNaN(result.value)){  //string
-                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:"'+result.value+'",raw:"'+(result.raw||result.value)+'",gran:'+ j.interval+', neID:"'+device.id+'",updateTS:'+Date.now()+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
-                            }else {  //number
-                                statements.push({statement:'match (ne:INSTANCE{id:"'+device.id+'"}) , (g:GRANULARITY{num:'+j.interval+'}) ,(kd:KPI_DEF{id:'+result.id+'}) with ne,g,kd create (k:KPI_VALUE{id:'+result.id+',key:"'+key+'",name:"'+ j.name+'", ts:'+ts+',value:'+result.value+',raw:'+(result.raw||result.value)+',gran:'+ j.interval+', neID:"'+device.id+'",updateTS:'+Date.now()+'"}), (ne)-[:HAS_KPI_VALUE]->(k) , (g)-[:HAS_KPI_VALUE]->(k),(kd)-[:HAS_KPI_VALUE]->(k)'});
-                            }
-                        }else{
-                            console.log('jjjjjjjjj',j,result.id);
-                        }
-                    }
-                );
-                //console.log('statements:',statements);
-                n4j.runCypherStatementsReturnErrors(statements,function(err,result){
-                    callback(err,result);
-                });
-            }  else{
-                callback(err,null);
-            }
-        });
-    };
-    P.collect=function(jobOfOneDevice,callback){
-        var device= _.get(jobOfOneDevice,'device');
-        var jobs= _.get(jobOfOneDevice,'jobs');
-        if(!device||!jobs){
-            console.log('Error in job definition');
-            return;
-        }
-
-        var session = new snmp.Session({host: device.ip, community: device.community,version:device.version==='2c'?1:0 });
-        var getOids=[];
-        var walkJobs=[];
-        var getJobs=[];
-        _.forEach(_.filter(jobs,function(j){
-            if(j.method==='walk'){
-                walkJobs.push(j);
-            }else if(j.method==='get'){
-                getJobs.push(j);
-            }
-            return j.method==='get';
-        }),function(j){
-            getOids=getOids.concat(j.collectArray);
-        });
-        console.log('get list:',JSON.stringify(getOids));
-        async.parallel(
-            [
-                async.apply(getAll,session,getOids,getJobs),
-                async.apply(walkAll,session,walkJobs)
-            ],function(err,results){
-                session.close();
-                if(err){
-                    callback(err,null);
-                }else{
-                    callback(null,results);
-                }
-            }
-        );
-    };
     function walkAll(session,jobs,callback){
         function _walk(job,callback){
             var oid= _.get(job,'collectArray[0]');
@@ -171,8 +105,8 @@ module.exports = (function() {
                             if(method==='delta'){
                                 //console.log('dddddddddddddddddelta');
                                 var raw= _.get(vars,job.keys[0]);
-                                var statement='match (e:KPI_VALUE{id:'+job.id+'}) return e order by e.ts desc limit 1';
-                                n4j.runCypherWithReturn([{statement:statement}],function(err,result){
+                                //var statement='match (e:KPI_VALUE{id:'+job.id+'}) return e order by e.ts desc limit 1';
+                                n4j.runCypherWithReturn(cypherMaker.getCypherGetLatestKPIValue(job.id),function(err,result){
                                     if(err){
                                         ret.push(
                                             {
@@ -217,12 +151,10 @@ module.exports = (function() {
                                 callback(null);
                             }
                         }
-
                     }catch(e){
                         console.error('KPI parse error:',JSON.stringify(e));
                         callback(null);
                     }
-
                 },function(/*err*/){
                     callback (null,ret);
                 });
@@ -237,6 +169,69 @@ module.exports = (function() {
         });
         return ret;
     }
+    P.collectAndPopulate=function(jobOfOneDevice,ts, callback){  //main entry
+        P.collect(jobOfOneDevice,function(err,results){
+            if(!err){
+                var statements=[];
+                var device= _.get(jobOfOneDevice,'device');
+                var jobs= _.get(jobOfOneDevice,'jobs');
+                _.forEach(_.flatten(results),function(result){
+                        var j=_.find(jobs,{id:result.id});
+                        if(j){
+                            // create kpi instance
+                            statements=statements.concat(cypherMaker.getCypherInjectSNMPKPIInstances(device.domain,device.type,device.id,j.interval,result.id,j.name,ts,result.value,(result.raw||result.value)));
+                        }else{
+                            console.error('collect with errors:',j,result.id);
+                        }
+                    }
+                );
+                //console.log('statements:',statements);
+                n4j.runCypherStatementsReturnErrors(statements,function(err,result){
+                    callback(err,result);
+                });
+            }  else{
+                callback(err,null);
+            }
+        });
+    };
+    P.collect=function(jobOfOneDevice,callback){
+        var device= _.get(jobOfOneDevice,'device');
+        var jobs= _.get(jobOfOneDevice,'jobs');
+        if(!device||!jobs){
+            console.log('Error in job definition');
+            return;
+        }
+
+        var session = new snmp.Session({host: device.ip, community: device.community,version:device.version==='2c'?1:0 });
+        var getOids=[];
+        var walkJobs=[];
+        var getJobs=[];
+        _.forEach(_.filter(jobs,function(j){
+            if(j.method==='walk'){
+                walkJobs.push(j);
+            }else if(j.method==='get'){
+                getJobs.push(j);
+            }
+            return j.method==='get';
+        }),function(j){
+            getOids=getOids.concat(j.collectArray);
+        });
+        console.log('get list:',JSON.stringify(getOids));
+        async.parallel(
+            [
+                async.apply(getAll,session,getOids,getJobs),
+                async.apply(walkAll,session,walkJobs)
+            ],function(err,results){
+                session.close();
+                if(err){
+                    callback(err,null);
+                }else{
+                    callback(null,results);
+                }
+            }
+        );
+    };
+
 
     return P;
 })();

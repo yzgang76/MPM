@@ -157,6 +157,8 @@ module.exports = (function() {
                             if(!d){
                                 d={
                                     device:{
+                                        domain:domain,
+                                        type:type,
                                         id:id,
                                         ip:ip,
                                         community:community,
@@ -207,9 +209,9 @@ module.exports = (function() {
             );
 
         }
-        if(status>0){
-            return;
-        }else /*if(status===0)*/{
+        if(status<=0){
+            //return;
+        //}else /*if(status===0)*/{
             console.log(JSON.stringify(conf));
 
             var msg=snmp_collector_console.messages.SUCCESSFULLY;
@@ -218,7 +220,7 @@ module.exports = (function() {
             if(!conf){
                 msg="Failed to load configuration file.";
                 status=-1;
-                return;
+                //return;
             }else{
 
                 //TODO:update to use kpi create service
@@ -227,12 +229,12 @@ module.exports = (function() {
                 if(!ossp||!workspace){
                     msg=snmp_collector_console.messages.ERROR1;
                     status=-1;
-                    return;
+                    //return;
                 }else{
-                    var collections= conf;
-                    async.each(collections,_processCollection,function(/*err*/){
+                    //var collections= conf;
+                    async.each(conf,_processCollection,function(/*err*/){
                         status=1;
-                        return;
+                        //return;
                     });
                 }
             }
@@ -282,7 +284,7 @@ module.exports = (function() {
         return oid;
     }
 
-    S.initCollector=function(req,res){
+  /*  S.initCollector=function(req,res){
         //embedded functions
         function _processCollection(collection,callback){
             //var dev= _.get(collection,'device_info');
@@ -335,7 +337,7 @@ module.exports = (function() {
                 async.waterfall([
                     async.apply(___getDeviceDefinition,dev),
                     async.apply(___ingestDeviceInstance)
-                ],function(err/*,result*/){
+                ],function(err/!*,result*!/){
                     if(err) {
                         console.error(err);
                         callback(err,null);
@@ -472,7 +474,7 @@ module.exports = (function() {
                     async.apply(__collectDevice,collection), //collect device instance
                     async.apply(__buildScheduler,collection)
                 ],
-                function(err/*, results*/){
+                function(err/!*, results*!/){
                     if(err){
                         console.log(snmp_collector_console.messages.ERROR2, JSON.stringify(collection));
                         msg=snmp_collector_console.messages.ERROR5;
@@ -486,7 +488,7 @@ module.exports = (function() {
         }
         if(status>0){
             res.send({"status":1,"Message":snmp_collector_console.messages.INITIALIZED});
-        }else /*if(status===0)*/{
+        }else /!*if(status===0)*!/{
             console.log(JSON.stringify(conf));
 
             var msg=snmp_collector_console.messages.SUCCESSFULLY;
@@ -505,7 +507,7 @@ module.exports = (function() {
                     res.send({"result":status,"Message":msg});
                 }else{
                     var collections= _.get(conf,"collection");
-                    async.each(collections,_processCollection,function(/*err*/){
+                    async.each(collections,_processCollection,function(/!*err*!/){
                         status=1;
                         res.send({"result":status,"Message":msg});
                     });
@@ -513,7 +515,7 @@ module.exports = (function() {
                 }
             }
         }
-    };
+    };*/
     S.getScheduler=function(req,res){
         res.send(scheduler);
     };
@@ -538,10 +540,10 @@ module.exports = (function() {
                         collector.collectAndPopulate(deviceJob,ts,function(err,result){
                             callback(err,result);
                         });
-                    },function(err){
+                    },function(/*err*/){
                         console.log("completed snmp scan job. interval: ",k," @",new Date().toISOString());
                     });
-                }, parseInt(k)*1000);
+                }, parseInt(k)*1000);  //ms->s
                 timers.push(timer);
             });
             state='started';

@@ -57,7 +57,7 @@ module.exports = (function() {
         var statement= _.isNaN(parseFloat(kpivalue))?
         'match (ne:INSTANCE{key:"'+domain+'/'+neType+'/'+neID+'"})<--(:TEMPLATE)-->(d:KPI_DEF{type:0,formula:"'+kpiname+'"})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{name:"'+kpiname+'", ts:'+ts+',value:'+kpivalue+',gran:'+gran+', neID:"'+neID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.key=d.id+"/"+ne.key+"/"+k.ts, k.id=d.id, k.updateTS=timestamp()'
         :'match (ne:INSTANCE{key:"'+domain+'/'+neType+'/'+neID+'"})<--(:TEMPLATE)-->(d:KPI_DEF{type:0,formula:"'+kpiname+'"})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{name:"'+kpiname+'", ts:'+ts+',value:"'+kpivalue+'",gran:'+gran+', neID:"'+neID+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.key=d.id+"/"+ne.key+"/"+k.ts, k.id=d.id, k.updateTS=timestamp()';
-        //console.log(statement);
+        //console.log('nnnnnnnnnnnnnnnnnnnnn',statement);
         return  [{statement:statement}];
     };
 
@@ -68,8 +68,25 @@ module.exports = (function() {
     };
 
     M.getCypherInjectSNMPNodeInstances=function(domain,type,id,ip,community,version){
-        var statement='match(d:DOMAIN{name:"'+domain+'"})-->(t:TEMPLATE{id:"'+type+'"}) with t merge (i:INSTANCE{id:"'+id+'",type:"'+type+'", ip:"'+ip+'",community:"'+community+'",version:"'+version+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)';
+        var key=domain+'/'+type+'/'+id;
+        var statement='match(d:DOMAIN{name:"'+domain+'"})-->(t:TEMPLATE{id:"'+type+'"}) with t merge (i:INSTANCE{key:"'+key+'",id:"'+id+'",type:"'+type+'", ip:"'+ip+'",community:"'+community+'",version:"'+version+'"}) with t,i merge (t)-[:HAS_INSTANCE]->(i)';
         //console.log(statement);
+        return  [{statement:statement}];
+    };
+
+    M.getCypherGetLatestKPIValue=function(id){
+        var statement='match (e:KPI_VALUE{id:'+id+'}) return e order by e.ts desc limit 1';
+        //console.log(statement);
+        return  [{statement:statement}];
+    };
+
+    M.getCypherInjectSNMPKPIInstances=function(domain,devicetype,devicename,gran,kpiid,kpiname,ts,kpivalue,kpiraw){
+        var key=kpiid+'/'+ domain+'/'+devicetype+'/'+devicename+'/'+ts;
+        var statement=
+        _.isNaN(kpivalue)?  //string
+            'match (ne:INSTANCE{key:"'+domain+'/'+devicetype+'/'+devicename+'"})<--(:TEMPLATE)-->(d:KPI_DEF{id:'+kpiid+'})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{key:"'+key+'",id:'+kpiid+',name:"'+kpiname+'", ts:'+ts+',value:"'+kpivalue+'",gran:'+gran+', neID:"'+devicename+'",raw:"'+kpiraw+'"}) , (ne)-[:HAS_KPI_INSTANCE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.updateTS=timestamp()':
+        'match (ne:INSTANCE{key:"'+domain+'/'+devicetype+'/'+devicename+'"})<--(:TEMPLATE)-->(d:KPI_DEF{id:'+kpiid+'})<-[:HAS_KPI]-(g:GRANULARITY)  create (k:KPI_VALUE{key:"'+key+'",id:'+kpiid+',name:"'+kpiname+'", ts:'+ts+',value:'+kpivalue+',gran:'+gran+', neID:"'+devicename+'",raw:'+kpiraw+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.updateTS=timestamp()';
+        console.log('nnnnnnnnnnnnnnnnnn',statement);
         return  [{statement:statement}];
     };
     return M;
