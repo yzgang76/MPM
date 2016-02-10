@@ -181,11 +181,18 @@ module.exports = (function() {
                                         callback(logMessage);
                                     }else{
                                         if(_.get(conf,'auto_register')){
+
                                             var kpis= _.slice(header,4);
 
                                             async.map(kpis, C.registerKPI.bind(this,domain,childType,gran,null,null,null),function(err,results){
                                                 if(err){
                                                     console.log('Register KPI with errors',err);
+                                                }else{
+                                                    console.log("CSV Standard Collector: KPI List:*********************");
+                                                    for(var i=0;i<kpis.length;i++){
+                                                        console.log(kpis[i]+': '+results[i]);
+                                                    }
+                                                    console.log("CSV Standard Collector: KPI List:*********************");
                                                 }
                                                 //results store the kpiiids for each kpi. can use it to optimize the collection cypher
 

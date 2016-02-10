@@ -165,7 +165,7 @@ module.exports = (function() {
             var user= _.get(r,'userName');
             var uri= _.get(r,'url');
             if(user&&uri){
-                var statement="";
+                //var statement="";
                 if(!_.includes(users,user)){
                     //add new instance
                     statements=statements.concat(cypherMaker.getCypherInjectNFVDGUIUserInstance(user));
@@ -188,7 +188,7 @@ module.exports = (function() {
 
                 var cost= _.get(r,'cost');
                 var ts= _.get(r,'ts');
-                var key;
+                //var key;
                 if(cost&&ts){
                     //key=uri+"_Server_Request_cost_"+ts;
                     //statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{formula:"Server_Request_cost"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{key:"NFVD/NFVD_GUI_REQUEST/'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{key:"'+key+'",name:"Server_Request_cost", ts:'+ r.ts+',value:'+parseFloat(cost)+', neID:"'+uri+'",updateTS:'+Date.now()+'}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id , k.gran=g.num';

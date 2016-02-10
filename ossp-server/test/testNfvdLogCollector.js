@@ -25,8 +25,8 @@ function test2(){
 }
 
 function test3(){
-    C.collectEx();
+    C.collectEx('2016-02-01');
 }
 
 test2();
-//test3();
+test3();

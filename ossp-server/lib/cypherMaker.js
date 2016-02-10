@@ -50,7 +50,7 @@ module.exports = (function() {
     M.getCypherInjectParentAndChildNodeInstances=function(domain,parentType,parentName,childType,childName){
         var kp=domain+'/'+parentType+'/'+parentName;
         var kc=domain+'/'+childType+'/'+childName;
-        var statement='match (p:TEMPLATE{key:"'+domain+'/'+parentType+'"})-->(c:TEMPLATE {key:"'+domain+'/'+childType+'"}) with p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
+        var statement='match (p:TEMPLATE{key:"'+domain+'/'+parentType+'"})-->(c:TEMPLATE {key:"'+domain+'/'+childType+'"}) with p,c  merge (pi:INSTANCE {key:"'+kp+'"}) with p,c,pi merge (ci:INSTANCE {key:"'+kc+'"}) with p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
         //console.log(statement);
         return  [{statement:statement}];
     };
@@ -103,29 +103,33 @@ module.exports = (function() {
     };
     M.getCypherInjectNFVDGUIServerInstance=function(id){
         var statement='merge (e:INSTANCE{key:"NFVD/NFV_GUI_SERVER/'+id+'",id:"'+id+'",type:"NFVD_GUI_SERVER"}) with e match  (server:TEMPLATE {key:"NFVD/NFVD_GUI_SERVER"}) merge (server)-[:HAS_INSTANCE]->(e)';
+        console.log('cccccccccccccccccccccc',statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectNFVDGUIUserInstance=function(user){
-        var statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_USER"}) with t  merge (user:INSTANCE{key:"NFVD/NFVD_GUI_USER/"+user,id:"'+user+'", type:"NFVD_GUI_USER"}) with t ,user merge (t)-[:HAS_INSTANCE]->(user) ';
+        var statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_USER"}) with t  merge (user:INSTANCE{key:"NFVD/NFVD_GUI_USER/'+user+'",id:"'+user+'", type:"NFVD_GUI_USER"}) with t ,user merge (t)-[:HAS_INSTANCE]->(user) ';
+        console.log('dddddddddddddddddddddddd',user,statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectNFVDGUIUriInstance=function(uri){
-        var statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"}) with t merge (uri:INSTANCE{key:"NFVD/NFVD_GUI_SERVER_REQUEST/"+uri,id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) with t, uri merge (t)-[:HAS_INSTANCE]->(uri)';
+        var statement='match (t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"}) with t merge (uri:INSTANCE{key:"NFVD/NFVD_GUI_SERVER_REQUEST/'+uri+'",id:"'+uri+'", type:"NFVD_GUI_SERVER_REQUEST"}) with t, uri merge (t)-[:HAS_INSTANCE]->(uri)';
+        console.log('aaaaaaaaaaaaaaaaaaa',statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectNFVDInventoryRelationships=function(id,user,uri){
         var statement='match (server:INSTANCE{key:"NFVD/NFVD_GUI_SERVER/'+id+'"}) with server match (uri:INSTANCE{key:"NFVD/NFVD_SERVER_REQUEST/'+uri+'"}) merge (server)-[:HAS_CHILD]->(uri) with uri match(user:INSTANCE{key:"NFVD/NFVD_GUI_USER/'+user+'"}) merge (user)-[:HAS_CHILD]->(uri)' ;
+        console.log('bbbbbbbbbbbbbbbbbbbbbbbb',statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectServerRequestCost=function(uri,ts,cost){
         //var key=kpiid+'/'+ domain+'/'+devicetype+'/'+devicename+'/'+ts;
-        var statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{type:0,formula:"Server_Request_cost"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{key:"NFVD/NFVD_GUI_REQUEST/'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{name:"Server_Request_cost", ts:'+ ts+',value:'+parseFloat(cost)+', neID:"'+uri+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id,k.key=k.id+"/"+ne.key+"/"+ts , k.gran=g.seconds,k.updateTS=timestamp()';
+        var statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{type:0,formula:"Server_Request_cost"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{key:"NFVD/NFVD_GUI_SERVER_REQUEST/'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{name:"Server_Request_cost", ts:'+ ts+',value:'+parseFloat(cost)+', neID:"'+uri+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id,k.key=k.id+"/"+ne.key+"/"+k.ts , k.gran=g.seconds,k.updateTS=timestamp()';
         console.log('1111111111111111111111',statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectServerReponse=function(uri,ts,returnCode,method,value){
         //var key=kpiid+'/'+ domain+'/'+devicetype+'/'+devicename+'/'+ts;
-        var statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{type:0,formula:"Server_Response"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{id:"'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{name:"Server_Response", ts:'+ ts+',value:"'+value+'", neID:"'+uri+'", returnCode:"'+returnCode+'",method:"'+ method+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id,k.key=k.id+"/"+ne.key+"/"+ts, k.gran=g.seconds,k.updateTS=timestamp()';
+        var statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{type:0,formula:"Server_Response"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{key:"NFVD/NFVD_GUI_SERVER_REQUEST/'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{name:"Server_Response", ts:'+ ts+',value:"'+value+'", neID:"'+uri+'", returnCode:"'+returnCode+'",method:"'+ method+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id,k.key=k.id+"/"+ne.key+"/"+k.ts, k.gran=g.seconds,k.updateTS=timestamp()';
         console.log('2222222',statement);
         return  [{statement:statement}];
     };
