@@ -196,97 +196,46 @@ define([
                     }
                 };
                 function updateSubOptions(callback){
-
-                    console.log('*********updateSubOptions');
-                    //console.log('update:'+$scope.neKPIType.type);
-                    //if(!$scope.domain){
-                    //    $scope.neList=[];
-                    //    callback(false);
-                    //}else{
-                    //    if(!$scope.neList){
-                    //        _getTemplates(function(err,result){
-                    //            console.log('tttttttttttttttttttttttttt',result);
-                    //            $scope.neList=result;
-                    //            if(!$scope.neKPIType) {
-                    //                callback(false);
-                    //            }else{
-                    //                if($scope.neKPIType.type===TA){
-                    //                    $scope.subGranList= _.sortBy(_.filter($scope.granList,function(l){
-                    //                        return l.num< $scope.neGranularity.num;
-                    //                    }),'num');
-                    //                    if(!$scope.subNeGranularity||$scope.subNeGranularity.num>=$scope.neGranularity.num){
-                    //                        $scope.subNeGranularity=$scope.subGranList[0];
-                    //                    }
-                    //                    callback(true);
-                    //                }else if($scope.neKPIType.type===EA){
-                    //                    if($scope.neType){
-                    //                        var route1='/kpis/templates/'+$scope.neType.type+'/sub';
-                    //                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
-                    //                        p1.then(
-                    //                            function(response) {
-                    //                                $scope.subNeList=response.data;
-                    //                                if($scope.subNeList&&!$scope.subNeType||!_.find($scope.subNeList,{type:$scope.subNeType.type})){
-                    //                                    $scope.subNeType=$scope.subNeList[0];
-                    //                                }
-                    //                                callback(true);
-                    //                            },
-                    //                            function(error) {
-                    //                                messageNotifierService.error(JSON.stringify(error));
-                    //                                logger.error('Cant get data', route1, error);
-                    //                                $scope.subNEList=[];
-                    //                                $scope.subNeType=undefined;
-                    //                                callback(true);
-                    //                            }
-                    //                        );
-                    //                    }
-                    //
-                    //
-                    //                }else{
-                    //                    callback(true);
-                    //                }
-                    //            }
-                    //        });
-                    //    }else{
-                            if(!$scope.neKPIType) {
-                                callback(false);
-                            }else {
-                                if ($scope.neKPIType.type === TA) {
-                                    $scope.subGranList = _.sortBy(_.filter($scope.granList, function (l) {
-                                        return l.seconds < $scope.neGranularity.seconds;
-                                    }), 'num');
-                                    if (!$scope.subNeGranularity || $scope.subNeGranularity.seconds >= $scope.neGranularity.seconds) {
-                                        $scope.subNeGranularity = $scope.subGranList[0];
-                                    }
-                                    callback(true);
-                                } else if ($scope.neKPIType.type === EA) {
-                                    if ($scope.neType) {
-                                        var route1 = '/kpis/templates/' + $scope.domain.name+'/'+$scope.neType.id + '/sub';
-                                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
-                                        p1.then(
-                                            function (response) {
-                                                $scope.subNeList = response.data;
-                                                if ($scope.subNeList && !$scope.subNeType || !_.find($scope.subNeList, {type: $scope.subNeType.id})) {
-                                                    $scope.subNeType = $scope.subNeList[0];
-                                                }
-                                                callback(true);
-                                            },
-                                            function (error) {
-                                                messageNotifierService.error(JSON.stringify(error));
-                                                logger.error('Cant get data', route1, error);
-                                                $scope.subNEList = [];
-                                                $scope.subNeType = undefined;
-                                                callback(true);
-                                            }
-                                        );
-                                    }
-                                }
+                    console.log('*********updateSubOptions',$scope.neKPIType);
+                    if(!$scope.neKPIType) {
+                        callback(false);
+                    }else {
+                        if ($scope.neKPIType.type === TA) {
+                            $scope.subGranList = _.sortBy(_.filter($scope.granList, function (l) {
+                                return l.seconds < $scope.neGranularity.seconds;
+                            }), 'num');
+                            if (!$scope.subNeGranularity || $scope.subNeGranularity.seconds >= $scope.neGranularity.seconds) {
+                                $scope.subNeGranularity = $scope.subGranList[0];
                             }
-                    //    }
-                    //
-                    //}
+                            callback(true);
+                        } else if ($scope.neKPIType.type === EA) {
+                            if ($scope.neType) {
+                                var route1 = '/kpis/templates/' + $scope.domain.name+'/'+$scope.neType.id + '/sub';
+                                var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                                p1.then(
+                                    function (response) {
+                                        $scope.subNeList = response.data;
+                                        if ($scope.subNeList && !$scope.subNeType || !_.find($scope.subNeList, {type: $scope.subNeType.id})) {
+                                            $scope.subNeType = $scope.subNeList[0];
+                                        }
+                                        callback(true);
+                                    },
+                                    function (error) {
+                                        messageNotifierService.error(JSON.stringify(error));
+                                        logger.error('Cant get data', route1, error);
+                                        $scope.subNEList = [];
+                                        $scope.subNeType = undefined;
+                                        callback(true);
+                                    }
+                                );
+                            }
+                        }else{
+                            callback(true);
+                        }
+                    }
                 }
                 $scope.isReadToSearchSourceKPI=function(){
-                    console.log('*********isReadToSearchSourceKPI');
+                    //console.log('*********isReadToSearchSourceKPI');
                     if(!$scope.neKPIType){
                         return false;
                     }
@@ -302,15 +251,16 @@ define([
                     }
 
                 };
-                    $scope.createNewKPI=function(){
+                $scope.createNewKPI=function(){
                     var route1='/kpis/create';
                     var p1 = dataAccessService.postRouteDeferred(route1, '', {
+                        domain:$scope.domain.name,
                         kpi_name:$scope.kpiName,
                         kpi_desc:$scope.kpiDesc,
                         kpi_formula:$scope.kpiFormula,
                         kpi_unit:$scope.kpiUnit,
                         ne_type:$scope.neType.id,
-                        granularity:$scope.neGranularity.id,
+                        granularity:$scope.neGranularity.seconds,
                         kpi_type: _.indexOf($scope.kpiTypeList,$scope.neKPIType)
 
                     },false).promise;
