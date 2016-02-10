@@ -24,6 +24,21 @@ module.exports = (function() {
         return  [{statement:statement}];
     };
 
+    K.getCypherForGetDomainList=function(){
+        var statement='MATCH (d:DOMAIN) return d';
+        return  [{statement:statement}];
+    };
+
+    K.getCypherForGetTemplateList=function(){
+        var statement='MATCH (t:TEMPLATE) return t';
+        return  [{statement:statement}];
+    };
+
+    K.getCypherForGetTemplateListOfDomain=function(domain){
+        var statement='MATCH (d:DOMAIN{name:"'+domain+'"})-->(t:TEMPLATE) return t';
+        return  [{statement:statement}];
+    };
+
 
     return K;
 })();

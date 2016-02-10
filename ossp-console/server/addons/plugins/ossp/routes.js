@@ -16,8 +16,10 @@ module.exports = function(app) {
     app.post(prefix+'/collectors/:id/stop',collect.stopCollectorByID);
 
     app.get(prefix+'/kpis/definition',kpi.getKPIDefinitions);
+    app.get(prefix+'/kpis/domains',kpi.getKPIDomains);
     app.get(prefix+'/kpis/templates',kpi.getKPITemplates);
-    app.get(prefix+'/kpis/templates/:type/sub',kpi.getKPISubTemplates);
+    app.get(prefix+'/kpis/templates/:domain/domain',kpi.getKPITemplatesByDomain);
+    app.get(prefix+'/kpis/templates/:domain/:type/sub',kpi.getKPISubTemplates);
     app.get(prefix+'/kpis/granularity',kpi.getKPIGranularity);
     app.get(prefix+'/kpis/source',kpi.getSourceKPIList);
     app.get(prefix+'/kpis/id',kpi.getKPIID);

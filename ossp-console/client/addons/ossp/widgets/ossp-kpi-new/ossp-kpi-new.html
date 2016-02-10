@@ -10,11 +10,17 @@
 	</div>
 	<div class="col-sm-12 col-md-12 col-lg-12" style="border: 1px solid #a0a1a3; border-top: none; padding: 0;">
 		<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
+
+			<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Select Domain:</translate>
+			<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;" id="domain" data-ng-model="domain" ng-options=" d.name for d in domainList" data-ng-change="onDomainSelected()">
+			</select>
+		</div>
+		<div class="col-sm-12 col-md-12 col-lg-12" style="padding: 10px 10px 0 10px;">
 			
 				<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Select Entity Type:</translate>
-				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;" id="neType" data-ng-model="neType" ng-options=" ne.type for ne in neList" data-ng-change="update()">
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;" id="neType" data-ng-model="neType" ng-options=" ne.id for ne in neList" data-ng-change="update()">
 				</select>
-				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="subNeType" data-ng-show="neKPIType.type==='Entity Aggregation'" data-ng-model="subNeType" ng-options=" ne.type for ne in subNeList" data-ng-change="update()">
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="subNeType" data-ng-show="neKPIType.type==='Entity Aggregation'" data-ng-model="subNeType" ng-options=" ne.id for ne in subNeList" data-ng-change="update()">
 				</select>
 			
 		</div>

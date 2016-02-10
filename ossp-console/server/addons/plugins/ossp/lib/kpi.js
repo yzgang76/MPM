@@ -62,6 +62,61 @@ module.exports = (function() {
             }
         });
     };
+    K.getDomains=function(req,res){
+        var getValue0= 'MATCH (n:TEMPLATE) return n';
+        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                var ret=[];
+                //var header=_.get(result,'results[0].columns');
+                _.forEach(_.get(result,'results[0].data'),function(r){
+                    ret=ret.concat(r.row);
+                });
+                res.send(ret);
+                res.end();
+            }
+        });
+    };
+    K.getKPIDomains=function(req,res){
+        var getValue0= 'MATCH (n:DOMAIN) return n';
+        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                var ret=[];
+                //var header=_.get(result,'results[0].columns');
+                _.forEach(_.get(result,'results[0].data'),function(r){
+                    ret=ret.concat(r.row);
+                });
+                res.send(ret);
+                res.end();
+            }
+        });
+    };
+    K.getKPITemplatesByDomain=function(req,res){
+        var domain= _.get(req,'params.domain');
+        var getValue0= 'MATCH (d:DOMAIN{name:"'+domain+'"})-->(n:TEMPLATE) return n';
+        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+            if(err){
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
+                var ret=[];
+                //var header=_.get(result,'results[0].columns');
+                _.forEach(_.get(result,'results[0].data'),function(r){
+                    ret=ret.concat(r.row);
+                });
+                res.send(ret);
+                res.end();
+            }
+        });
+    };
     K.getKPITemplates=function(req,res){
         var getValue0= 'MATCH (n:TEMPLATE) return n';
         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
@@ -81,8 +136,9 @@ module.exports = (function() {
         });
     };
     K.getKPISubTemplates=function(req,res){
-        var type= _.get(req,'params.type');
-        var getValue0= 'MATCH (n:TEMPLATE{type:"'+type+'"})-[:CONTAINS]->(c:TEMPLATE) return c';
+        var domain= _.get(req,'params.domain');
+        var id= _.get(req,'params.type');
+        var getValue0= 'MATCH (n:TEMPLATE{key:"'+domain+'/'+id+'"})-[:CONTAINS]->(c:TEMPLATE) return c';
         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
             if(err){
                 res.status(500).send(err);
@@ -119,6 +175,7 @@ module.exports = (function() {
     };
     K.getSourceKPIList=function(req,res){
         console.log(req.query);
+        var domain= _.get(req,'query.domain');
         var neType= _.get(req,'query.neType');
         var neGranularity=_.get(req,'query.neGranularity');
         var neKPIType=_.get(req,'query.neKPIType');
@@ -128,13 +185,13 @@ module.exports = (function() {
         var url;
         switch (neKPIType){
             case CAL:
-                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{type:"'+neType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+neGranularity+'}) return e';
+                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{key:"'+domain+'/'+neType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+neGranularity+'}) return e';
                 break;
             case TA:
-                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{type:"'+neType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+subNeGranularity+'}) return e';
+                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{key:"'+domain+'/'+neType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+subNeGranularity+'}) return e';
                 break;
             case EA:
-                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{type:"'+subNeType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+neGranularity+'}) return e';
+                url='match (e:KPI_DEF)<-[:HAS_KPI]-(n:TEMPLATE{key:"'+domain+'/'+subNeType+'"}) with e,n match (e:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY{id:'+neGranularity+'}) return e';
                 break;
             default:
                 break;

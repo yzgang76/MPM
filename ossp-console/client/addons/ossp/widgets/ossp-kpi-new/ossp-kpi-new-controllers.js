@@ -43,26 +43,8 @@ define([
                 $scope.kpiTypeList=[{type:RAW},{type:CAL},{type:TA},{type:EA}];
 
                 function refresh(){
-                    async.parallel({
-                        neList:async.apply(_getTemplates),
-                        granList:async.apply(_getGranularity)
-
-                    },function(err,result){
-                        if(err){
-                            messageNotifierService.error(JSON.stringify(err));
-                        }else{
-                            $scope.neList=result.neList;
-                            $scope.granList=result.granList;
-                        }
-                    });
-                    if(KPIID){  //edit KPI Definition
-                        //$scope.neType=dataExchangeService.getData('netype');
-                        //$scope.neGranularity=dataExchangeService.getData('gran');
-                        //$scope.neKPIType=dataExchangeService.getData('kpitype');
-                    }
-
-                    function _getTemplates(callback){
-                        var route1='/kpis/templates';
+                    function _getDomains(callback){
+                        var route1='/kpis/domains';
                         var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
                         p1.then(
                             function(response) {
@@ -75,6 +57,20 @@ define([
                             }
                         );
                     }
+                    //function _getTemplates(callback){
+                    //    var route1='/kpis/templates';
+                    //    var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                    //    p1.then(
+                    //        function(response) {
+                    //            callback(null,response.data);
+                    //        },
+                    //        function(error) {
+                    //            messageNotifierService.error(JSON.stringify(error));
+                    //            logger.error('Cant get data', route1, error);
+                    //            callback(error,null);
+                    //        }
+                    //    );
+                    //}
                     function _getGranularity(callback){
                         var route1='/kpis/granularity';
                         var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
@@ -89,6 +85,27 @@ define([
                             }
                         );
                     }
+                    async.parallel({
+                        domainList:async.apply(_getDomains),
+                        //neList:async.apply(_getTemplates),
+                        granList:async.apply(_getGranularity)
+
+                    },function(err,result){
+                        if(err){
+                            messageNotifierService.error(JSON.stringify(err));
+                        }else{
+                            $scope.domainList=result.domainList;
+                            //$scope.neList=result.neList;
+                            $scope.granList=result.granList;
+                        }
+                    });
+                    //if(KPIID){  //edit KPI Definition
+                        //$scope.neType=dataExchangeService.getData('netype');
+                        //$scope.neGranularity=dataExchangeService.getData('gran');
+                        //$scope.neKPIType=dataExchangeService.getData('kpitype');
+                    //}
+
+
 
                 }
 
@@ -96,17 +113,17 @@ define([
 
                 var getSourceKPIList=function(){
                     console.log('*********getSourceKPIList');
-                    function _getSourceKPI(neType,neGranularity,neKPIType,subNeType,subNeGranularity,callback){
+                    function _getSourceKPI(domain,neType,neGranularity,neKPIType,subNeType,subNeGranularity,callback){
                         //console.log('_getSourceKPI:',neType,neGranularity,neKPIType);
                         if(neKPIType.type==='Raw'){
                             callback(null,[]);
                         }else{
                             var route1='/kpis/source/';
-                            var req='neType='+neType.type+'&neGranularity='+neGranularity.id+'&neKPIType='+neKPIType.type;
+                            var req='neType='+neType.id+'&neGranularity='+neGranularity.id+'&neKPIType='+neKPIType.type+'&domain='+domain;
                             if(neKPIType.type===TA){
                                 req=req+'&subNeGranularity='+subNeGranularity.id;
                             }else if(neKPIType.type===EA){
-                                req=req+'&subNeType='+subNeType.type;
+                                req=req+'&subNeType='+subNeType.id;
                             }
                             var p1 = dataAccessService.getRouteDeferred(route1, req, false).promise;
                             p1.then(
@@ -122,22 +139,22 @@ define([
                         }
                     }
                     if($scope.isReadToSearchSourceKPI()){
-                        _getSourceKPI($scope.neType,$scope.neGranularity,$scope.neKPIType,$scope.subNeType,$scope.subNeGranularity ,function(err,data){
+                        _getSourceKPI($scope.domain.name,$scope.neType,$scope.neGranularity,$scope.neKPIType,$scope.subNeType,$scope.subNeGranularity ,function(err,data){
                             if(!err){
                                 if($scope.neKPIType.type===CAL){
                                     _.forEach(data,function(d){
                                         d.gran=$scope.neGranularity.type;
-                                        d.ne=$scope.neType.type;
+                                        d.ne=$scope.neType.id;
                                     });
                                 }else if($scope.neKPIType.type===TA){
                                     _.forEach(data,function(d){
                                         d.gran=$scope.subNeGranularity.type;
-                                        d.ne=$scope.neType.type;
+                                        d.ne=$scope.neType.id;
                                     });
                                 }else if($scope.neKPIType.type===EA){
                                     _.forEach(data,function(d){
                                         d.gran=$scope.neGranularity.type;
-                                        d.ne=$scope.subNeType.type;
+                                        d.ne=$scope.subNeType.id;
                                     });
                                 }
                                 $scope.srcKPIs=data;
@@ -154,49 +171,119 @@ define([
                         }
                     });
                 };
+                $scope.onDomainSelected=function(){
+                    function _getTemplates(callback){
+                        //console.log('tttttttttttttttttttttttttt',$scope.domain);
+                        var route1='/kpis/templates/'+$scope.domain.name+'/domain';
+                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                        p1.then(
+                            function(response) {
+                                callback(null,response.data);
+                            },
+                            function(error) {
+                                messageNotifierService.error(JSON.stringify(error));
+                                logger.error('Cant get data', route1, error);
+                                callback(error,null);
+                            }
+                        );
+                    }
+                    if($scope.domain){
+                        _getTemplates(function(err,result){
+                            $scope.neList=result;
+                        });
+                    }else{
+                        $scope.neList=[];
+                    }
+                };
                 function updateSubOptions(callback){
+
                     console.log('*********updateSubOptions');
                     //console.log('update:'+$scope.neKPIType.type);
-                    if(!$scope.neKPIType) {
-                         callback(false);
-                    }else{
-                        if($scope.neKPIType.type===TA){
-                            $scope.subGranList= _.sortBy(_.filter($scope.granList,function(l){
-                                return l.num< $scope.neGranularity.num;
-                            }),'num');
-                            if(!$scope.subNeGranularity||$scope.subNeGranularity.num>=$scope.neGranularity.num){
-                                $scope.subNeGranularity=$scope.subGranList[0];
-                            }
-                            callback(true);
-                        }else if($scope.neKPIType.type===EA){
-                            if($scope.neType){
-                                var route1='/kpis/templates/'+$scope.neType.type+'/sub';
-                                var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
-                                p1.then(
-                                    function(response) {
-                                        $scope.subNeList=response.data;
-                                        if($scope.subNeList&&!$scope.subNeType||!_.find($scope.subNeList,{type:$scope.subNeType.type})){
-                                            $scope.subNeType=$scope.subNeList[0];
-                                        }
-                                        callback(true);
-                                    },
-                                    function(error) {
-                                        messageNotifierService.error(JSON.stringify(error));
-                                        logger.error('Cant get data', route1, error);
-                                        $scope.subNEList=[];
-                                        $scope.subNeType=undefined;
-                                        callback(true);
+                    //if(!$scope.domain){
+                    //    $scope.neList=[];
+                    //    callback(false);
+                    //}else{
+                    //    if(!$scope.neList){
+                    //        _getTemplates(function(err,result){
+                    //            console.log('tttttttttttttttttttttttttt',result);
+                    //            $scope.neList=result;
+                    //            if(!$scope.neKPIType) {
+                    //                callback(false);
+                    //            }else{
+                    //                if($scope.neKPIType.type===TA){
+                    //                    $scope.subGranList= _.sortBy(_.filter($scope.granList,function(l){
+                    //                        return l.num< $scope.neGranularity.num;
+                    //                    }),'num');
+                    //                    if(!$scope.subNeGranularity||$scope.subNeGranularity.num>=$scope.neGranularity.num){
+                    //                        $scope.subNeGranularity=$scope.subGranList[0];
+                    //                    }
+                    //                    callback(true);
+                    //                }else if($scope.neKPIType.type===EA){
+                    //                    if($scope.neType){
+                    //                        var route1='/kpis/templates/'+$scope.neType.type+'/sub';
+                    //                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                    //                        p1.then(
+                    //                            function(response) {
+                    //                                $scope.subNeList=response.data;
+                    //                                if($scope.subNeList&&!$scope.subNeType||!_.find($scope.subNeList,{type:$scope.subNeType.type})){
+                    //                                    $scope.subNeType=$scope.subNeList[0];
+                    //                                }
+                    //                                callback(true);
+                    //                            },
+                    //                            function(error) {
+                    //                                messageNotifierService.error(JSON.stringify(error));
+                    //                                logger.error('Cant get data', route1, error);
+                    //                                $scope.subNEList=[];
+                    //                                $scope.subNeType=undefined;
+                    //                                callback(true);
+                    //                            }
+                    //                        );
+                    //                    }
+                    //
+                    //
+                    //                }else{
+                    //                    callback(true);
+                    //                }
+                    //            }
+                    //        });
+                    //    }else{
+                            if(!$scope.neKPIType) {
+                                callback(false);
+                            }else {
+                                if ($scope.neKPIType.type === TA) {
+                                    $scope.subGranList = _.sortBy(_.filter($scope.granList, function (l) {
+                                        return l.seconds < $scope.neGranularity.seconds;
+                                    }), 'num');
+                                    if (!$scope.subNeGranularity || $scope.subNeGranularity.seconds >= $scope.neGranularity.seconds) {
+                                        $scope.subNeGranularity = $scope.subGranList[0];
                                     }
-                                );
+                                    callback(true);
+                                } else if ($scope.neKPIType.type === EA) {
+                                    if ($scope.neType) {
+                                        var route1 = '/kpis/templates/' + $scope.domain.name+'/'+$scope.neType.id + '/sub';
+                                        var p1 = dataAccessService.getRouteDeferred(route1, '', false).promise;
+                                        p1.then(
+                                            function (response) {
+                                                $scope.subNeList = response.data;
+                                                if ($scope.subNeList && !$scope.subNeType || !_.find($scope.subNeList, {type: $scope.subNeType.id})) {
+                                                    $scope.subNeType = $scope.subNeList[0];
+                                                }
+                                                callback(true);
+                                            },
+                                            function (error) {
+                                                messageNotifierService.error(JSON.stringify(error));
+                                                logger.error('Cant get data', route1, error);
+                                                $scope.subNEList = [];
+                                                $scope.subNeType = undefined;
+                                                callback(true);
+                                            }
+                                        );
+                                    }
+                                }
                             }
-
-
-                        }else{
-                            callback(true);
-                        }
-                    }
-
-
+                    //    }
+                    //
+                    //}
                 }
                 $scope.isReadToSearchSourceKPI=function(){
                     console.log('*********isReadToSearchSourceKPI');
@@ -206,11 +293,11 @@ define([
                     switch($scope.neKPIType.type){
                         case RAW:
                         case CAL:
-                            return $scope.neType&&$scope.neGranularity&&$scope.neKPIType;
+                            return $scope.domain&&$scope.neType&&$scope.neGranularity&&$scope.neKPIType;
                         case TA:
-                            return $scope.neType&&$scope.neGranularity&&$scope.neKPIType&&$scope.subNeGranularity;
+                            return $scope.domain&&$scope.neType&&$scope.neGranularity&&$scope.neKPIType&&$scope.subNeGranularity;
                         case EA:
-                            return $scope.neType&&$scope.neGranularity&&$scope.neKPIType&&$scope.subNeType;
+                            return $scope.domain&&$scope.neType&&$scope.neGranularity&&$scope.neKPIType&&$scope.subNeType;
 
                     }
 
@@ -222,7 +309,7 @@ define([
                         kpi_desc:$scope.kpiDesc,
                         kpi_formula:$scope.kpiFormula,
                         kpi_unit:$scope.kpiUnit,
-                        ne_type:$scope.neType.type,
+                        ne_type:$scope.neType.id,
                         granularity:$scope.neGranularity.id,
                         kpi_type: _.indexOf($scope.kpiTypeList,$scope.neKPIType)
 
