@@ -13,6 +13,9 @@
             <thead>
             <tr>
                 <th>
+                    <translate>Domain</translate>
+                </th>
+                <th>
                     <translate>ID</translate>
                 </th>
                 <th>
@@ -43,6 +46,7 @@
             </thead>
             <tbody>
             <tr  ng-repeat="item in filtered = (kpis | filter:searchText )|orderBy:'id'">
+                <td>{{item.domain || ''}} </td>
                 <td><!--<i class="fa fa-signal"></i>--> K{{item.id}}</td>
                 <td>{{item.ne || ''}} </td>
                 <td>{{item.description || ''}} </td>

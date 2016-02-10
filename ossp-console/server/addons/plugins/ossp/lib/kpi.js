@@ -7,6 +7,7 @@ module.exports = (function() {
     // var request = require(process.env.ROOT + '/node_modules/request');
     //var fs = require('fs');
     var async = require(process.env.ROOT + '/server/addons/plugins/ossp/node_modules/async/lib/async');
+    var cypherMaker=require(process.env.ROOT + '/server/addons/plugins/ossp/lib/cypherMaker');
     var C = require('./ossp-common');
 
     var n4j=require('./neo4j_funs');
@@ -18,6 +19,7 @@ module.exports = (function() {
     var CAL='Calculation';
     var TA="Time Aggregation";
     var EA="Entity Aggregation";
+
     var KPIID;
     var K = {};
     /*function getResult(result,kpi_name){
@@ -43,8 +45,8 @@ module.exports = (function() {
         return ret;
     }
     K.getKPIDefinitions=function(req,res){
-        var getValue0= 'MATCH (t:TEMPLATE)-[:HAS_KPI]->(n:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)  return n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit,n.description as description';
-        n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
+        //var getValue0= 'MATCH (d:DOMAIN)-->(t:TEMPLATE)-[:HAS_KPI]->(n:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)  return d.name as domain, n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit,n.description as description';
+        n4j.runCypherWithReturn(cypherMaker.getCypherForGetKPIDefinitionList(),function(err,result){
             if(err){
                 res.status(500).send(err);
                 res.end();

@@ -19,6 +19,11 @@ module.exports = (function() {
         return  [{statement:statement}];
     };
 
+    K.getCypherForGetKPIDefinitionList=function(){
+        var statement='MATCH (d:DOMAIN)-->(t:TEMPLATE)-[:HAS_KPI]->(n:KPI_DEF)<-[:HAS_KPI]-(g:GRANULARITY)  return d.name as domain, n.id as id,t.type as ne,g.type as gran,n.name as name,n.type as type ,n.formula as formula,n.unit as unit,n.description as description';
+        return  [{statement:statement}];
+    };
+
 
     return K;
 })();
