@@ -50,8 +50,8 @@ module.exports = (function() {
     M.getCypherInjectParentAndChildNodeInstances=function(domain,parentType,parentName,childType,childName){
         var kp=domain+'/'+parentType+'/'+parentName;
         var kc=domain+'/'+childType+'/'+childName;
-        var statement='match (p:TEMPLATE{key:"'+domain+'/'+parentType+'"})-->(c:TEMPLATE {key:"'+domain+'/'+childType+'"}) with p,c  merge (pi:INSTANCE {key:"'+kp+'"}) with p,c,pi merge (ci:INSTANCE {key:"'+kc+'"}) with p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
-        //console.log(statement);
+        var statement='match (p:TEMPLATE{key:"'+domain+'/'+parentType+'"})-->(c:TEMPLATE {key:"'+domain+'/'+childType+'"}) with p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
+        console.log('ddddddddddddddddddd', statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectKPIInstances=function(domain,neType,neID,granularity,kpiname,ts,kpivalue,gran){

@@ -406,7 +406,7 @@ module.exports = (function() {
                 var kpi_name= forExpression?'K'+kpiid:_.get(kpi_def ,'name');
                 //var type=kpi_def.type;
                 var formula= _.get(kpi_def,'formula');
-                var window_size= _.get(gran,'num')*1000;
+                var window_size= _.get(gran,'seconds')*1000;
                 //console.log(type,formula,window_size);
                 var vars;
                 var fun;
@@ -469,16 +469,17 @@ module.exports = (function() {
                         async.waterfall([
                             async.apply(E.getKPIDef,src),
                             function(child_def,callback) {  //get node hierarchy
+                                //console.log('aaaaaaaaaaaa',child_def);
                                 var srcKPIType = _.get(child_def, 'kpi_def.type');
                                 var srcKPIName= _.get(child_def,'kpi_def.name');
-                                var chType = _.get(child_def, 'template.type');
+                                var chType = _.get(child_def, 'template.name');
                                 //console.log('eAggr1', srcKPIType, chType);
                                 if (srcKPIType === undefined || chType === undefined) {
                                     callback(new Error("Error in KPI definition"), null);
                                 }
                                 var stat;
-                                if (srcKPIType === 0) {
-                                    stat = 'match (e:INSTANCE)-[r..4]->(c:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts+' and e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                if (srcKPIType === 0) {  //the step shall = the step num in gui search+1 ;TODO : add it into config
+                                    stat = 'match (e:INSTANCE)-[*..5]->(k:KPI_VALUE) where k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts+' and e.type="' + neType + '"';
                                     if (nelist && _.isArray(nelist) && nelist.length > 0) {
                                         stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
                                     }
@@ -486,7 +487,7 @@ module.exports = (function() {
                                     n4j.runCypherWithReturn([{statement: stat}], callback);
                                     //callback(null,stat,0);
                                 } else {
-                                    stat = 'match (e:INSTANCE)-[r..4]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                    stat = 'match (e:INSTANCE)-[*..4]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
                                     if (nelist && _.isArray(nelist) && nelist.length > 0) {
                                         stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
                                     }

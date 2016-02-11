@@ -17,12 +17,12 @@ function test(){
 
     function t(i,callback){
         var startTime = os.uptime();
-        var id=213;
+        var id=133;
         E.getKPIValue(function(e,d){
             console.log('get kpi('+id+'):',JSON.stringify(_.slice(d,0,5)));
             console.log('Request completed in ' + (os.uptime() - startTime)+'s');
             callback(null);
-        },id,1453954774849,null,null,null,null);
+        },id,100002700000,null,null,null,null);
     }
     var iterate=[];
     for(var i=7;i<8;i++){
