@@ -230,7 +230,7 @@ define(
 
 
                         if (url) {
-                            logger.info('Getting data from URL', url, new Date());
+                            //logger.info('Getting data from URL', url, new Date());
                             deferred.promise = $http.put(url, data, {
                                 timeout: deferred.promise,
                                 cache: useCache
@@ -279,7 +279,7 @@ define(
 
                         if (url) {
                             //logger.info('Getting data from URL', url, new Date());
-                            console.warn('lllllllllllllll',url,data);
+                            //console.warn('lllllllllllllll',url,data);
                             deferred.promise = $http.post(url, data, {
                                 timeout: deferred.promise,
                                 cache: useCache

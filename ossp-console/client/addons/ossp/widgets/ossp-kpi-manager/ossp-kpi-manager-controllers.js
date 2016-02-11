@@ -28,7 +28,6 @@ define([
                 var p1 = dataAccessService.postRouteDeferred(url, '',body, false).promise;
                 p1.then(
                     function(response) {
-                        console.warn('rrrrrrrrrr',response);
                         $scope.results=response.data;
                     },
                     function(error) {
