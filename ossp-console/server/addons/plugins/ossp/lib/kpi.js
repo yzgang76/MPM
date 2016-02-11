@@ -335,6 +335,10 @@ module.exports = (function() {
         }
     });
 
+    //K.getKPIValue=function(req,res){
+    //    var url='/collect/kpi/value';
+    //
+    //};
     K.getKPIsForNFVDGUIRequestMonitor=function(req,res){
         var url='/collect/kpi/nfvd-gui-request';
         C.makeQuery('http://localhost:3001',url,function(err,r,body){

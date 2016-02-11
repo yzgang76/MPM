@@ -38,7 +38,7 @@ module.exports = (function() {
         return _.slice(result,offset?offset:0,size?offset?offset+size:size:result.length);
     }
 
-    function getResult(result,kpi_name){
+    function getResult(result,kpi_name,size,offset,order){
         var ret=[];
         _.forEach(_.get(result,'results[0].data'),function(d){
             var data={
@@ -50,7 +50,24 @@ module.exports = (function() {
             ret.push(data);
         });
         //console.log(ret);
-        return ret;
+        switch(order){
+            case 0:
+                ret=_.sortByOrder(ret, ['ne'], ['asc']);
+                break;
+            case 1:
+                ret=_.sortByOrder(ret, ['ne'], ['desc']);
+                break;
+            case 2:
+                ret=_.sortByOrder(ret, [kpi_name], ['asc']);
+                break;
+            case 3:
+                ret=_.sortByOrder(ret, [kpi_name], ['desc']);
+                break;
+            default:
+                break;
+        }
+        return _.slice(ret,offset?offset:0,size?offset?offset+size:size:result.length);
+        //return ret;
     }
     function getVars(expression){
         var r =/K\d*/g;
@@ -327,7 +344,7 @@ module.exports = (function() {
                         //[ { ne: 'BTS2', ts: 100002700000, K0: 3 },
                         //    { ne: 'BTS21', ts: 100002700000, K0: 2 }]
                         var statement=E.makeCypherForRaw(def.kpi_def.id,ts,window_size,nelist,size,skip,order);
-                        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaa',statement);
+                        //console.log('aaaaaaaaaaaaaaaaaaaaaaaaaa',statement);
                         n4j.runCypherWithReturn([{statement:statement}],function(err,result){
                             if(err){
                                 throw new Error('Fail to get KPI (' + def.kpi_def.id + ') value');
@@ -419,7 +436,7 @@ module.exports = (function() {
                                 throw new Error('Fail to get KPI (' + kpiid + ') value');
                             }else{
                                 //console.log('get kpi('+kpiid+') value :'+JSON.stringify(getResult(result,kpi_name)));
-                                callback (null,getResult(result,kpi_name));
+                                callback (null,getResult(result,kpi_name,size,skip,order));
                             }
                         });
                         break;

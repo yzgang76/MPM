@@ -36,10 +36,6 @@ module.exports = (function() {
                 }
             },param.id,param.ts,param.nelist,param.size,param.skip,param.order);
 
-
-
-
-
         }else{
             res.send([]);
             res.end();
