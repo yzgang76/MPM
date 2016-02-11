@@ -164,6 +164,11 @@ define([
                         });
                     }
                 };
+                $scope.onSubNeTypeSelected=function(){
+                    if($scope.isReadToSearchSourceKPI()){
+                        getSourceKPIList();
+                    }
+                };
                 $scope.update=function(){
                     updateSubOptions(function(ret){
                         if(ret){
@@ -215,7 +220,10 @@ define([
                                 p1.then(
                                     function (response) {
                                         $scope.subNeList = response.data;
-                                        if ($scope.subNeList && !$scope.subNeType || !_.find($scope.subNeList, {type: $scope.subNeType.id})) {
+                                        console.log('aaaaaaaaaaaaaaaaaa',$scope.subNeList,$scope.subNeType);
+                                        if ($scope.subNeList && !$scope.subNeType || !_.find($scope.subNeList, {id: $scope.subNeType.id})) {
+                                            console.log('00000000000000000');
+
                                             $scope.subNeType = $scope.subNeList[0];
                                         }
                                         callback(true);

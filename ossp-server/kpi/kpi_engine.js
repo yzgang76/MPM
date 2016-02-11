@@ -154,7 +154,8 @@ module.exports = (function() {
         }
         return ret;
     }
-    function getAggregationResult2(method,ts,kpi_name, data){  //for entity aggr
+    function getAggregationResult2(method,ts,kpi_name, data){
+        //for entity aggr
         //console.log('getAggregationResult2',method,ts,kpi_name,data);
 
         var ret=reformatResult(data);
@@ -309,7 +310,7 @@ module.exports = (function() {
                 console.log("err1:",err);
                 callback(err,null);
             }else{
-                var gran= _.get(def, 'gran.num');
+                var gran= _.get(def, 'gran.seconds');
                 if(gran){
                     var tss=[];
                     for(var t=ts;t>ts-window_size;t=t-gran*1000){
@@ -354,7 +355,7 @@ module.exports = (function() {
                 console.log("err5:",err);
                 callback(err,null);
             }else{
-                var type= _.get(def,'template.type');
+                var type= _.get(def,'template.id');
                 if(!type){
                     callback(new Error('KPI definition Error'),null);
                 }else{
@@ -401,7 +402,7 @@ module.exports = (function() {
                 }
 
                 var type=_.get(kpi_def,'type');   //TODO: the performance of _.get() ??
-                var neType= _.get(template,'type');
+                var neType= _.get(template,'id');
                 var kpi_name= forExpression?'K'+kpiid:_.get(kpi_def ,'name');
                 //var type=kpi_def.type;
                 var formula= _.get(kpi_def,'formula');
@@ -477,7 +478,7 @@ module.exports = (function() {
                                 }
                                 var stat;
                                 if (srcKPIType === 0) {
-                                    stat = 'match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts+' and e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                    stat = 'match (e:INSTANCE)-[r..4]->(c:INSTANCE)-[:HAS_KPI_VALUE]->(k:KPI_VALUE) where k.id=' + src + ' AND ' + (ts - window_size) + '<k.ts<=' + ts+' and e.type="' + neType + '" AND c.type="' + chType + '" ';
                                     if (nelist && _.isArray(nelist) && nelist.length > 0) {
                                         stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
                                     }
@@ -485,7 +486,7 @@ module.exports = (function() {
                                     n4j.runCypherWithReturn([{statement: stat}], callback);
                                     //callback(null,stat,0);
                                 } else {
-                                    stat = 'match (e:INSTANCE)-[:HAS_CHILD]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
+                                    stat = 'match (e:INSTANCE)-[r..4]->(c:INSTANCE) where e.type="' + neType + '" AND c.type="' + chType + '" ';
                                     if (nelist && _.isArray(nelist) && nelist.length > 0) {
                                         stat = stat + ' AND e.id in ' + JSON.stringify(nelist);
                                     }

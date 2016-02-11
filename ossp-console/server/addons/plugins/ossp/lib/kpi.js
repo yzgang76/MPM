@@ -138,7 +138,7 @@ module.exports = (function() {
     K.getKPISubTemplates=function(req,res){
         var domain= _.get(req,'params.domain');
         var id= _.get(req,'params.type');
-        var getValue0= 'MATCH (n:TEMPLATE{key:"'+domain+'/'+id+'"})-[:CONTAINS]->(c:TEMPLATE) return c';
+        var getValue0= 'MATCH (n:TEMPLATE{key:"'+domain+'/'+id+'"})-[*..4]->(c:TEMPLATE) return c';
         n4j.runCypherWithReturn([{statement:getValue0}],function(err,result){
             if(err){
                 res.status(500).send(err);

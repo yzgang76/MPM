@@ -20,7 +20,7 @@
 				<translate class="col-sm-12 col-md-4 col-lg-2" style="padding: 0px 0 5px 5px;">Select Entity Type:</translate>
 				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;" id="neType" data-ng-model="neType" ng-options=" ne.id for ne in neList" data-ng-change="update()">
 				</select>
-				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="subNeType" data-ng-show="neKPIType.type==='Entity Aggregation'" data-ng-model="subNeType" ng-options=" ne.id for ne in subNeList" data-ng-change="update()">
+				<select class="col-sm-12 col-md-10 col-lg-4" style="margin: 0 0 5px 1px;"  id="subNeType" data-ng-show="neKPIType.type==='Entity Aggregation'" data-ng-model="subNeType" ng-options=" ne.id for ne in subNeList" data-ng-change="onSubNeTypeSelected()">
 				</select>
 			
 		</div>
