@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <h3 class="modal-title">Query KPI Value</h3>
+</div>
+<div class="modal-body">
+    <ul>
+        <li>KPI Definition: {{item}}</li>
+        <li>Timestamp: <input type="TEXT" ng-model="ts"></li>
+        <li>Results:
+                <li ng-repeat="r in results">
+                    {{truncateNE(r)}}-{{r.ts}}-{{r[item.name]}}
+                </li>
+        </li>
+    </ul>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="query()">Query</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Close</button>
+</div>

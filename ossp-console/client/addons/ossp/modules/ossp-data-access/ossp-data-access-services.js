@@ -278,7 +278,8 @@ define(
 
 
                         if (url) {
-                            logger.info('Getting data from URL', url, new Date());
+                            //logger.info('Getting data from URL', url, new Date());
+                            console.warn('lllllllllllllll',url,data);
                             deferred.promise = $http.post(url, data, {
                                 timeout: deferred.promise,
                                 cache: useCache
@@ -298,7 +299,7 @@ define(
                     }
 
                     this.postRouteDeferred = function(route, query, data, cache, delay) {
-
+                        console.warn('postRouteDeferred',route,data);
                         function buildUrl(route, query) {
 
                             var uri = '';

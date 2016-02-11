@@ -25,6 +25,7 @@ module.exports = function(app) {
     app.get(prefix+'/kpis/id',kpi.getKPIID);
     app.get(prefix+'/kpis/create/',kpi.createKPIForExternalGetRequest);
     app.post(prefix+'/kpis/create',kpi.createKPI);
+    app.post(prefix+'/kpis/value',kpi.queryKPI);
 
     app.get(prefix+'/kpis/values/nfvdgui',kpi.getKPIsForNFVDGUIRequestMonitor);
 

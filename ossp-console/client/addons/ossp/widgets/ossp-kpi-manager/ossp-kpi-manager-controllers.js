@@ -12,16 +12,47 @@ define([
     function(angular,_) {
         'use strict';
         var osspKPIManagerControllers = angular.module('osspKPIManagerControllers', [ 'commonsEvents','dataExchangeServices','osspDataAccessServices']);
+        osspKPIManagerControllers.controller('dlgKPIValueController',['$scope', '$modalInstance','osspDataAccessService', 'item', function($scope, $modalInstance,dataAccessService, item){
+            $scope.ts=100002700000;
+            $scope.item=item;
+            $scope.truncateNE=function(r){
+              return _.trunc(r.ne,40);
+            };
+            $scope.query=function(){
+                var url='/kpis/value';
+                var body={
+                    "id":$scope.item.id,
+                    "ts":parseInt($scope.ts),
+                    "size":5
+                };
+                var p1 = dataAccessService.postRouteDeferred(url, '',body, false).promise;
+                p1.then(
+                    function(response) {
+                        console.warn('rrrrrrrrrr',response);
+                        $scope.results=response.data;
+                    },
+                    function(error) {
+                        $scope.results='Cant get data: '+ error;
+                    }
+                );
+            };
+
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }]);
         osspKPIManagerControllers.controller('osspKPIManagerController', [
             '$rootScope',
             '$scope',
             '$log',
             '$location',
             '$window',
+            '$modal',
             'dataExchangeService',
             'osspDataAccessService',
             'messageNotifierService',
-            function($rootScope, $scope, $log, $location,$window,dataExchangeService,dataAccessService,messageNotifierService) {
+            function($rootScope, $scope, $log, $location,$window,$modal,dataExchangeService,dataAccessService,messageNotifierService) {
                 var logger = $log.getInstance('osspKPIManagerControllers');
                 //logger.warn('ssssssssssssssssssss$',$scope);
                 $scope.title = "KPI Manager";
@@ -79,6 +110,27 @@ define([
                     console.log('rrrrrrrrrrrrrrrr',url);
                     $location.url(url);
                     //$window.alert('TO BE DEVELOPED');
+                };
+                $scope.onQueryKPI=function(item){
+                    var modalInstance = $modal.open({
+                        size:'lg',
+                        backdrop: 'static',
+                        templateUrl: 'addons/ossp/widgets/ossp-kpi-manager/dlgKPIValue.html',
+                        controller: 'dlgKPIValueController',
+                        //size: size,
+                        resolve: {
+                            item:function(){
+                                return item;
+                            }
+                        }
+                    });
+
+                    modalInstance.result.then(function (selectedItem) {
+                        $scope.selected = selectedItem;
+                    }, function () {
+                        $log.info('Modal dismissed at: ' + new Date());
+                    });
+
                 };
                 refresh();
             }

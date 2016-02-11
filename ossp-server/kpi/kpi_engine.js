@@ -424,6 +424,9 @@ module.exports = (function() {
                 //var type=kpi_def.type;
                 var formula= _.get(kpi_def,'formula');
                 var window_size= _.get(gran,'seconds')*1000;
+                if(window_size<=0){
+                    window_size=1;
+                }
                 //console.log(type,formula,window_size);
                 var vars;
                 var fun;

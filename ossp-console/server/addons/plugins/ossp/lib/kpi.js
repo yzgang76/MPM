@@ -310,6 +310,25 @@ module.exports = (function() {
         //});
 
     };
+    K.queryKPI=function(req,res){
+        console.log('queryKPI',req.body);
+        var url='/collect/kpi/value';
+        C.makeQuery('http://localhost:3001',url,function(err,r,body){
+            if(err){
+                //console.log("getAllNode return with error: ",JSON.stringify(err),body);
+                console.log({
+                    headers: _.get(r,'headers'),
+                    errors:body
+                });
+                res.status(500).send(err);
+                res.end();
+            }else{
+                //console.log('makeQuery return :',JSON.stringify(body));
+                res.send(body);
+                res.end();
+            }
+        },'POST',req.body,false);
+    };
     K.createKPIForExternalGetRequest=function(req,res){
         req.body={};
         _.set(req.body,'domain',_.get(req,'query.domain'));

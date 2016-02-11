@@ -51,7 +51,7 @@ module.exports = (function() {
         var kp=domain+'/'+parentType+'/'+parentName;
         var kc=domain+'/'+childType+'/'+childName;
         var statement='match (p:TEMPLATE{key:"'+domain+'/'+parentType+'"})-->(c:TEMPLATE {key:"'+domain+'/'+childType+'"}) with p,c  merge (pi:INSTANCE {key:"'+kp+'",id:"'+parentName+'",type:"'+parentType+'"}) with p,c,pi merge (ci:INSTANCE {key:"'+kc+'",id:"'+childName+'",type:"'+childType+'"}) with p,c,pi,ci merge (p)-[:HAS_INSTANCE]->(pi)  with p,c,pi,ci merge (c)-[:HAS_INSTANCE]->(ci)  with p,c,pi,ci merge (pi)-[:HAS_CHILD]->(ci)';
-        console.log('ddddddddddddddddddd', statement);
+        //console.log('ddddddddddddddddddd', statement);
         return  [{statement:statement}];
     };
     M.getCypherInjectKPIInstances=function(domain,neType,neID,granularity,kpiname,ts,kpivalue,gran){
@@ -125,6 +125,12 @@ module.exports = (function() {
     M.getCypherInjectServerReponse=function(uri,ts,returnCode,method,value){
         //var key=kpiid+'/'+ domain+'/'+devicetype+'/'+devicename+'/'+ts;
         var statement='match(g:GRANULARITY)-[:HAS_KPI]->(d:KPI_DEF{type:0,formula:"Server_Response"})<-[:HAS_KPI]-(t:TEMPLATE{key:"NFVD/NFVD_GUI_SERVER_REQUEST"})-[:HAS_INSTANCE]->(ne:INSTANCE{key:"NFVD/NFVD_GUI_SERVER_REQUEST/'+uri+'"}) with g,ne ,d create (k:KPI_VALUE{name:"Server_Response", ts:'+ ts+',value:"'+value+'", neID:"'+uri+'", returnCode:"'+returnCode+'",method:"'+ method+'"}) , (ne)-[:HAS_KPI_VALUE]->(k) ,(d)-[:HAS_KPI_VALUE]->(k) set k.id=d.id,k.key=k.id+"/"+ne.key+"/"+k.ts, k.gran=g.seconds,k.updateTS=timestamp()';
+        return  [{statement:statement}];
+    };
+
+    //cypher for KPI engine
+    M.getCypherForLatestTsOfKPIInstance=function(kpiid){
+        var statement='match(k:KPI_VALUE{id:'+kpiid+'}) return max(k.ts)';
         return  [{statement:statement}];
     };
     return M;
